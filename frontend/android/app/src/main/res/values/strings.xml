@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Filmograf</string>
-    <string name="title_activity_main">Filmograf</string>
-    <string name="package_name">com.filmograf</string>
-    <string name="custom_url_scheme">com.filmograf</string>
-</resources>
