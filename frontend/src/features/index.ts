@@ -1,0 +1,1 @@
+export { ToggleFilmFavorite } from "./ToggleFilmFavorite/ui/ToggleFilmFavorite";

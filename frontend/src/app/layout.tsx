@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 
 // components
-import { Footer } from "@/modules/Footer";
+import { Footer } from "widgets/Footer";
 
 const roboto = Roboto({
   variable: "--font-roboto",

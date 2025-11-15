@@ -4,19 +4,17 @@
 import type { FC } from "react";
 
 // components
-import { Input } from "@/ui/input";
+import { Input } from "@/shared/ui/input";
 import { Search as SearchLogo } from "lucide-react";
 import { SearchItem } from "./SearchItem";
-import { toastMessage } from "@/components/toast";
 
 // hooks
-import { useDebounce, useClickAway } from "react-use";
-import { useCallback, useState, useRef, useEffect } from "react";
+import { useRef, useState } from "react";
+import { useClickAway, useDebounce } from "react-use";
 
 // fn
 import { cn } from "@/shared/lib/utils";
-import { FilmService } from "services";
-import { Button } from "@/ui/button";
+import { Button } from "@/shared/ui/button";
 
 interface Props {
   className?: string | undefined;
@@ -42,26 +40,14 @@ export const Search: FC<Props> = ({ className }) => {
     handleSearch(query).then(addData);
   };
 
-  const handleSearch = async (searchTerm: string) => {
-    const trimmedQuery = searchTerm.trim();
-
-    if (trimmedQuery) {
-      setIsLoading(true);
-      const data = await FilmService.fetchFilmByTitle(trimmedQuery, curPage);
-      setIsDropdownOpen(true);
-
-      setIsLoading(false);
-      return data.docs || [];
-    } else {
-      setIsDropdownOpen(false);
-      setIsLoading(false);
-      setData([]);
-    }
-  };
-
   const addData = (addData: any[]) => {
     setData((prevData) => [...prevData, ...addData]);
   };
+
+  const handleSearch = (query: string) => {
+    // Заглушка
+    return {} as any
+  }
 
   useDebounce(
     () => {

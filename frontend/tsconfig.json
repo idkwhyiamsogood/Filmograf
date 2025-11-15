@@ -21,20 +21,14 @@
     "baseUrl": "./src",
 
     "paths": {
+      
       // Основные алиасы для папок
         "@/api/*": ["api/*"],
         "@/components/*": ["components/*"],
-        "@/modules/*": ["modules/*"],
+        "@/widgets/*": ["widgets/*"],
         "@/shared/*": ["shared/*"],
-        "@/domains/*": ["domains/*"],
-        "@/ui/*": ["ui/*"],
-        
-      // Алиасы для index.ts файлов
-      "@/api": ["src/api/index.ts"],
-      "@/components": ["src/components/index.ts"],
-      "@/domains": ["src/domains/index.ts"],
-      "@/modules": ["src/modules/index.ts"],
-      "@/services": ["src/services/index.ts"],
+        "@/features/*": ["features/*"],
+        "@/core/*": ["core/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

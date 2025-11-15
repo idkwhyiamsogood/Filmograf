@@ -6,7 +6,7 @@ import type { FC } from "react";
 // components
 import Image from "next/image";
 
-// hooks
+// fn
 import { memo } from "react";
 
 interface Props {

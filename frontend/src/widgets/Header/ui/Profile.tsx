@@ -2,10 +2,10 @@
 import type { FC } from "react";
 
 // components
-import { Button } from "@/ui/button";
+import { Button } from "@/shared/ui/button";
 import { User } from "lucide-react";
 
-export const UserProfile: FC = () => {
+export const Profile: FC = () => {
   return (
     <div className="">
       <Button>
