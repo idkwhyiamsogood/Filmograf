@@ -5,12 +5,13 @@ using StackExchange.Redis;
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Authentication;
 using Filmograf.MoviesService.Util;
+using ParsingService.Services;
 
 namespace Filmograf.MoviesService;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public async static Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,6 @@ public class Program
         SettingUpRedis(builder);
         SettingComponents(builder);
         SettingUpAuthenticationService(builder);
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -113,6 +113,8 @@ public class Program
 
     private static void SettingComponents(WebApplicationBuilder builder)
     {
+        builder.Services.AddSingleton<RabbitMQService>();
+        
         builder.Services.AddTransient<FileExtensionContentTypeProvider>();
         
         builder.Services.AddScoped<AuthService>();

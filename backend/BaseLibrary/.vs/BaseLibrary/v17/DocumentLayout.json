@@ -1,16 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "A:\\Web projects\\Filmograf\\backend\\BaseLibrary\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{60655738-75CB-4784-9CD6-CE43E72706DB}|BaseLibrary.csproj|a:\\web projects\\filmograf\\backend\\baselibrary\\baselibrary.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
-      "RelativeMoniker": "D:0:0:{60655738-75CB-4784-9CD6-CE43E72706DB}|BaseLibrary.csproj|solutionrelative:baselibrary.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{60655738-75CB-4784-9CD6-CE43E72706DB}|BaseLibrary.csproj|a:\\web projects\\filmograf\\backend\\baselibrary\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{60655738-75CB-4784-9CD6-CE43E72706DB}|BaseLibrary.csproj|solutionrelative:class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -18,36 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 210,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BaseLibrary",
-              "DocumentMoniker": "A:\\Web projects\\Filmograf\\backend\\BaseLibrary\\BaseLibrary.csproj",
-              "RelativeDocumentMoniker": "BaseLibrary.csproj",
-              "ToolTip": "A:\\Web projects\\Filmograf\\backend\\BaseLibrary\\BaseLibrary.csproj",
-              "RelativeToolTip": "BaseLibrary.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-16T12:31:56.188Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "A:\\Web projects\\Filmograf\\backend\\BaseLibrary\\Class1.cs",
-              "RelativeDocumentMoniker": "Class1.cs",
-              "ToolTip": "A:\\Web projects\\Filmograf\\backend\\BaseLibrary\\Class1.cs",
-              "RelativeToolTip": "Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-16T12:31:47.074Z",
-              "EditorCaption": ""
             }
           ]
         }

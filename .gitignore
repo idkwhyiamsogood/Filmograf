@@ -36,3 +36,6 @@ node_modules
 /backend/BaseLibrary/obj
 /backend/BaseLibrary/bin
 /backend/BaseLibrary/.idea
+/backend/BaseLibrary/obj
+/backend/BaseLibrary/obj/Debug
+/backend/BaseLibrary/.vs

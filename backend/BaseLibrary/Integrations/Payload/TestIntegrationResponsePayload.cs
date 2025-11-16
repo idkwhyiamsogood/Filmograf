@@ -2,5 +2,5 @@
 
 public class TestIntegrationResponsePayload : IntegrationResponsePayloadBase
 {
-    
+    public int Value { get; set; }
 }

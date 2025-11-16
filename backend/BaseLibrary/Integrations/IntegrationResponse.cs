@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using Filmograf.BaseLibrary.Integrations.Payload;
-using Newtonsoft.Json;
 
 namespace Filmograf.BaseLibrary.Integrations;
 
-public class IntegrationResponse<PType> where PType : IntegrationResponsePayloadBase
+public class IntegrationResponse
 {
     public string RequestId { get; set; } = null!;
     public string Action { get; set; } = null!;
@@ -13,10 +11,4 @@ public class IntegrationResponse<PType> where PType : IntegrationResponsePayload
     
     [DefaultValue(true)]
     public bool Success { get; set; } = true;
-    
-    public PType? ParsePayload()
-    {
-        if (Payload == null) return null;
-        return JsonConvert.DeserializeObject<PType>(Payload);
-    }
 }

@@ -1,6 +1,7 @@
 ﻿using Filmograf.BaseLibrary.Integrations.Payload;
 using Filmograf.BaseLibrary.Models.IntegrationExceptions;
 using Filmograf.BaseLibrary.Util;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -25,7 +26,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
         try
         {
             // сперва десериализуем сам запрос
-            var request = SerializationUtil.DeserializeFromBytes<IntegrationRequest<ReqPayload>>(ea.Body.ToArray());
+            var request = SerializationUtil.DeserializeFromBytes<IntegrationRequest>(ea.Body.ToArray());
             if (request == null) return;
 
             // если по какой-то причине action в IntegrationRequest не совпадает с ожидаемым - дропаем исключение
@@ -33,7 +34,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
                 throw new IncorrectActionIntegrationException(_actionName, request.Action);
 
             // далее десериализуем payload в запросе
-            var payload = request.ParsePayload();
+            var payload = request.Payload != null ? JsonConvert.DeserializeObject<ReqPayload>(request.Payload) : null;
 
             // обрабатываем запрос
             await ProcessRequestAsync(request, payload);
@@ -48,7 +49,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
         }
     }
 
-    protected virtual async Task ProcessRequestAsync(IntegrationRequest<ReqPayload> request, ReqPayload? payload)
+    protected virtual async Task ProcessRequestAsync(IntegrationRequest request, ReqPayload? payload)
     {
         try
         {
@@ -57,7 +58,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
             var responseSerializePayload = SerializationUtil.Serialize<ResPayload>(responsePayload);
 
             // формируем ответ
-            var response = new IntegrationResponse<ResPayload>
+            var response = new IntegrationResponse
             {
                 RequestId = request.RequestId,
                 Action = GetResponseActionName(),
@@ -65,7 +66,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
             };
 
             // готовим ответ к отправке: сериализуем в байты 
-            var responseBytes = SerializationUtil.SerializeToBytes<IntegrationResponse<ResPayload>>(response);
+            var responseBytes = SerializationUtil.SerializeToBytes<IntegrationResponse>(response);
 
             // публикуем ответ
             await _channel.BasicPublishAsync(
@@ -77,7 +78,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
         catch (IntegrationException iex)
         {
             // формируем ответ
-            var response = new IntegrationResponse<ResPayload>
+            var response = new IntegrationResponse
             {
                 RequestId = request.RequestId,
                 Action = GetResponseActionName(),
@@ -87,7 +88,7 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
             };
             
             // готовим ответ к отправке: сериализуем в байты 
-            var responseBytes = SerializationUtil.SerializeToBytes<IntegrationResponse<ResPayload>>(response);
+            var responseBytes = SerializationUtil.SerializeToBytes<IntegrationResponse>(response);
 
             // публикуем ответ
             await _channel.BasicPublishAsync(
@@ -103,5 +104,5 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
         return $"{_actionName}_response";
     }
 
-    protected abstract Task<ResPayload> ProcessingAsync(IntegrationRequest<ReqPayload> request, ReqPayload? payload);
+    protected abstract Task<ResPayload> ProcessingAsync(IntegrationRequest request, ReqPayload? payload);
 }
