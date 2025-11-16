@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
+
 using Filmograf.AuthService.Services;
 using Filmograf.AuthService.Services.Authentication;
 using Filmograf.AuthService.Util;
