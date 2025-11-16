@@ -33,6 +33,11 @@ public class RabbitMQService
             _connection = await _factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
+            // Настройка BasicQos для параллельной обработки сообщений
+            // PrefetchCount = 5 означает, что consumer может получить до 5 сообщений одновременно
+            // Это позволяет обрабатывать несколько запросов параллельно
+            await _channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 5, global: false);
+
             await _channel.QueueDeclareAsync("base_to_parser", durable: true, exclusive: false, autoDelete: false,
                 arguments: null);
             await _channel.QueueDeclareAsync("parser_to_base", durable: true, exclusive: false, autoDelete: false,

@@ -1,4 +1,5 @@
-﻿using Filmograf.BaseLibrary.Integrations;
+﻿using System.Collections.Concurrent;
+using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Payload;
 using Filmograf.BaseLibrary.Models.IntegrationExceptions;
 using Filmograf.BaseLibrary.Util;
@@ -13,8 +14,8 @@ public class BaseIntegrationSender
     protected readonly string _requestQueue;
     protected readonly string _responseQueue;
     
-    // Для отслеживания ожидающих ответов
-    protected readonly Dictionary<string, TaskCompletionSource<IntegrationResponse>> _pendingRequests;
+    // Для отслеживания ожидающих ответов (потокобезопасный словарь)
+    protected readonly ConcurrentDictionary<string, TaskCompletionSource<IntegrationResponse>> _pendingRequests;
 
     public BaseIntegrationSender(IChannel channel, string actionName, string requestQueue, string responseQueue)
     {
@@ -22,7 +23,7 @@ public class BaseIntegrationSender
         _actionName = actionName;
         _requestQueue = requestQueue;
         _responseQueue = responseQueue;
-        _pendingRequests = new Dictionary<string, TaskCompletionSource<IntegrationResponse>>();
+        _pendingRequests = new ConcurrentDictionary<string, TaskCompletionSource<IntegrationResponse>>();
     }
 
      public async Task<TResponse> SendRequestAsync<TRequest, TResponse>(TRequest? payload = null)
@@ -39,7 +40,10 @@ public class BaseIntegrationSender
         };
 
         var tcs = new TaskCompletionSource<IntegrationResponse>();
-        _pendingRequests[requestId] = tcs;
+        if (!_pendingRequests.TryAdd(requestId, tcs))
+        {
+            throw new InvalidOperationException($"Failed to add pending request {requestId}");
+        }
 
         var requestBytes = SerializationUtil.SerializeToBytes(request);
         
@@ -55,7 +59,7 @@ public class BaseIntegrationSender
         
         if (completedTask == timeoutTask)
         {
-            _pendingRequests.Remove(requestId);
+            _pendingRequests.TryRemove(requestId, out _);
             throw new TimeoutException($"Request {requestId} timed out after 30 seconds");
         }
 
@@ -83,9 +87,8 @@ public class BaseIntegrationSender
 
     public virtual Task ProcessResponseAsync(IntegrationResponse response)
     {
-        if (_pendingRequests.TryGetValue(response.RequestId, out var tcs))
+        if (_pendingRequests.TryRemove(response.RequestId, out var tcs))
         {
-            _pendingRequests.Remove(response.RequestId);
             tcs.SetResult(response);
         }
         
