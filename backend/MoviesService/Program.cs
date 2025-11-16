@@ -5,7 +5,6 @@ using StackExchange.Redis;
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Authentication;
 using Filmograf.MoviesService.Util;
-using ParsingService.Services;
 
 namespace Filmograf.MoviesService;
 
@@ -28,6 +27,7 @@ public class Program
         SettingUpRedis(builder);
         SettingComponents(builder);
         SettingUpAuthenticationService(builder);
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -120,6 +120,7 @@ public class Program
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped<RedisService>();
+        builder.Services.AddScoped<MoviesParserService>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

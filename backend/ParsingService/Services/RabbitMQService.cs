@@ -52,7 +52,7 @@ public class RabbitMQService
     private void InitListeners()
     {
         _integrationsBus = new Dictionary<string, IIntegrationHandler>();
-        _integrationsBus["test"] = new TestIntegration(_channel, "test", "parser_to_base");
+        _integrationsBus["test"] = new ParseMoviesIntegration(_channel, "test", "parser_to_base");
     }
 
     private void StartListeners()

@@ -7,7 +7,7 @@ using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Integration;
 using Filmograf.MoviesService.Util;
 
-namespace ParsingService.Services;
+namespace Filmograf.MoviesService.Services;
 
 public class RabbitMQService
 {

@@ -32,10 +32,13 @@ node_modules
 /backend/ParsingService/bin
 /backend/ParsingService/env.json
 
+/backend/SearchService/.vs
+/backend/SearchService/obj
+/backend/SearchService/.idea
+/backend/SearchService/bin
+/backend/SearchService/env.json
+
 /backend/BaseLibrary/.vs
 /backend/BaseLibrary/obj
 /backend/BaseLibrary/bin
 /backend/BaseLibrary/.idea
-/backend/BaseLibrary/obj
-/backend/BaseLibrary/obj/Debug
-/backend/BaseLibrary/.vs

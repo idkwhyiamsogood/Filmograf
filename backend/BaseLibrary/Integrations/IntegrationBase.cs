@@ -1,4 +1,5 @@
 ﻿using Filmograf.BaseLibrary.Integrations.Payload;
+using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.IntegrationExceptions;
 using Filmograf.BaseLibrary.Util;
 using Newtonsoft.Json;
@@ -38,6 +39,10 @@ public abstract class IntegrationBase<ReqPayload, ResPayload> : IIntegrationHand
 
             // обрабатываем запрос
             await ProcessRequestAsync(request, payload);
+        }
+        catch (HttpException htex)
+        {
+            Console.WriteLine($"Http Error: {htex.StackTrace}");
         }
         catch (Exception ex)
         {

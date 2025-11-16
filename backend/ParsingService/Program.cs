@@ -7,6 +7,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        await PlaywrightService.InstallPlaywright();
         AppSettingsUtil.LoadAppSettingsData();
         
         await using var rabbitService = new RabbitMQService();

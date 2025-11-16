@@ -1,7 +1,9 @@
-﻿using Filmograf.BaseLibrary.Integrations.Payload;
-using Filmograf.BaseLibrary.Models.IntegrationExceptions;
+﻿using Filmograf.BaseLibrary.Models.IntegrationExceptions;
+using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.MoviesService.Services;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ParsingService.Services;
 
 namespace Filmograf.MoviesService.Controllers;
 
@@ -9,24 +11,20 @@ namespace Filmograf.MoviesService.Controllers;
 [Route("api/movies")]
 public class MoviesController : CustomControllerBase
 {
-    private readonly RabbitMQService _rabbitMqService;
+    private readonly MoviesParserService _moviesParserService;
     
-    public MoviesController(RabbitMQService rabbitMqService)
+    public MoviesController(MoviesParserService moviesParserService)
     {
-        _rabbitMqService = rabbitMqService;
+        _moviesParserService = moviesParserService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult> GetMoviesAsync()
+    [HttpGet("top")]
+    // [Authorize]
+    public async Task<ActionResult<List<Movie>>> GetTopMoviesAsync()
     {
         try
         {
-            var data = await _rabbitMqService.SendRequestAsync<TestIntegrationRequestPayload, TestIntegrationResponsePayload>(
-                "test", 
-                new TestIntegrationRequestPayload { Value = 10 }
-            );
-        
-            return Ok(data.Value); // data уже типизирован как TestIntegrationResponsePayload
+            return Ok(await _moviesParserService.ParseMoviesAsync("https://www.imdb.com/chart/top/"));
         }
         catch (TimeoutException ex)
         {
