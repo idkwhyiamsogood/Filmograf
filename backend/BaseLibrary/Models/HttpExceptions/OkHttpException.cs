@@ -1,4 +1,4 @@
-﻿namespace Filmograf.MoviesService.Models.HttpExceptions;
+﻿namespace Filmograf.BaseLibrary.Models.HttpExceptions;
 
 // 20x
 public class OkHttpException : HttpException

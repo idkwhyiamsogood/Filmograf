@@ -1,4 +1,4 @@
-﻿using Filmograf.MoviesService.Models.HttpExceptions;
+﻿using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmograf.MoviesService.Controllers;

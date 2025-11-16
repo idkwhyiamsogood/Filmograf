@@ -1,4 +1,4 @@
-﻿namespace Filmograf.MoviesService.Models.HttpExceptions;
+﻿namespace Filmograf.BaseLibrary.Models.HttpExceptions;
 
 public abstract class HttpException : Exception
 {

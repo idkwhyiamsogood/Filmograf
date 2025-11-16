@@ -31,3 +31,8 @@ node_modules
 /backend/ParsingService/.idea
 /backend/ParsingService/bin
 /backend/ParsingService/env.json
+
+/backend/BaseLibrary/.vs
+/backend/BaseLibrary/obj
+/backend/BaseLibrary/bin
+/backend/BaseLibrary/.idea

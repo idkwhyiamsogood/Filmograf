@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Filmograf.MoviesService.Util;
+namespace ParsingService.Util;
 
 public class AppSettingsUtil
 {
@@ -30,14 +30,8 @@ public class AppSettingsUtil
 
 public class AppSettings
 {
-    public SecretsSettings SecretsSettings { get; set; } = null!;
     public RedisSettings RedisSettings { get; set; } = null!;
     public RabbitConnectionSettings RabbitConnectionSettings  { get; set; } = null!;
-}
-
-public class SecretsSettings
-{
-    public string BCryptSecret { get; set; }
 }
 
 public class RedisSettings

@@ -1,9 +1,11 @@
-﻿namespace ParsingService;
+﻿using ParsingService.Util;
 
-internal class Program
+namespace ParsingService;
+
+public class Program
 {
-    static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        AppSettingsUtil.LoadAppSettingsData();
     }
 }
