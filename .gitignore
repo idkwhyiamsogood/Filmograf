@@ -20,3 +20,8 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 node_modules
+/backend/AuthService/.vs
+/backend/AuthService/obj
+/backend/AuthService/.idea
+/backend/AuthService/.idea
+/backend/AuthService/bin
