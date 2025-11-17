@@ -19,3 +19,26 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+node_modules
+/backend/MoviesService/.vs
+/backend/MoviesService/obj
+/backend/MoviesService/.idea
+/backend/MoviesService/bin
+/backend/MoviesService/env.json
+
+/backend/ParsingService/.vs
+/backend/ParsingService/obj
+/backend/ParsingService/.idea
+/backend/ParsingService/bin
+/backend/ParsingService/env.json
+
+/backend/SearchService/.vs
+/backend/SearchService/obj
+/backend/SearchService/.idea
+/backend/SearchService/bin
+/backend/SearchService/env.json
+
+/backend/BaseLibrary/.vs
+/backend/BaseLibrary/obj
+/backend/BaseLibrary/bin
+/backend/BaseLibrary/.idea
