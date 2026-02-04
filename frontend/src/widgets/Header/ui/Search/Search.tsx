@@ -15,18 +15,17 @@ import { useClickAway, useDebounce } from "react-use";
 // fn
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import { usePathname } from "next/navigation";
 
-interface Props {
-  className?: string | undefined;
-}
-
-export const Search: FC<Props> = ({ className }) => {
+export const Search: FC = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState<any[]>([]);
   const [curPage, setCurPage] = useState<number>(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const pathname = usePathname();
 
   useClickAway(containerRef, () => {
     setIsDropdownOpen(false);
@@ -46,15 +45,15 @@ export const Search: FC<Props> = ({ className }) => {
 
   const handleSearch = (query: string) => {
     // Заглушка
-    return {} as any
-  }
+    return {} as any;
+  };
 
   useDebounce(
     () => {
       handleSearch(query).then(setData);
     },
     300,
-    [query]
+    [query],
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +66,7 @@ export const Search: FC<Props> = ({ className }) => {
   };
 
   return (
-    <div ref={containerRef} className={cn(className, "relative")}>
+    <div ref={containerRef}>
       <div className="relative">
         <Input
           value={query}
@@ -78,11 +77,11 @@ export const Search: FC<Props> = ({ className }) => {
           text-lg! text-accent/70"
           placeholder="Введите название фильма"
         />
-        <SearchLogo className="absolute right-5 top-1/2 transform -translate-y-1/2 text-accent/70" />
+        <SearchLogo className="absolute right-3 top-1/2 transform -translate-y-1/2 text-accent/80" />
       </div>
 
       {isDropdownOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 z-50 max-h-80 overflow-y-auto">
           {isLoading ? (
             <div className="p-4 text-center text-gray-500">Загрузка...</div>
           ) : data.length > 0 ? (

@@ -1,61 +1,26 @@
 "use client";
 
-import React from "react";
 
-// types
 import type { FC } from "react";
-import type { LucideProps } from "lucide-react";
+import type { INavigationItem } from "@/shared/types";
 
-// fn
-import { cn } from "@/shared/lib/utils";
+import { FooterItem } from "./FooterItem";
 
-// components
-import { NotepadText, Settings, Home, User } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-// hooks
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-interface FooterItemProps {
-  icon: React.ComponentType<LucideProps>;
-  isActive?: boolean;
-  className?: string;
-  onClick?: () => void;
-}
-
-export const FooterItem: FC<FooterItemProps> = ({
-  icon: Icon,
-  isActive = false,
-  className,
-  onClick,
-}) => {
-  return (
-    <div
-      className={cn(
-        className,
-        "p-3 rounded-lg cursor-pointer transition-colors",
-        isActive
-          ? "bg-primary text-primary-foreground"
-          : "bg-transparent text-muted-foreground hover:bg-muted"
-      )}
-      onClick={onClick}
-    >
-      <Icon size={24} />
-    </div>
-  );
-};
+import { navigationMenu } from "@/shared/constants";
 
 export const Footer: FC = () => {
-  const [current, setCurrent] = useState<number>(0);
+  const [current, setCurrent] = useState<number | undefined>(undefined);
 
   const router = useRouter();
+  const pathname = usePathname();
 
-  const menu = [
-    { icon: Home, label: "Главная", url: "/" },
-    { icon: NotepadText, label: "Заметки", url: "/films" },
-    { icon: User, label: "Профиль", url: "/profile" },
-    { icon: Settings, label: "Настройки", url: "/settings" },
-  ];
+  useEffect(() => {
+    const current = navigationMenu.items.find((item) => item.url === pathname);
+    setCurrent(current ? current.id : 2);
+  }, []);
 
   const handleClick = (index: number, url: string) => {
     router.push(url);
@@ -63,13 +28,13 @@ export const Footer: FC = () => {
   };
 
   return (
-    <div className="px-4 py-2 flex justify-around items-center">
-      {menu.map((item, index) => (
+    <div className="px-4 py-2 flex justify-around items-center bg-accent">
+      {navigationMenu.items.map((item: INavigationItem) => (
         <FooterItem
+          item={item}
           key={item.label}
-          icon={item.icon}
-          isActive={current === index}
-          onClick={() => handleClick(index, item.url)}
+          isActive={current === item.id}
+          onClick={() => handleClick(item.id, item.url)}
         />
       ))}
     </div>

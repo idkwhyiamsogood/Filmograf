@@ -1,0 +1,14 @@
+.FilmWrapper {
+  display: grid;
+  grid-template-rows: 1fr;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 5px;
+}
+
+@media (max-width: 390px) {
+  .FilmWrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

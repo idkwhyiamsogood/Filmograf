@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'out',
   server: {
     // Для разработки - укажите IP вашего компьютера в локальной сети для dev другой config
-    url: 'http://192.168.0.192:3000',
+    // url: 'http://127.0.0.1:3000/',
     androidScheme: 'http',
     cleartext: true,
   },

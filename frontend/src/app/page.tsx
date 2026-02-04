@@ -1,15 +1,19 @@
+"use client";
+
 // types
 import { FC } from "react";
 
-import { Header } from "@/widgets/Header/ui/Header";
+// components
+import { Rating, ratingMock } from "@/features/RenderStarRating";
+
+import { useAuth } from "@/shared/hooks/useAuth";
 
 const Page: FC = () => {
+  const auth = useAuth();
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0">
-        <Header />
-      </div>
+    <div>
+      <Rating data={ratingMock} />
     </div>
   );
 };

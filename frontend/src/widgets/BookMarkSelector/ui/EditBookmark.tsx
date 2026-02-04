@@ -4,7 +4,7 @@ interface Props {
   className?: string;
 }
 
-export const StarRating: React.FC<Props> = ({ className }) => {
+export const EditBookmarkMenu: React.FC<Props> = ({ className }) => {
   return (
     <div className={className}>
       

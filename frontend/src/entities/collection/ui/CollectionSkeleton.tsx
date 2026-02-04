@@ -4,12 +4,10 @@ interface Props {
   className?: string;
 }
 
-const Page: React.FC<Props> = ({ className }) => {
+export const CollectionSkeleton: React.FC<Props> = ({ className }) => {
   return (
     <div className={className}>
       
     </div>
   );
 };
-
-export default Page;

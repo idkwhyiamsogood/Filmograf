@@ -1,25 +1,26 @@
+"use client";
+
 // types
-import type { ReactNode, FC } from "react";
-import type { IFilm } from "./types";
+import type { FC, ReactNode } from "react";
+import type { IFilm } from "../types/types";
 
 // fn
 import { createContext } from "react";
 
 // hooks
-import { useReducer, useContext } from "react";
+import { useReducer } from "react";
 
 type FilmAction =
   | { type: "SET_FILM_LIST"; payload: IFilm[] }
   | { type: "ADD_FILM"; payload: IFilm }
-  | { type: "DELETE_FILM"; payload: number }
+  | { type: "DELETE_FILM"; payload: string }
   | { type: "UPDATE_FILM"; payload: Partial<IFilm> };
 
 export interface FilmContextType {
   films: IFilm[];
-
   setFilms: (payload: IFilm[]) => void;
   addFilm: (payload: IFilm) => void;
-  deleteFilm: (payload: number) => void;
+  deleteFilm: (payload: string) => void;
   updateFilm: (payload: Partial<IFilm>) => void;
 }
 
@@ -58,21 +59,15 @@ export const FilmProvider: FC<FilmProviderProps> = ({ children }) => {
 
   const addFilm = (data: IFilm) => {
     dispatch({ type: "ADD_FILM", payload: data });
-
-    // event on add
   };
 
-  const deleteFilm = (data: number) => {
+  const deleteFilm = (data: string) => {
     dispatch({ type: "DELETE_FILM", payload: data });
-
-    // event on delete
   };
 
   // toggleFavorite вызываем из нее же
   const updateFilm = (data: Partial<IFilm>) => {
     dispatch({ type: "UPDATE_FILM", payload: data });
-
-    // event on update
   };
 
   const value: FilmContextType = {
@@ -84,13 +79,4 @@ export const FilmProvider: FC<FilmProviderProps> = ({ children }) => {
   };
 
   return <FilmContext.Provider value={value}>{children}</FilmContext.Provider>;
-};
-
-// Хук для использования контекста
-export const useFilm = (): FilmContextType => {
-  const context = useContext(FilmContext);
-  if (context === undefined) {
-    throw new Error("useFilm must be used within a FilmProvider");
-  }
-  return context;
 };

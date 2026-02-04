@@ -1,14 +1,15 @@
-import React from 'react';
+import React from "react";
 
-interface Props {
-  className?: string;
-}
+import type { FC } from "react";
 
-const Page: React.FC<Props> = ({ className }) => {
+import { Rating } from "@/features/RenderStarRating";
+import { ratingMock } from "@/features/RenderStarRating";
+
+import { FilmWrapper, FilmCover } from "entities/film";
+
+const Page: FC = () => {
   return (
-    <div className={className}>
-      
-    </div>
+    <FilmWrapper items={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}/>
   );
 };
 
