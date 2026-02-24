@@ -39,6 +39,9 @@ public class AppSettings
 public class SecretsSettings
 {
     public string BCryptSecret { get; set; }
+    public string JwtSecret { get; set; }
+    public string JwtValidIssuer { get; set; }
+    public string JwtValidAudience { get; set; }
 }
 
 public class RedisSettings

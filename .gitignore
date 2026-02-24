@@ -47,3 +47,4 @@ node_modules
 /backend/AuthService/obj
 /backend/BaseLibrary/obj
 /backend/AuthService/.idea
+backend/shared/env.json

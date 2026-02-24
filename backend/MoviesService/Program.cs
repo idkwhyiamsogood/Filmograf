@@ -1,3 +1,4 @@
+using System.Text;
 using Filmograf.BaseLibrary.DataAccess.DbContext;
 using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Requested;
@@ -10,6 +11,9 @@ using StackExchange.Redis;
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Authentication;
 using Filmograf.MoviesService.Services.Integrations;
+using Filmograf.MoviesService.Services.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Filmograf.MoviesService;
 
