@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "XajvwvxjgJE=",
+  "dgSpecHash": "MpOS64ARHYM=",
   "success": true,
   "projectFilePath": "A:\\Web projects\\Filmograf\\backend\\BaseLibrary\\BaseLibrary.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.11\\microsoft.entityframeworkcore.8.0.11.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.11\\microsoft.entityframeworkcore.abstractions.8.0.11.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.11\\microsoft.entityframeworkcore.analyzers.8.0.11.nupkg.sha512",

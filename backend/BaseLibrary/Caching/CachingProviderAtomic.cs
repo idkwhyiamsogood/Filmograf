@@ -3,7 +3,7 @@ using StackExchange.Redis;
 
 namespace Filmograf.BaseLibrary.Caching;
 
-public class CachingProviderAtomic<BType>
+public class CachingProviderAtomic<BType> where BType : class
 {
     protected readonly IConnectionMultiplexer _redis;
     protected readonly IDatabase _redisDb;
@@ -16,8 +16,30 @@ public class CachingProviderAtomic<BType>
         _idKey = idKey;
     }
 
-    protected virtual string MakeIdKey(int id) => $"{_idKey}:{id}";
-    protected virtual string MakeIdKey(string subKey) => $"{_idKey}:{subKey}";
+    public virtual string MakeIdKey(int id) => $"{_idKey}:{id}";
+    public virtual string MakeIdKey(string subKey) => $"{_idKey}:{subKey}";
+    
+    public virtual async Task<BType?> GetOrDefaultAsync(int id)
+    {
+        return await GetOrDefaultAsync(MakeIdKey(id));
+    }
+
+    public virtual async Task<BType?> GetOrDefaultAsync(string key)
+    {
+        try
+        {
+            var cachedValue = await _redisDb.StringGetAsync(key);
+
+            if (!cachedValue.IsNullOrEmpty)
+                return JsonSerializer.Deserialize<BType>(cachedValue);
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
     
     public virtual async Task<BType> GetOrCreateAsync(int id, BType newItem, TimeSpan? expirationTime = null) =>
         await this.GetOrCreateAsync(MakeIdKey(id), async () => newItem, expirationTime);
@@ -89,6 +111,48 @@ public class CachingProviderAtomic<BType>
         catch (Exception e)
         {
             return false;
+        }
+    }
+    
+    public virtual async Task<long> RemoveByRootAsync()
+    {
+        try
+        {
+            var server = GetServer();
+            if (server == null)
+                return 0;
+
+            var pattern = $"{_idKey}:*";
+            var keys = new List<RedisKey>();
+
+            await foreach (var key in server.KeysAsync(_redisDb.Database, pattern))
+            { keys.Add(key); }
+
+            if (keys.Count == 0)
+                return 0;
+
+            return await _redisDb.KeyDeleteAsync(keys.ToArray());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return 0;
+        }
+    }
+    
+    private IServer? GetServer()
+    {
+        try
+        {
+            var endpoints = _redis.GetEndPoints();
+            if (endpoints.Length == 0)
+                return null;
+
+            return _redis.GetServer(endpoints[0]);
+        }
+        catch
+        {
+            return null;
         }
     }
 }
