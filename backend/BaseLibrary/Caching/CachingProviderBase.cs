@@ -22,18 +22,18 @@ public abstract class CachingProviderBase<BType>
         _enumerableCachingAtomic = new CachingProviderAtomic<IEnumerable<BType>>(redis, $"{baseKey}");
     }
     
-    public virtual async Task<BType> CachingAsync(int id, Func<Task<BType>> createItem)
+    public virtual async Task<BType> CachingAsync(Guid id, Func<Task<BType>> createItem)
     {
         return await _cachingAtomic.GetOrCreateAsync(id, createItem, DefaultExpirationTime);
     }
     
-    public async Task ResetCachingAsync(int id, Func<Task<BType>> createItem)
+    public async Task ResetCachingAsync(Guid id, Func<Task<BType>> createItem)
     {
         var payloadData = await createItem();
         await _cachingAtomic.CreateAsync(id, payloadData, DefaultExpirationTime);
     }
 
-    public async Task<bool> RemoveCachingAllAsync(int id)
+    public async Task<bool> RemoveCachingAllAsync(Guid id)
     {
         return await _cachingAtomic.RemoveAsync(id);
     }

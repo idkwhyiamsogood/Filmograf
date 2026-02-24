@@ -1,10 +1,15 @@
+using Filmograf.BaseLibrary.DataAccess.DbContext;
+using Filmograf.BaseLibrary.Integrations;
+using Filmograf.BaseLibrary.Integrations.Requested;
+using Filmograf.BaseLibrary.Services;
+using Filmograf.BaseLibrary.Util;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Authentication;
-using Filmograf.MoviesService.Util;
+using Filmograf.MoviesService.Services.Integrations;
 
 namespace Filmograf.MoviesService;
 
@@ -23,8 +28,8 @@ public class Program
         
         SettingUpSwagger(builder);
         SettingUpCors(builder);
-        SettingUpContexts(builder);
         SettingUpRedis(builder);
+        SettingRabbitMQ(builder);
         SettingComponents(builder);
         SettingUpAuthenticationService(builder);
         
@@ -49,12 +54,13 @@ public class Program
     {
         builder.Services.AddSwaggerGen(c =>
         {
-            c.AddSecurityDefinition("S5kAuth", new OpenApiSecurityScheme
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "Введите ваш токен",
-                Name = "X-Auth-Token",
+                Description = "Введите ваш JWT токен",
+                Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -65,7 +71,7 @@ public class Program
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "S5kAuth"
+                            Id = "Bearer"
                         }
                     },
                     new string[] { }
@@ -97,11 +103,6 @@ public class Program
         });
     }
     
-    private static void SettingUpContexts(WebApplicationBuilder builder)
-    {
-        
-    }
-    
     private static void SettingUpRedis(WebApplicationBuilder builder)
     {
         var redisSettings = AppSettingsUtil.AppSettings.RedisSettings;
@@ -110,28 +111,78 @@ public class Program
         builder.Services.AddSingleton<IConnectionMultiplexer>(sp => 
             ConnectionMultiplexer.Connect($"{redisSettings.Host}:6379,abortConnect=false"));
     }
+    
+    private static void SettingRabbitMQ(WebApplicationBuilder builder)
+    {
+        // rabbitqm hosted service
+        builder.Services.AddHostedService<RabbitMqHostedShell>();
+        
+        // rabbitqm requests service
+        builder.Services.AddSingleton<IRabbitMqRequestedService, RabbitMqRequestedServiceShell>();
+        
+        // integration contexts
+        builder.Services.AddScoped<IntegrationContextBase>();
+    }
 
     private static void SettingComponents(WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<RabbitMQService>();
-        
+        // common utils
         builder.Services.AddTransient<FileExtensionContentTypeProvider>();
         
+        // database contexts
+        builder.Services.AddScoped<DbContextBase>();
+        
+        // contexts
         builder.Services.AddScoped<AuthService>();
+        
+        // services
         builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<MoviesParserService>();
+        
+        // providers
+        // ...
+        
+        // cache
+        // ...
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
     {
-        builder.Services.AddAuthentication(options =>
+        // Добавляем AuthorizationMiddleware в Singleton
+        builder.Services.AddScoped<AuthorizationMiddleware>();
+        
+        // Настройка авторизации через JWT
+        var jwtSecret = AppSettingsUtil.AppSettings.SecretsSettings.JwtSecret;
+        var validIssuer = AppSettingsUtil.AppSettings.SecretsSettings.JwtValidIssuer;
+        var validAudience = AppSettingsUtil.AppSettings.SecretsSettings.JwtValidAudience;
+        var key = Encoding.UTF8.GetBytes(jwtSecret);
+        builder.Services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                options.DefaultAuthenticateScheme = S5kAuthSchemeOptions.SchemeName;
-                options.DefaultChallengeScheme = S5kAuthSchemeOptions.SchemeName;
-            })
-            .AddScheme<S5kAuthSchemeOptions, S5kAuthHandler>(
-                S5kAuthSchemeOptions.SchemeName, 
-                options => { });
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = validIssuer,
+                    ValidAudience = validAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        // Получаем auth middleware через контекст
+                        var authMiddleware = context.HttpContext.RequestServices
+                            .GetRequiredService<AuthorizationMiddleware>();
+                            
+                        await authMiddleware.GetMiddlewareFunc()(context);
+                    }
+                };
+            });
     }
 }

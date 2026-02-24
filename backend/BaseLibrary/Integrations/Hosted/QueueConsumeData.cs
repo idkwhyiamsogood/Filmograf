@@ -6,6 +6,13 @@ public class QueueConsumeData
 {
     public string QueueName { get; set; }
 
-    [DefaultValue(true)]
-    public bool AutoAck { get; set; } = true;
+    [DefaultValue(false)]
+    public bool AutoAck { get; set; } = false;
+    
+    public static QueueConsumeData[] MapConsumes(string[] queueNames)
+    {
+        return queueNames
+            .Select(name => new QueueConsumeData { QueueName = name })
+            .ToArray();
+    }
 }

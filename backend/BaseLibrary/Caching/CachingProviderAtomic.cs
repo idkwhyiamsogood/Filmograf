@@ -19,10 +19,12 @@ public class CachingProviderAtomic<BType> where BType : class
     public virtual string MakeIdKey(int id) => $"{_idKey}:{id}";
     public virtual string MakeIdKey(string subKey) => $"{_idKey}:{subKey}";
     
-    public virtual async Task<BType?> GetOrDefaultAsync(int id)
-    {
-        return await GetOrDefaultAsync(MakeIdKey(id));
-    }
+    public virtual async Task<BType?> GetOrDefaultAsync(Guid uuid) => 
+        await GetOrDefaultAsync(MakeIdKey(uuid.ToString()));
+    
+    public virtual async Task<BType?> GetOrDefaultAsync(int id) => 
+        await GetOrDefaultAsync(MakeIdKey(id));
+    
 
     public virtual async Task<BType?> GetOrDefaultAsync(string key)
     {
@@ -43,9 +45,15 @@ public class CachingProviderAtomic<BType> where BType : class
     
     public virtual async Task<BType> GetOrCreateAsync(int id, BType newItem, TimeSpan? expirationTime = null) =>
         await this.GetOrCreateAsync(MakeIdKey(id), async () => newItem, expirationTime);
+    
+    public virtual async Task<BType> GetOrCreateAsync(Guid uuid, BType newItem, TimeSpan? expirationTime = null) =>
+        await this.GetOrCreateAsync(MakeIdKey(uuid.ToString()), async () => newItem, expirationTime);
 
     public virtual async Task<BType> GetOrCreateAsync(int id, Func<Task<BType>> createItem, TimeSpan? expirationTime = null) =>
         await this.GetOrCreateAsync(MakeIdKey(id), createItem, expirationTime);
+
+    public virtual async Task<BType> GetOrCreateAsync(Guid uuid, Func<Task<BType>> createItem, TimeSpan? expirationTime = null) =>
+        await this.GetOrCreateAsync(MakeIdKey(uuid.ToString()), createItem, expirationTime);
     
     public virtual async Task<BType> GetOrCreateAsync(string key, Func<Task<BType>> createItem, TimeSpan? expirationTime = null)
     {
@@ -68,6 +76,9 @@ public class CachingProviderAtomic<BType> where BType : class
         }
     }
     
+    public virtual async Task CreateAsync(Guid uuid, BType newItem, TimeSpan? expirationTime = null) => 
+        await this.CreateAsync(MakeIdKey(uuid.ToString()), newItem, expirationTime);
+    
     public virtual async Task CreateAsync(int id, BType newItem, TimeSpan? expirationTime = null) => 
         await this.CreateAsync(MakeIdKey(id), newItem, expirationTime);
 
@@ -84,6 +95,10 @@ public class CachingProviderAtomic<BType> where BType : class
         }
     }
 
+    
+    public virtual async Task<bool> RemoveAsync(Guid uuid) => 
+        await this.RemoveAsync(MakeIdKey(uuid.ToString()));
+    
     public virtual async Task<bool> RemoveAsync(int id) => 
         await this.RemoveAsync(MakeIdKey(id));
     
@@ -99,6 +114,10 @@ public class CachingProviderAtomic<BType> where BType : class
         }
     }
 
+    
+    public virtual async Task<bool> ExistsAsync(Guid uuid) =>
+        await this.ExistsAsync(MakeIdKey(uuid.ToString()));
+    
     public virtual async Task<bool> ExistsAsync(int id) =>
         await this.ExistsAsync(MakeIdKey(id));
     
