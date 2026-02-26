@@ -1,14 +1,13 @@
 using System.Security.Claims;
+using Filmograf.BaseLibrary.Util;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
-using Filmograf.MoviesService.Util;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.EntityFrameworkCore;
 
 namespace Filmograf.MoviesService;
 
@@ -24,10 +23,6 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
-        
-        
-        
         
         SettingUpSwagger(builder);
         SettingUpCors(builder);
