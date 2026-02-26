@@ -42,3 +42,9 @@ node_modules
 /backend/BaseLibrary/obj
 /backend/BaseLibrary/bin
 /backend/BaseLibrary/.idea
+/backend/AuthService/.vs
+/backend/AuthService/bin
+/backend/AuthService/obj
+/backend/BaseLibrary/obj
+/backend/AuthService/.idea
+backend/shared/env.json

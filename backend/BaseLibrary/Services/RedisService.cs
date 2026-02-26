@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using StackExchange.Redis;
 
-namespace Filmograf.MoviesService.Services;
+namespace Filmograf.BaseLibrary.Services;
 
 public class RedisService
 {

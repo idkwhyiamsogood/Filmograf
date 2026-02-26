@@ -1,0 +1,11 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Filmograf.BaseLibrary.Models.Types;
+
+public abstract class TypeBase
+{
+    [Key]
+    public Guid Id { get; set; }
+
+    public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+}

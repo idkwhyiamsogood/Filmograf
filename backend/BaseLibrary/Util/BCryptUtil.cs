@@ -1,6 +1,6 @@
 ﻿using BCrypt.Net;
 
-namespace Filmograf.MoviesService.Util;
+namespace Filmograf.BaseLibrary.Util;
 
 public class BCryptUtil
 {
