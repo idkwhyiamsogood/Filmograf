@@ -1,5 +1,9 @@
 using System.Security.Claims;
+using System.Text;
+using Filmograf.BaseLibrary.DataAccess.DbContext;
+using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
@@ -7,7 +11,9 @@ using StackExchange.Redis;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Filmograf.MoviesService;
 
@@ -52,12 +58,14 @@ public class Program
     {
         builder.Services.AddSwaggerGen(c =>
         {
-            c.AddSecurityDefinition("S5kAuth", new OpenApiSecurityScheme
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "Введите ваш токен",
-                Name = "X-Auth-Token",
+                Description = "Введите JWT в формате: Bearer {token}",
+                Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -68,10 +76,10 @@ public class Program
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "S5kAuth"
+                            Id = "Bearer"
                         }
                     },
-                    new string[] { }
+                    Array.Empty<string>()
                 }
             });
         });
@@ -122,103 +130,72 @@ public class Program
 
     private static void SettingComponents(WebApplicationBuilder builder)
     {
+        // common utils
         builder.Services.AddTransient<FileExtensionContentTypeProvider>();
+        
+        // database contexts
+        builder.Services.AddScoped<DbContextBase>();
+        
+        // services
+        builder.Services.AddScoped<JwtService>();
+        builder.Services.AddScoped<UserService>();
+        
+        // providers
+        builder.Services.AddScoped<UserProvider>();
+        
+        // cache
+        // ..
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
     {
-        // builder.Services.AddAuthentication(options =>
-        //     {
-        //         options.DefaultAuthenticateScheme = S5kAuthSchemeOptions.SchemeName;
-        //         options.DefaultChallengeScheme = S5kAuthSchemeOptions.SchemeName;
-        //     })
-        //     .AddScheme<S5kAuthSchemeOptions, S5kAuthHandler>(
-        //         S5kAuthSchemeOptions.SchemeName, 
-        //         options => { });
+        var secretsSettings = AppSettingsUtil.AppSettings.SecretsSettings;
+        var jwtSecret = secretsSettings.JwtSecret;
+        var validIssuer = secretsSettings.JwtValidIssuer;
+        var validAudience = secretsSettings.JwtValidAudience;
+        var key = Encoding.UTF8.GetBytes(jwtSecret);
 
         builder.Services.AddAuthentication(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // для Google
             })
-            .AddCookie(options =>
+            .AddJwtBearer(options =>
             {
-                options.Cookie.Name = "auth_cookie";
-                options.Cookie.SameSite = SameSiteMode.Lax;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-                options.Cookie.HttpOnly = true;
-                options.Cookie.MaxAge = TimeSpan.FromDays(7);
-                options.ExpireTimeSpan = TimeSpan.FromDays(7);
-                options.SlidingExpiration = true;
-                options.LoginPath = "/api/auth/google";
-                options.AccessDeniedPath = "/api/auth/denied";
-
-                // ВАЖНО: Добавляем обработчик событий для отладки
-                options.Events = new CookieAuthenticationEvents
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    OnRedirectToLogin = context =>
-                    {
-                        if (context.Request.Path.StartsWithSegments("/api"))
-                        {
-                            context.Response.StatusCode = 401;
-                            return Task.CompletedTask;
-                        }
-
-                        context.Response.Redirect(context.RedirectUri);
-                        return Task.CompletedTask;
-                    }
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = validIssuer,
+                    ValidAudience = validAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
             })
-            .AddGoogle(options =>
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = "auth_cookie";
+                options.Cookie.HttpOnly = true;
+
+                // 🔥 ВАЖНО
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+            }) // только для Google handshake
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
             {
                 options.ClientId = builder.Configuration["Google:ClientId"];
                 options.ClientSecret = builder.Configuration["Google:ClientSecret"];
                 options.CallbackPath = "/api/auth/google-callback";
-                options.SaveTokens = true;
+                
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // для Google
+                
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
-                options.Scope.Add("openid");
-
-                options.Events = new OAuthEvents
-                {
-                    OnRedirectToAuthorizationEndpoint = context =>
-                    {
-                        Console.WriteLine($"=== Redirecting to Google: {context.RedirectUri} ===");
-                        context.Response.Redirect(context.RedirectUri);
-                        return Task.CompletedTask;
-                    },
-                    OnCreatingTicket = async context =>
-                    {
-                        Console.WriteLine("=== Creating ticket ===");
-                        var identity = (ClaimsIdentity)context.Principal.Identity;
-
-                        var picture = context.User.GetProperty("picture").GetString();
-                        if (!string.IsNullOrEmpty(picture))
-                        {
-                            identity.AddClaim(new Claim("picture", picture));
-                        }
-
-                        context.Properties.StoreTokens(new[]
-                        {
-                            new AuthenticationToken { Name = "access_token", Value = context.AccessToken },
-                            new AuthenticationToken { Name = "refresh_token", Value = context.RefreshToken },
-                            new AuthenticationToken { Name = "id_token", Value = context.Identity.ToString() },
-                            new AuthenticationToken { Name = "token_type", Value = context.TokenType },
-                            new AuthenticationToken { Name = "expires_at", Value = context.ExpiresIn?.ToString() }
-                        });
-                    },
-                    OnRemoteFailure = context =>
-                    {
-                        Console.WriteLine($"=== Remote failure: {context.Failure?.Message} ===");
-
-                        // ВАЖНО: Редиректим на фронтенд, а не на бекенд
-                        var frontendUrl = builder.Configuration["Frontend:Url"] ?? "http://localhost:3000";
-                        context.Response.Redirect($"{frontendUrl}/?error={Uri.EscapeDataString(context.Failure?.Message ?? "Unknown error")}");
-
-                        context.HandleResponse();
-                        return Task.CompletedTask;
-                    }
-                };
             });
     }
 }

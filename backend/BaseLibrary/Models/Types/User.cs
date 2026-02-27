@@ -8,12 +8,15 @@ public class User : DeletableTypeBase
     [RegularExpression("^(Guest|Member)$")]
     public string UserType { get; set; }
     
-    public DateTime LastFetchDate { get; set; } = DateTime.UtcNow;
-    
+    [MaxLength(256)]
     [EmailAddress]
-    public string Email { get; set; }
+    public string? Email { get; set; }
     
-    public string GoogleId { get; set; }
+    [MaxLength(256)]
+    public string? Name { get; set; }
+    
+    [MaxLength(256)]
+    public string? GoogleId { get; set; }
     
     public DateTime VerifyDate { get; set; } = DateTime.UtcNow;
     
@@ -22,4 +25,6 @@ public class User : DeletableTypeBase
     
     [DefaultValue(false)]
     public bool IsAdmin { get; set; } = false;
+    
+    public DateTime LastFetchDate { get; set; } = DateTime.UtcNow;
 }

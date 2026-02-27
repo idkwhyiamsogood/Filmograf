@@ -1,9 +1,12 @@
 ﻿using System.Security.Claims;
+using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.MoviesService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Filmograf.MoviesService.Controllers;
 
@@ -12,10 +15,14 @@ namespace Filmograf.MoviesService.Controllers;
 public class AuthController : CustomControllerBase
 {
     private readonly IConfiguration _configuration;
+    private readonly UserService _userService;
+    private readonly JwtService _jwtService;
 
-    public AuthController(IConfiguration configuration)
+    public AuthController(IConfiguration configuration, UserService userService, JwtService jwtService)
     {
         _configuration = configuration;
+        _userService = userService;
+        _jwtService = jwtService;
     }
     
     [HttpGet("google")]
@@ -41,102 +48,79 @@ public class AuthController : CustomControllerBase
     [HttpGet("google-callback")]
     public async Task<IActionResult> GoogleCallback()
     {
-        // Получаем результат аутентификации
-        var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
 
-        if (!authenticateResult.Succeeded)
+        if (!result.Succeeded)
+            return Unauthorized();
+
+        var claims = result.Principal?.Claims;
+
+        var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        var googleId = claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+        if (email == null || googleId == null)
+            return Unauthorized();
+
+        var user = await _userService.GetByGoogleIdAsync(googleId);
+
+        if (user == null)
         {
-            var frontendUrl = _configuration["Frontend:Url"] ?? "http://localhost:3000";
-            var errorMessage = authenticateResult.Failure?.Message ?? "Authentication failed";
-            return Redirect($"{frontendUrl}/?error={Uri.EscapeDataString(errorMessage)}");
+            var newUserEntity = new User
+            {
+                Email = email,
+                GoogleId = googleId,
+                Name = name,
+                UserType = "Member"
+            };
+            
+            user = await _userService.CreateUserAsync(newUserEntity);
         }
 
+        var jwt = _jwtService.GenerateToken(user);
 
-        // Получаем информацию о пользователе
-        var claims = authenticateResult.Principal?.Identities?.FirstOrDefault()?.Claims;
-
-        // Получаем токены
-        var accessToken = await HttpContext.GetTokenAsync("access_token");
-        var idToken = await HttpContext.GetTokenAsync("id_token");
-        var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
-        
-        var frontendUrlSuccess = _configuration["Frontend:Url"] ?? "http://localhost:3000";
-        
-        // Создаем URL для редиректа на фронтенд
-        var redirectUrlBuilder = new UriBuilder(frontendUrlSuccess);
-        var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-        
-        if (!string.IsNullOrEmpty(accessToken))
-            query["access_token"] = accessToken;
-        if (!string.IsNullOrEmpty(idToken))
-            query["id_token"] = idToken;
-        if (!string.IsNullOrEmpty(refreshToken))
-            query["refresh_token"] = refreshToken;
-        
-        redirectUrlBuilder.Query = query.ToString();
-        var redirectUrl = redirectUrlBuilder.ToString();
-        
-        return Redirect(redirectUrl);
+        var frontendUrl = _configuration["Frontend:Url"];
+        return Redirect($"{frontendUrl}/auth-success?token={jwt}");
     }
 
     /// <summary>
     /// Получение информации о текущем пользователе
     /// </summary>
-    [HttpGet("user")]
-    public async Task<IActionResult> GetCurrentUser()
+    [Authorize]
+    [HttpGet("fetch")]
+    public async Task<IActionResult> Fetch()
     {
-        if (!User.Identity?.IsAuthenticated ?? true)
-            return Unauthorized(new { message = "Пользователь не авторизован" });
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var claims = User.Claims;
-        
-        var userInfo = new
+        if (!Guid.TryParse(userIdStr, out var userId))
+            return Unauthorized();
+
+        var user = await _userService.GetByIdAsync(userId);
+
+        if (user == null)
+            return Unauthorized();
+
+        return Ok(new
         {
-            Id = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value,
-            Email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
-            Name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
-            Picture = claims.FirstOrDefault(c => c.Type == "picture")?.Value
-        };
-
-        return Ok(userInfo);
+            user.Id,
+            user.Email,
+            user.Name,
+            user.GoogleId
+        });
     }
 
     /// <summary>
     /// Получение статуса аутентификации
     /// </summary>
+    [Authorize]
     [HttpGet("status")]
-    public IActionResult GetAuthStatus()
+    public IActionResult Status()
     {
         return Ok(new
         {
-            IsAuthenticated = User.Identity?.IsAuthenticated ?? false,
-            AuthenticationType = User.Identity?.AuthenticationType
+            IsAuthenticated = true,
+            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            Email = User.FindFirstValue(ClaimTypes.Email)
         });
-    }
-
-    /// <summary>
-    /// Выход из системы
-    /// </summary>
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return Ok(new { message = "Успешный выход из системы" });
-    }
-
-    /// <summary>
-    /// Обновление токена
-    /// </summary>
-    [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
-    {
-        var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
-        
-        if (string.IsNullOrEmpty(refreshToken))
-            return Unauthorized(new { message = "Refresh token не найден" });
-
-        // Здесь должна быть логика обновления токена через Google
-        // Пока возвращаем заглушку
-        return Ok(new { access_token = "new_access_token" });
     }
 }

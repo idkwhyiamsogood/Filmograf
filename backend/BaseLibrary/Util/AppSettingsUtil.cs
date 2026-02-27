@@ -6,7 +6,7 @@ public class AppSettingsUtil
 {
     public static AppSettings AppSettings = null!;
     private static readonly string AppSettingsFileName = "env.json";
-    private static readonly string AppSettingsFilePath = Path.Combine(Directory.GetCurrentDirectory() + "/" + AppSettingsFileName);
+    private static readonly string AppSettingsFilePath = Path.Combine(Directory.GetCurrentDirectory() + "/../shared/" + AppSettingsFileName);
 
     public static void LoadAppSettingsData()
     {
