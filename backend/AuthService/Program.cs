@@ -150,6 +150,8 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<GoogleO2IdempotenceService>();
+        builder.Services.AddScoped<BotProtectionService>();
+        builder.Services.AddScoped<TemporaryAuthService>();
         
         // providers
         builder.Services.AddScoped<AuthProvider>();
@@ -158,6 +160,7 @@ public class Program
         // cache
         builder.Services.AddScoped<GoogleO2IdempotenceCaching>();
         builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<TemporaryGuardCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

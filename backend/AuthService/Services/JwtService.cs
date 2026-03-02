@@ -20,9 +20,10 @@ public class JwtService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim("google_id", user.GoogleId ?? ""),
-            new Claim(ClaimTypes.Name, user.Name ?? "")
+            new Claim("user_type", user.UserType),
+            new Claim(ClaimTypes.Email, user.Email ?? "guest@guest.guest"),
+            new Claim("google_id", user.GoogleId ?? "guest"),
+            new Claim(ClaimTypes.Name, user.Name ?? "guest")
         };
 
         var descriptor = new SecurityTokenDescriptor
