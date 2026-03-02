@@ -37,6 +37,7 @@ public class AppSettings
     public DbConnectionSettings DbConnectionSettings { get; set; }
     public GoogleO2AuthSettings GoogleO2AuthSettings { get; set; }
     public OriginSettings OriginSettings { get; set; }
+    public MongoDbSettings MongoDbSettings { get; set; }
 }
 
 public class SecretsSettings
@@ -77,4 +78,10 @@ public class GoogleO2AuthSettings
 public class OriginSettings
 {
     public string FrontendOrigin { get; set; }
+}
+
+public class MongoDbSettings
+{
+    public string ConnectionString { get; set; }
+    public string DatabaseName { get; set; }
 }

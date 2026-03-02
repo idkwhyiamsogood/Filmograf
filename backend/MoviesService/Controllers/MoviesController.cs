@@ -22,21 +22,6 @@ public class MoviesController : CustomControllerBase
     // [Authorize]
     public async Task<ActionResult<List<Movie>>> GetTopMoviesAsync()
     {
-        try
-        {
-            return Ok(await _moviesParserService.ParseMoviesAsync("https://www.imdb.com/chart/top/"));
-        }
-        catch (TimeoutException ex)
-        {
-            return StatusCode(408, $"Request timed out: {ex.Message}");
-        }
-        catch (IntegrationException ex)
-        {
-            return BadRequest($"Integration error: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error: {ex.Message}");
-        }
+        return Ok(await _moviesParserService.ParseMoviesAsync("https://www.imdb.com/chart/top/"));
     }
 }

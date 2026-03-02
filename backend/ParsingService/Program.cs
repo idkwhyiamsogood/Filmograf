@@ -1,25 +1,22 @@
 using System.Text;
 using Filmograf.BaseLibrary.DataAccess.DbContext;
-using Filmograf.BaseLibrary.DataAccess.Providers;
-using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
-using Filmograf.MoviesService.Caching;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
-using Filmograf.MoviesService.Services;
-using Filmograf.MoviesService.Services.Integrations;
-using Filmograf.MoviesService.Services.Middlewares;
+using Filmograf.ParsingService.Services;
+using Filmograf.ParsingService.Services.Authentication;
+using Filmograf.ParsingService.Services.Integrations;
+using Filmograf.ParsingService.Services.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver;
 
-namespace Filmograf.MoviesService;
+namespace Filmograf.ParsingService;
 
 public class Program
 {
@@ -37,7 +34,6 @@ public class Program
         SettingUpSwagger(builder);
         SettingUpCors(builder);
         SettingUpRedis(builder);
-        SettingUpMongoDB(builder);
         SettingRabbitMQ(builder);
         SettingComponents(builder);
         SettingUpAuthenticationService(builder);
@@ -124,20 +120,6 @@ public class Program
             ConnectionMultiplexer.Connect($"{redisSettings.Host}:6379,abortConnect=false"));
     }
     
-    private static void SettingUpMongoDB(WebApplicationBuilder builder)
-    {
-        var mongoDbSettings = AppSettingsUtil.AppSettings.MongoDbSettings;
-
-        builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
-        {
-            var client = new MongoClient(mongoDbSettings.ConnectionString);
-            return client.GetDatabase(mongoDbSettings.DatabaseName);
-        });
-
-        builder.Services.AddScoped<MovieRepository>();
-        builder.Services.AddHostedService<MongoIndexService>();
-    }
-    
     private static void SettingRabbitMQ(WebApplicationBuilder builder)
     {
         // rabbitqm hosted service
@@ -162,21 +144,15 @@ public class Program
         builder.Services.AddScoped<AuthContext>();
         
         // services
+        builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<MoviesParserService>();
-        builder.Services.AddScoped<GenresService>();
-        builder.Services.AddScoped<CommentService>();
         
         // providers
-        builder.Services.AddScoped<GenreProvider>();
-        
-        // repositories
-        builder.Services.AddScoped<CommentRepository>();
-        builder.Services.AddScoped<MovieRepository>();
+        // ...
         
         // cache
-        builder.Services.AddScoped<GenreCaching>();
-        builder.Services.AddScoped<CommentsCaching>();
+        // ...
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

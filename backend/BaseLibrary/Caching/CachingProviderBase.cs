@@ -4,7 +4,7 @@ using StackExchange.Redis;
 namespace Filmograf.BaseLibrary.Caching;
 
 public abstract class CachingProviderBase<BType> 
-    where BType : TypeBase
+    where BType : class
 {
     protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(2, 0, 0);
 
@@ -20,6 +20,12 @@ public abstract class CachingProviderBase<BType>
 
         _cachingAtomic = new CachingProviderAtomic<BType>(redis, $"{baseKey}:byId");
         _enumerableCachingAtomic = new CachingProviderAtomic<IEnumerable<BType>>(redis, $"{baseKey}");
+    }
+    
+    public virtual async Task<BType> CachingAsync(string id, Func<Task<BType>> createItem)
+    {
+        var key = _cachingAtomic.MakeIdKey(id);
+        return await _cachingAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
     }
     
     public virtual async Task<BType> CachingAsync(Guid id, Func<Task<BType>> createItem)

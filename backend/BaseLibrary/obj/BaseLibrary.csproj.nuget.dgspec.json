@@ -55,6 +55,14 @@
               "target": "Package",
               "version": "[4.1.0, )"
             },
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[3.6.0, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[3.6.0, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.4, )"

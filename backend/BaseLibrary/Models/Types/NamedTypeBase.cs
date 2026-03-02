@@ -4,6 +4,6 @@ namespace Filmograf.BaseLibrary.Models.Types;
 
 public abstract class NamedTypeBase : TypeBase
 {
-    [MaxLength(96)]
+    [MaxLength(128)]
     public string Name { get; set; }
 }
