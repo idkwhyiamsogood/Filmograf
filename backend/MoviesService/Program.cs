@@ -39,9 +39,12 @@ public class Program
         SettingUpAuthenticationService(builder);
         
         var app = builder.Build();
+        
+        // ловушка для ошибок
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (AppSettingsUtil.AppSettings.DevMode)
         {
             app.UseSwagger();
             app.UseSwaggerUI();
@@ -101,7 +104,7 @@ public class Program
             options.AddPolicy("AllowFrontend",
                 policy => 
                 {
-                    policy.WithOrigins("http://localhost:3000")
+                    policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
