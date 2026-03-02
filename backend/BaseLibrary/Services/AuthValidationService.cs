@@ -9,27 +9,12 @@ namespace Filmograf.BaseLibrary.Services;
 public class AuthValidationService
 {
     private readonly AuthProvider _authProvider;
-    private readonly UserProvider _userProvider;
-    private readonly UserCaching _userCaching;
+    private readonly UserService _userService;
 
-    public AuthValidationService(AuthProvider authProvider, UserProvider userProvider)
+    public AuthValidationService(AuthProvider authProvider, UserService userService)
     {
         _authProvider = authProvider;
-        _userProvider = userProvider;
-    }
-
-    private async Task<User> CreateCacheForUserAsync(Guid userId)
-    {
-        var user = await _userProvider.GetAsync(userId);
-        if (user == null) throw new NotFoundHttpException("UserNotFound", $"Пользователь с id={userId} не найден.");
-
-        return user;
-    }
-
-    public async Task<User> GetUserAsync(Guid userId)
-    {
-        var method = async () => await CreateCacheForUserAsync(userId);
-        return await _userCaching.CachingAsync(userId, method);
+        _userService = userService;
     }
 
     public async Task<AuthContext> CheckAuthAsync(Guid targetUserId, string jwt)
@@ -42,7 +27,7 @@ public class AuthValidationService
             throw new ForbiddenHttpException("SessionNotAvailable", "Сессия не найдена или неактивна.");
         
         // если чела нет - выкинет NotFound
-        var user = await _userProvider.GetAsync(auth.UserId);
+        var user = await _userService.GetByIdAsync(auth.UserId);
 
         // проверяем, не был ли забанен пользователь
         if (!user.IsAdmin && user.IsBanned) 
