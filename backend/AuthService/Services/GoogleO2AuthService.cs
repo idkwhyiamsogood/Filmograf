@@ -21,7 +21,6 @@ public class GoogleO2AuthService
     public GoogleO2AuthService(UserService userService, JwtService jwtService, AuthProvider authProvider, 
         GoogleO2IdempotenceService idempotenceService)
     {
-        
         _userService = userService;
         _jwtService = jwtService;
         _authProvider = authProvider;

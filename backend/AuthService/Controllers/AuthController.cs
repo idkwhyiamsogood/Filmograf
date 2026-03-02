@@ -18,16 +18,18 @@ namespace Filmograf.MoviesService.Controllers;
 public class AuthController : CustomControllerBase
 {
     private readonly GoogleO2AuthService _googleO2AuthService;
+    private readonly TemporaryAuthService _temporaryAuthService;
 
-    public AuthController(GoogleO2AuthService googleO2AuthService)
+    public AuthController(GoogleO2AuthService googleO2AuthService, TemporaryAuthService temporaryAuthService)
     {
         _googleO2AuthService = googleO2AuthService;
+        _temporaryAuthService = temporaryAuthService;
     }
     
     [HttpGet("google")]
     public IActionResult GoogleLogin()
     {
-        // Указываем путь к методу, который сгенерирует JWT
+        // путь к методу, который продолжит авторизацию (перекидываем на 2ой этап)
         var redirectUrl = Url.Action(nameof(GoogleResponse), "Auth", null, Request.Scheme);
 
         var properties = new AuthenticationProperties
@@ -37,10 +39,15 @@ public class AuthController : CustomControllerBase
     }
 
     [HttpGet("temporary")]
-    public async Task<ActionResult> TemporaryLoginAsync()
+    public async Task<ActionResult<AuthResponseDto>> TemporaryLoginAsync()
     {
-        // todo
-        throw new NotImplementedException();
+        var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var jwt = await _temporaryAuthService.ProcessingTemporaryAuthAsync(userAgent, ip);
+        
+        var response = new AuthResponseDto { Jwt = jwt };
+        return Ok(response);
     }
 
     [HttpGet("google-response")] 
@@ -61,7 +68,7 @@ public class AuthController : CustomControllerBase
     }
 
     [HttpPost("verify-idempotence-code")]
-    public async Task<ActionResult<VerifyIdempotenceResponseDto>> VerifyIdempotenceCodeAsync(
+    public async Task<ActionResult<AuthResponseDto>> VerifyIdempotenceCodeAsync(
         [FromBody] VerifyIdempotenceRequestDto data)
     {
         var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
@@ -69,7 +76,7 @@ public class AuthController : CustomControllerBase
             
         var jwt = await _googleO2AuthService.VerifyIdempotenceCodeAsync(data.Code, userAgent, ip);
             
-        var response = new VerifyIdempotenceResponseDto { Jwt = jwt };
+        var response = new AuthResponseDto { Jwt = jwt };
         return Ok(response);
     }
 
