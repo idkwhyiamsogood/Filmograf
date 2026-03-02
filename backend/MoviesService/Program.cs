@@ -2,6 +2,7 @@ using System.Text;
 using Filmograf.BaseLibrary.DataAccess.DbContext;
 using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Requested;
+using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
 using Microsoft.AspNetCore.StaticFiles;
@@ -137,7 +138,7 @@ public class Program
         builder.Services.AddScoped<DbContextBase>();
         
         // contexts
-        builder.Services.AddScoped<AuthService>();
+        builder.Services.AddScoped<AuthContext>();
         
         // services
         builder.Services.AddScoped<TokenService>();
@@ -153,7 +154,7 @@ public class Program
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
     {
-        // Добавляем AuthorizationMiddleware в Singleton
+        // Добавляем AuthorizationMiddleware в Scoped
         builder.Services.AddScoped<AuthorizationMiddleware>();
         
         // Настройка авторизации через JWT

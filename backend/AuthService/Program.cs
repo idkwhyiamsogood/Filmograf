@@ -1,9 +1,13 @@
-using System.Security.Claims;
 using System.Text;
+using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.DbContext;
 using Filmograf.BaseLibrary.DataAccess.Providers;
+using Filmograf.BaseLibrary.Models.Context;
+using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Caching;
 using Filmograf.MoviesService.Services;
+using Filmograf.MoviesService.Services.Middlewares;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
@@ -12,7 +16,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Filmograf.MoviesService;
@@ -38,15 +41,18 @@ public class Program
         SettingUpAuthenticationService(builder);
         
         var app = builder.Build();
+        
+        // ловушка для ошибок
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (AppSettingsUtil.AppSettings.DevMode)
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
 
-        app.UseCors("AllowFrontend"); // todo: в проде поменять
+        app.UseCors("AllowFrontend");
         app.UseAuthentication();
         app.UseAuthorization();
         
@@ -103,8 +109,7 @@ public class Program
                 policy => 
                 {
                     policy.WithOrigins(
-                            "http://localhost:3000",     // Next.js dev server
-                            "https://localhost:3000"    // HTTPS version
+                            AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin
                         )
                         .AllowCredentials()              // Разрешаем куки
                         .AllowAnyHeader()                // Разрешаем любые заголовки
@@ -136,19 +141,29 @@ public class Program
         // database contexts
         builder.Services.AddScoped<DbContextBase>();
         
+        // contexts
+        builder.Services.AddScoped<AuthContext>();
+        
         // services
         builder.Services.AddScoped<JwtService>();
+        builder.Services.AddScoped<GoogleO2AuthService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<AuthValidationService>();
+        builder.Services.AddScoped<GoogleO2IdempotenceService>();
         
         // providers
         builder.Services.AddScoped<UserProvider>();
         
         // cache
-        // ..
+        builder.Services.AddScoped<GoogleO2IdempotenceCaching>();
+        builder.Services.AddScoped<UserCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
     {
+        // Добавляем AuthorizationMiddleware в Scoped
+        builder.Services.AddScoped<AuthorizationMiddleware>();
+        
         var secretsSettings = AppSettingsUtil.AppSettings.SecretsSettings;
         var jwtSecret = secretsSettings.JwtSecret;
         var validIssuer = secretsSettings.JwtValidIssuer;
@@ -174,6 +189,18 @@ public class Program
                     ValidAudience = validAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
+                
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        // Получаем auth middleware через контекст
+                        var authMiddleware = context.HttpContext.RequestServices
+                            .GetRequiredService<AuthorizationMiddleware>();
+                            
+                        await authMiddleware.GetMiddlewareFunc()(context);
+                    }
+                };
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
@@ -188,14 +215,18 @@ public class Program
             }) // только для Google handshake
             .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
             {
-                options.ClientId = builder.Configuration["Google:ClientId"];
-                options.ClientSecret = builder.Configuration["Google:ClientSecret"];
-                options.CallbackPath = "/api/auth/google-callback";
+                var googleO2Settings = AppSettingsUtil.AppSettings.GoogleO2AuthSettings;
+                
+                options.ClientId = googleO2Settings.ClientId;
+                options.ClientSecret = googleO2Settings.ClientSecret;
+                // options.CallbackPath = "/api/auth/google-callback";
                 
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // для Google
                 
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+                
+                options.ClaimActions.MapJsonKey("picture", "picture");
             });
     }
 }

@@ -18,6 +18,8 @@ public class User : DeletableTypeBase
     [MaxLength(256)]
     public string? GoogleId { get; set; }
     
+    public string? AvatarUrl { get; set; }
+    
     public DateTime VerifyDate { get; set; } = DateTime.UtcNow;
     
     [DefaultValue(false)]

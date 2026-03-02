@@ -1,12 +1,16 @@
-﻿using System.Security.Claims;
+﻿using Filmograf.BaseLibrary.Models.Context;
+using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Models.Dto;
 using Filmograf.MoviesService.Services;
-using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Net.Http.Headers;
 
 namespace Filmograf.MoviesService.Controllers;
 
@@ -14,73 +18,93 @@ namespace Filmograf.MoviesService.Controllers;
 [Route("api/auth")]
 public class AuthController : CustomControllerBase
 {
-    private readonly IConfiguration _configuration;
-    private readonly UserService _userService;
-    private readonly JwtService _jwtService;
+    private readonly GoogleO2AuthService _googleO2AuthService;
 
-    public AuthController(IConfiguration configuration, UserService userService, JwtService jwtService)
+    public AuthController(GoogleO2AuthService googleO2AuthService)
     {
-        _configuration = configuration;
-        _userService = userService;
-        _jwtService = jwtService;
+        _googleO2AuthService = googleO2AuthService;
     }
     
     [HttpGet("google")]
     public IActionResult GoogleLogin()
     {
-        // Генерируем и сохраняем state для защиты от CSRF
-        var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth", null, Request.Scheme);
+        // Указываем путь к методу, который сгенерирует JWT
+        var redirectUrl = Url.Action(nameof(GoogleResponse), "Auth", null, Request.Scheme);
 
         var properties = new AuthenticationProperties
-        {
-            RedirectUri = redirectUrl,
-            Items = 
-            {
-                { "scheme", GoogleDefaults.AuthenticationScheme },
-                // Добавляем дополнительную информацию
-                { "returnUrl", _configuration["Frontend:Url"] ?? "http://localhost:3000" }
-            }
-        };
+        { RedirectUri = redirectUrl };
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
-    [HttpGet("google-callback")]
-    public async Task<IActionResult> GoogleCallback()
+    [HttpGet("temporary")]
+    public async Task<ActionResult> TemporaryLoginAsync()
     {
-        var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-
-        if (!result.Succeeded)
-            return Unauthorized();
-
-        var claims = result.Principal?.Claims;
-
-        var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-        var googleId = claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-
-        if (email == null || googleId == null)
-            return Unauthorized();
-
-        var user = await _userService.GetByGoogleIdAsync(googleId);
-
-        if (user == null)
+        try
         {
-            var newUserEntity = new User
-            {
-                Email = email,
-                GoogleId = googleId,
-                Name = name,
-                UserType = "Member"
-            };
-            
-            user = await _userService.CreateUserAsync(newUserEntity);
+            // todo
+            throw new NotImplementedException();
         }
+        catch (HttpException htex)
+        {
+            return ProcessingHttpException(htex);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error: {ex.Message}");
+        }
+    }
 
-        var jwt = _jwtService.GenerateToken(user);
+    [HttpGet("google-response")] 
+    public async Task<IActionResult> GoogleResponse()
+    {
+        try
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        var frontendUrl = _configuration["Frontend:Url"];
-        return Redirect($"{frontendUrl}/auth-success?token={jwt}");
+            var idempotence = await _googleO2AuthService.ProcessingGoogleResponseAsync(result, userAgent, ip);
+            
+            // ВАЖНО: Удаляем временную куку, так как дальше мы работаем только по idempotenceCode
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            // Редиректим на фронт с idempotence кодом
+            var frontendUrl = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin;
+            return Redirect($"{frontendUrl}/auth-success?idempotence={idempotence}");
+        }
+        catch (HttpException htex)
+        {
+            return ProcessingHttpException(htex);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error: {ex.Message}");
+        }
+    }
+
+    [HttpPost("verify-idempotence-code")]
+    public async Task<ActionResult<VerifyIdempotenceResponseDto>> VerifyIdempotenceCodeAsync(
+        [FromBody] VerifyIdempotenceRequestDto data)
+    {
+        try
+        {
+            var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            
+            var jwt = await _googleO2AuthService.VerifyIdempotenceCodeAsync(data.Code, userAgent, ip);
+            
+            var response = new VerifyIdempotenceResponseDto { Jwt = jwt };
+            return Ok(response);
+        }
+        catch (HttpException htex)
+        {
+            return ProcessingHttpException(htex);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -88,25 +112,20 @@ public class AuthController : CustomControllerBase
     /// </summary>
     [Authorize]
     [HttpGet("fetch")]
-    public async Task<IActionResult> Fetch()
+    public async Task<ActionResult<User>> Fetch([FromServices] AuthContext authContext)
     {
-        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (!Guid.TryParse(userIdStr, out var userId))
-            return Unauthorized();
-
-        var user = await _userService.GetByIdAsync(userId);
-
-        if (user == null)
-            return Unauthorized();
-
-        return Ok(new
+        try
         {
-            user.Id,
-            user.Email,
-            user.Name,
-            user.GoogleId
-        });
+            return Ok(authContext.CurrentUser!);
+        }
+        catch (HttpException htex)
+        {
+            return ProcessingHttpException(htex);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -118,9 +137,7 @@ public class AuthController : CustomControllerBase
     {
         return Ok(new
         {
-            IsAuthenticated = true,
-            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-            Email = User.FindFirstValue(ClaimTypes.Email)
+            IsAuthenticated = true
         });
     }
 }

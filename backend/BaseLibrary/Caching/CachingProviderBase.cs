@@ -33,7 +33,7 @@ public abstract class CachingProviderBase<BType>
         await _cachingAtomic.CreateAsync(id, payloadData, DefaultExpirationTime);
     }
 
-    public async Task<bool> RemoveCachingAllAsync(Guid id)
+    public async Task<bool> RemoveCachingAsync(Guid id)
     {
         return await _cachingAtomic.RemoveAsync(id);
     }
