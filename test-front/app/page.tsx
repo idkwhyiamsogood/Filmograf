@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { authApi, IUser } from "@/api/auth.api";
 import { useEffect, useState } from "react";
@@ -6,16 +6,9 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = authApi.handleCallback();
-
-    if (token) {
-      loadUser();
-    } else {
-      checkAuth();
-    }
+    checkAuth();
   }, []);
 
   const checkAuth = async () => {
@@ -33,18 +26,13 @@ export default function Home() {
 
   const loadUser = async () => {
     try {
-      setError(null);
       const response = await authApi.getCurrentUser();
       setUser(response.data);
     } catch (error: any) {
       if (error.response?.status === 401) {
         authApi.clearToken();
         setUser(null);
-      } else {
-        setError("Failed to load user.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -52,14 +40,21 @@ export default function Home() {
     authApi.googleLogin();
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     authApi.logout();
     setUser(null);
   };
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         Loading...
       </div>
     );
@@ -67,12 +62,6 @@ export default function Home() {
 
   return (
     <div style={{ padding: 20 }}>
-      {error && (
-        <div style={{ color: "red", marginBottom: 20 }}>
-          {error}
-        </div>
-      )}
-
       {user ? (
         <div style={{ textAlign: "center" }}>
           <h1>Welcome, {user.name}</h1>
@@ -87,7 +76,7 @@ export default function Home() {
               border: "none",
               borderRadius: 4,
               cursor: "pointer",
-              marginTop: 20
+              marginTop: 20,
             }}
           >
             Logout
@@ -108,7 +97,7 @@ export default function Home() {
               borderRadius: 4,
               fontSize: 16,
               cursor: "pointer",
-              marginTop: 20
+              marginTop: 20,
             }}
           >
             Sign in with Google

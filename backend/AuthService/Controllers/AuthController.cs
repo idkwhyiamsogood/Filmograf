@@ -1,5 +1,4 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
-using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Models.Dto;
@@ -40,71 +39,38 @@ public class AuthController : CustomControllerBase
     [HttpGet("temporary")]
     public async Task<ActionResult> TemporaryLoginAsync()
     {
-        try
-        {
-            // todo
-            throw new NotImplementedException();
-        }
-        catch (HttpException htex)
-        {
-            return ProcessingHttpException(htex);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error: {ex.Message}");
-        }
+        // todo
+        throw new NotImplementedException();
     }
 
     [HttpGet("google-response")] 
     public async Task<IActionResult> GoogleResponse()
     {
-        try
-        {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-            var idempotence = await _googleO2AuthService.ProcessingGoogleResponseAsync(result, userAgent, ip);
+        var idempotence = await _googleO2AuthService.ProcessingGoogleResponseAsync(result, userAgent, ip);
             
-            // ВАЖНО: Удаляем временную куку, так как дальше мы работаем только по idempotenceCode
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        // ВАЖНО: Удаляем временную куку, так как дальше мы работаем только по idempotenceCode
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             
-            // Редиректим на фронт с idempotence кодом
-            var frontendUrl = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin;
-            return Redirect($"{frontendUrl}/auth-success?idempotence={idempotence}");
-        }
-        catch (HttpException htex)
-        {
-            return ProcessingHttpException(htex);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error: {ex.Message}");
-        }
+        // Редиректим на фронт с idempotence кодом
+        var frontendUrl = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin;
+        return Redirect($"{frontendUrl}/auth-success?idempotence={idempotence}");
     }
 
     [HttpPost("verify-idempotence-code")]
     public async Task<ActionResult<VerifyIdempotenceResponseDto>> VerifyIdempotenceCodeAsync(
         [FromBody] VerifyIdempotenceRequestDto data)
     {
-        try
-        {
-            var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
             
-            var jwt = await _googleO2AuthService.VerifyIdempotenceCodeAsync(data.Code, userAgent, ip);
+        var jwt = await _googleO2AuthService.VerifyIdempotenceCodeAsync(data.Code, userAgent, ip);
             
-            var response = new VerifyIdempotenceResponseDto { Jwt = jwt };
-            return Ok(response);
-        }
-        catch (HttpException htex)
-        {
-            return ProcessingHttpException(htex);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error: {ex.Message}");
-        }
+        var response = new VerifyIdempotenceResponseDto { Jwt = jwt };
+        return Ok(response);
     }
 
     /// <summary>
@@ -114,18 +80,7 @@ public class AuthController : CustomControllerBase
     [HttpGet("fetch")]
     public async Task<ActionResult<User>> Fetch([FromServices] AuthContext authContext)
     {
-        try
-        {
-            return Ok(authContext.CurrentUser!);
-        }
-        catch (HttpException htex)
-        {
-            return ProcessingHttpException(htex);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error: {ex.Message}");
-        }
+        return Ok(authContext.CurrentUser!);
     }
 
     /// <summary>

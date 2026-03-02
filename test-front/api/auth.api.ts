@@ -1,4 +1,3 @@
-// api/auth.api.ts
 import { authInstance } from "@/lib/axios";
 import { AxiosResponse } from "axios";
 
@@ -9,10 +8,8 @@ export interface IUser {
   googleId?: string;
 }
 
-export interface IAuthStatus {
-  isAuthenticated: boolean;
-  userId?: string;
-  email?: string;
+export interface IVerifyIdempotenceResponse {
+  jwt: string;
 }
 
 class AuthApi {
@@ -28,28 +25,14 @@ class AuthApi {
     window.location.href = `${this.API_URL}/api/auth/google`;
   };
 
-  /** Обработка callback: получаем НАШ jwt */
-  public handleCallback = (): string | null => {
-    if (typeof window === "undefined") return null;
-
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    const error = params.get("error");
-
-    if (error) {
-      console.error("OAuth error:", error);
-      return null;
-    }
-
-    if (token) {
-      localStorage.setItem("access_token", token);
-
-      // чистим URL
-      window.history.replaceState({}, document.title, "/");
-      return token;
-    }
-
-    return null;
+  /** Отправляем idempotence и получаем JWT */
+  public verifyIdempotence = async (
+    code: string
+  ): Promise<AxiosResponse<IVerifyIdempotenceResponse>> => {
+    return await authInstance.post(
+      "/api/auth/verify-idempotence-code",
+      { code }
+    );
   };
 
   // ======================
@@ -62,12 +45,12 @@ class AuthApi {
   };
 
   /** Проверка статуса */
-  public getAuthStatus = async (): Promise<AxiosResponse<IAuthStatus>> => {
+  public getAuthStatus = async (): Promise<AxiosResponse<any>> => {
     return await authInstance.get("/api/auth/status");
   };
 
-  /** Logout (удаляем JWT локально) */
-  public logout = async (): Promise<void> => {
+  /** Logout */
+  public logout = (): void => {
     this.clearToken();
   };
 

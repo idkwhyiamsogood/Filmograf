@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Services;
@@ -15,12 +16,15 @@ public class GoogleO2AuthService
     private readonly UserService _userService;
     private readonly JwtService _jwtService;
     private readonly GoogleO2IdempotenceService _idempotenceService;
+    private readonly AuthProvider _authProvider;
     
-    public GoogleO2AuthService(UserService userService, JwtService jwtService, GoogleO2IdempotenceService idempotenceService)
+    public GoogleO2AuthService(UserService userService, JwtService jwtService, AuthProvider authProvider, 
+        GoogleO2IdempotenceService idempotenceService)
     {
         
         _userService = userService;
         _jwtService = jwtService;
+        _authProvider = authProvider;
         _idempotenceService = idempotenceService;
     }
     
@@ -40,6 +44,34 @@ public class GoogleO2AuthService
             "There is some error on create new user.");
 
         return newUser;
+    }
+
+    /// <summary>
+    /// С течением времени чел может сменить аву или имя пользователя (в гугл аккаунте)
+    /// </summary>
+    /// <returns></returns>
+    private async Task<User> ProcessInvalidClaimsAsync(User user, string? name, string? avatarUrl)
+    {
+        bool hasBeenUpdated = false;
+        
+        if (name != null && user.Name != name)
+        {
+            user.Name = name;
+            hasBeenUpdated = true;
+        }
+        
+        if (avatarUrl != null && user.AvatarUrl != avatarUrl)
+        {
+            user.AvatarUrl = avatarUrl;
+            hasBeenUpdated = true;
+        }
+
+        if (hasBeenUpdated)
+        {
+            await _userService.UpdateUserAsync(user.Id, user);
+        }
+        
+        return user;
     }
 
     /// <summary>
@@ -69,10 +101,26 @@ public class GoogleO2AuthService
         
         // если чела с таким googleId - чел авторизуется впервые, значит создаем
         user ??= await CreateUserAsync(email, googleId, name, avatarUrl);
+
+        // актуализируем клеймы name и avatarUrl
+        await ProcessInvalidClaimsAsync(user, name, avatarUrl);
         
         // генерим временный idempotence код
         var idempotence = await _idempotenceService.CreateCodeAsync(user.Id, userAgent, ip);
         return idempotence.Code;
+    }
+
+    private async Task HandleAddAuthAsync(string jwt, Guid userId, string? userAgent, string? ip)
+    {
+        var authEntity = new Auth
+        { 
+            Jwt = jwt,
+            UserId = userId,
+            UserAgent = userAgent,
+            Ip = ip
+        };
+        
+        await _authProvider.AddAsync(authEntity);
     }
 
     /// <summary>
@@ -104,6 +152,8 @@ public class GoogleO2AuthService
         if (user == null) throw new ForbiddenHttpException("BadAuthVerify", "Bad auth verify");
         
         // генерим jwt
-        return _jwtService.GenerateToken(user);
+        var jwt = _jwtService.GenerateToken(user);
+        await HandleAddAuthAsync(jwt, user.Id, userAgent, ip);
+        return jwt;
     }
 }

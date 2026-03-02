@@ -152,6 +152,7 @@ public class Program
         builder.Services.AddScoped<GoogleO2IdempotenceService>();
         
         // providers
+        builder.Services.AddScoped<AuthProvider>();
         builder.Services.AddScoped<UserProvider>();
         
         // cache
