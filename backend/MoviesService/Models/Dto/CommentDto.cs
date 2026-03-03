@@ -2,9 +2,15 @@
 
 namespace Filmograf.MoviesService.Models.Dto;
 
-public class CommentPathQueryDto
+public class CommentResponseDto
 {
-    public string[] Parts { get; set; }
+    public string Id { get; set; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
+    public Guid UserId { get; set; }
+    public string Text { get; set; }
+    
+    public CommentResponseDto[] Childs { get; set; }
 }
 
 public class CreateCommentRequestDto

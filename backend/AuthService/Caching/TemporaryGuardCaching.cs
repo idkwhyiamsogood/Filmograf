@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Filmograf.BaseLibrary.Caching;
+using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Models.Types;
 using StackExchange.Redis;
 
@@ -20,13 +21,8 @@ public class TemporaryGuardCaching
 
     private string MakeIdKey(string ip, string userAgent)
     {
-        var ipHash = Convert.ToHexString(
-            SHA256.HashData(Encoding.UTF8.GetBytes(ip))
-        );
-        
-        var userAgentHash = Convert.ToHexString(
-            SHA256.HashData(Encoding.UTF8.GetBytes(userAgent))
-        );
+        var ipHash = HashUtil.HashSHA256(ip);
+        var userAgentHash = HashUtil.HashSHA256(userAgent);
         
         return _cachingAtomic.MakeIdKey($"{ipHash}-{userAgentHash}");
     }

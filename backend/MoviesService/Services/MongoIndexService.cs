@@ -6,21 +6,65 @@ namespace Filmograf.MoviesService.Services;
 
 public class MongoIndexService : IHostedService
 {
-    private readonly IMongoCollection<MovieRepo> _buildings;
+    private readonly IMongoCollection<MovieRepo> _movies;
+    private readonly IMongoCollection<CommentRepo> _comments;
+    private readonly IMongoCollection<CommentLikeRepo> _commentLikes;
 
     public MongoIndexService(IMongoDatabase database)
     {
-        _buildings = database.GetCollection<MovieRepo>(MovieRepository.CollectionName);
+        _movies = database.GetCollection<MovieRepo>(MovieRepository.CollectionName);
+        _comments = database.GetCollection<CommentRepo>(CommentRepository.CollectionName);
+        _commentLikes = database.GetCollection<CommentLikeRepo>(CommentLikeRepository.CollectionName);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
         {
-            // todo
+            await _comments.Indexes.CreateManyAsync(new[]
+            {
+                // быстрый выбор комментариев сущности
+                new CreateIndexModel<CommentRepo>(
+                    Builders<CommentRepo>.IndexKeys
+                        .Ascending(x => x.EntityId)
+                        .Ascending(x => x.EntityType)
+                        .Ascending(x => x.Path)
+                ),
+
+                // быстрый выбор root-комментов
+                new CreateIndexModel<CommentRepo>(
+                    Builders<CommentRepo>.IndexKeys
+                        .Ascending(x => x.EntityId)
+                        .Ascending(x => x.Depth)
+                ),
+
+                // быстрый поиск детей
+                new CreateIndexModel<CommentRepo>(
+                    Builders<CommentRepo>.IndexKeys
+                        .Ascending(x => x.ParentId)
+                )
+            });
+            
+            await _commentLikes.Indexes.CreateManyAsync(new[]
+            {
+                // уникальность лайка
+                new CreateIndexModel<CommentLikeRepo>(
+                    Builders<CommentLikeRepo>.IndexKeys
+                        .Ascending(x => x.CommentId)
+                        .Ascending(x => x.UserId),
+                    new CreateIndexOptions { Unique = true }
+                ),
+
+                // быстрый count по CommentId
+                new CreateIndexModel<CommentLikeRepo>(
+                    Builders<CommentLikeRepo>.IndexKeys
+                        .Ascending(x => x.CommentId)
+                )
+            });
         }
         catch (Exception ex)
         {
+            // todo логи добавь, забал
             Console.WriteLine($"Ошибка при создании индексов: {ex.Message}");
         }
     }

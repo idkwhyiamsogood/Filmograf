@@ -1,4 +1,5 @@
 using System.Text;
+using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.DbContext;
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
@@ -17,6 +18,7 @@ using Filmograf.MoviesService.Services.Integrations;
 using Filmograf.MoviesService.Services.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Filmograf.MoviesService;
@@ -33,6 +35,9 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
+        // Add AutoMapper
+        builder.Services.AddAutoMapper(_ => { }, typeof(Program).Assembly);
         
         SettingUpSwagger(builder);
         SettingUpCors(builder);
@@ -71,7 +76,7 @@ public class Program
                 Description = "Введите ваш JWT токен",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
+                Type = SecuritySchemeType.Http,
                 Scheme = "Bearer"
             });
 
@@ -127,6 +132,10 @@ public class Program
     private static void SettingUpMongoDB(WebApplicationBuilder builder)
     {
         var mongoDbSettings = AppSettingsUtil.AppSettings.MongoDbSettings;
+        
+        // mongoDB из коробки не понимает что надо хранить Guid в стандартном формате (Standard UUID)
+        var serializer = new MongoDB.Bson.Serialization.Serializers.GuidSerializer(GuidRepresentation.Standard);
+        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(serializer);
 
         builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
         {
@@ -166,9 +175,13 @@ public class Program
         builder.Services.AddScoped<MoviesParserService>();
         builder.Services.AddScoped<GenresService>();
         builder.Services.AddScoped<CommentService>();
+        builder.Services.AddScoped<AuthValidationService>();
+        builder.Services.AddScoped<UserService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
+        builder.Services.AddScoped<AuthProvider>();
+        builder.Services.AddScoped<UserProvider>();
         
         // repositories
         builder.Services.AddScoped<CommentRepository>();
@@ -177,6 +190,7 @@ public class Program
         // cache
         builder.Services.AddScoped<GenreCaching>();
         builder.Services.AddScoped<CommentsCaching>();
+        builder.Services.AddScoped<UserCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

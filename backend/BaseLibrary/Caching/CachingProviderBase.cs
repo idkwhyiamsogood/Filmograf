@@ -6,7 +6,7 @@ namespace Filmograf.BaseLibrary.Caching;
 public abstract class CachingProviderBase<BType> 
     where BType : class
 {
-    protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(2, 0, 0);
+    protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(0, 45, 0);
 
     protected readonly IConnectionMultiplexer _redis;
     protected readonly CachingProviderAtomic<BType> _cachingAtomic;
