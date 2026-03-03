@@ -1,5 +1,7 @@
-﻿using Filmograf.BaseLibrary.Integrations.Hosted;
+﻿using Filmograf.BaseLibrary.Integrations;
+using Filmograf.BaseLibrary.Integrations.Hosted;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.ParsingService.Integration.Hosted;
 
 namespace Filmograf.ParsingService.Services.Integrations;
 

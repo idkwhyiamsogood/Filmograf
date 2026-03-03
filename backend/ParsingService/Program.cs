@@ -5,14 +5,15 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.ParsingService.Integration.Hosted;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
 using Filmograf.ParsingService.Services;
-using Filmograf.ParsingService.Services.Authentication;
 using Filmograf.ParsingService.Services.Integrations;
 using Filmograf.ParsingService.Services.Middlewares;
+using Filmograf.ParsingService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,18 +26,19 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
+        LocalAppSettingsUtil.LoadAppSettingsData();
         
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
-        SettingUpSwagger(builder);
-        SettingUpCors(builder);
+        // SettingUpSwagger(builder);
+        // SettingUpCors(builder);
         SettingUpRedis(builder);
         SettingRabbitMQ(builder);
         SettingComponents(builder);
-        SettingUpAuthenticationService(builder);
+        // SettingUpAuthenticationService(builder);
         
         var app = builder.Build();
         
@@ -130,6 +132,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
+        builder.Services.AddScoped<ParseTopFilmsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -144,7 +147,6 @@ public class Program
         builder.Services.AddScoped<AuthContext>();
         
         // services
-        builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<MoviesParserService>();
         

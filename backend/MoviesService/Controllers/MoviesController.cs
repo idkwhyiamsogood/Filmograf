@@ -18,10 +18,11 @@ public class MoviesController : CustomControllerBase
         _moviesParserService = moviesParserService;
     }
 
-    // [HttpGet("top")]
-    // [Authorize]
-    // public async Task<ActionResult<List<Movie>>> GetTopMoviesAsync()
-    // {
-    //     return Ok(await _moviesParserService.ParseMoviesAsync("https://www.imdb.com/chart/top/"));
-    // }
+    [HttpGet("top")]
+    [Authorize]
+    public async Task<ActionResult> GetTopMoviesAsync()
+    {
+        await _moviesParserService.ParseMoviesAsync();
+        return Ok();
+    }
 }

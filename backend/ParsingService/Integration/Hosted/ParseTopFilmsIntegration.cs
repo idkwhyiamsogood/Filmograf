@@ -1,6 +1,8 @@
 ﻿using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Payload;
 using Filmograf.ParsingService.Services;
+using Filmograf.ParsingService.Services.IMDb;
+using Filmograf.ParsingService.Util;
 using RabbitMQ.Client;
 
 namespace Filmograf.ParsingService.Integration.Hosted;
@@ -26,9 +28,12 @@ public class ParseTopFilmsIntegration : NoAskIntegrationBase<ParseTopFilmsIntegr
     {
     }
 
-    protected override Task ProcessingAsync(IntegrationRequest request, ParseTopFilmsIntegrationRequestPayload? payload,
+    protected override async Task ProcessingAsync(IntegrationRequest request, ParseTopFilmsIntegrationRequestPayload? payload,
         ParseTopFilmsIntegrationContext context)
     {
-        throw new NotImplementedException();
+        var data = await IMDbParserService.ParseMoviesFromPage(LocalAppSettingsUtil.AppSettings
+            .IMDbSettings.TopChartLink);
+        
+        return;
     }
 }

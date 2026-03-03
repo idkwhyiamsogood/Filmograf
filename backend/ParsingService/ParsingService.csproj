@@ -24,9 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Models\Context\" />
-    <Folder Include="Models\Dto\" />
     <Folder Include="Models\Integrations\" />
-    <Folder Include="Models\Types\" />
   </ItemGroup>
 
   <ItemGroup>

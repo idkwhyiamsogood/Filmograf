@@ -49,3 +49,4 @@ node_modules
 /backend/AuthService/.idea
 backend/shared/env.json
 /backend/BaseLibrary/obj
+backend/ParsingService/imdb_page.html
