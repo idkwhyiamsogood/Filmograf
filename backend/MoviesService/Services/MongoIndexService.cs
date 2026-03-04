@@ -21,6 +21,15 @@ public class MongoIndexService : IHostedService
     {
         try
         {
+            await _movies.Indexes.CreateManyAsync(new[]
+            {
+                new CreateIndexModel<MovieRepo>(
+                    Builders<MovieRepo>.IndexKeys
+                        .Ascending(x => x.Name)
+                        .Ascending(x => x.Year)
+                )
+            });
+            
             await _comments.Indexes.CreateManyAsync(new[]
             {
                 // быстрый выбор комментариев сущности

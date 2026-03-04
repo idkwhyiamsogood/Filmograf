@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Filmograf.BaseLibrary.Models.Types;
+namespace Filmograf.BaseLibrary.Models.Entities;
 
 public abstract class DeletableTypeBase : TypeBase
 {

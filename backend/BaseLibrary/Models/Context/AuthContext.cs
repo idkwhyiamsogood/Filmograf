@@ -1,4 +1,5 @@
-﻿using Filmograf.BaseLibrary.Models.Types;
+﻿using Filmograf.BaseLibrary.Models.Entities;
+using Filmograf.BaseLibrary.Models.Types;
 
 namespace Filmograf.BaseLibrary.Models.Context;
 

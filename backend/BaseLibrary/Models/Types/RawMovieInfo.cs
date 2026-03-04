@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Filmograf.ParsingService.Models.Types;
+namespace Filmograf.BaseLibrary.Models.Types;
 
-public class MovieIMDbInfo
+public class RawMovieInfo
 {
+    [RegularExpression("^(IMDb|Kinopoisk)$")]
+    public string Source { get; set; }
+    
     [MaxLength(256)]
     public string Name { get; set; }
     
@@ -14,7 +17,10 @@ public class MovieIMDbInfo
     public TimeOnly Time { get; set; }
     
     public string? ImageUrl { get; set; }
+    public string? PreviewImageUrl { get; set; }
     public string? MovieLink { get; set; }
     
-    public float RateIMDb { get; set; }
+    public float Rate { get; set; }
+    
+    public List<string> Genres { get; set; } = new();
 }

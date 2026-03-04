@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Filmograf.BaseLibrary.Models.Types;
 
-namespace Filmograf.BaseLibrary.Models.Types;
+namespace Filmograf.BaseLibrary.Models.Entities;
 
 public class Auth : TypeBase
 {

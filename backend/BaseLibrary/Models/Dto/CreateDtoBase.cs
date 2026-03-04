@@ -1,3 +1,4 @@
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.Types;
 
 namespace Filmograf.BaseLibrary.Models.Dto;

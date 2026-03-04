@@ -9,6 +9,7 @@ using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Caching;
+using Filmograf.MoviesService.Integration.Hosted;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
@@ -16,6 +17,7 @@ using StackExchange.Redis;
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Integrations;
 using Filmograf.MoviesService.Services.Middlewares;
+using Filmograf.MoviesService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
@@ -30,6 +32,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
+        LocalAppSettingsUtil.LoadAppSettingsData();
         
         // Add services to the container.
         builder.Services.AddControllers();
@@ -157,6 +160,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
+        builder.Services.AddScoped<ParseFilmsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -177,6 +181,7 @@ public class Program
         builder.Services.AddScoped<CommentService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<FilmsDistinctService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

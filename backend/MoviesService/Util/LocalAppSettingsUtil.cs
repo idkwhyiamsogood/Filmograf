@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Filmograf.ParsingService.Util;
+namespace Filmograf.MoviesService.Util;
 
 public class LocalAppSettingsUtil
 {
@@ -30,4 +30,10 @@ public class LocalAppSettingsUtil
 
 public class LocalAppSettings
 {
+    public IMDbSettings IMDbSettings { get; set; }
+}
+
+public class IMDbSettings
+{
+    public string TopChartLink { get; set; }
 }

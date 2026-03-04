@@ -16,7 +16,7 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
     protected override void InitListeners()
     {
         _integrationsBus = new Dictionary<string, IIntegrationHandler>();
-        _integrationsBus["parse_top_films"] = new ParseTopFilmsIntegration(_channel, "parse_top_films");
+        _integrationsBus["parse_top_films"] = new ParseFilmsIntegration(_channel, "parse_top_films");
     }
 }
 

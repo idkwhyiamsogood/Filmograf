@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
 using Filmograf.ParsingService.Services;
+using Filmograf.ParsingService.Services.IMDb;
 using Filmograf.ParsingService.Services.Integrations;
 using Filmograf.ParsingService.Services.Middlewares;
 using Filmograf.ParsingService.Util;
@@ -26,7 +27,6 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
-        LocalAppSettingsUtil.LoadAppSettingsData();
         
         // Add services to the container.
         builder.Services.AddControllers();
@@ -132,7 +132,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
-        builder.Services.AddScoped<ParseTopFilmsIntegrationContext>();
+        builder.Services.AddScoped<ParseFilmsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -149,6 +149,8 @@ public class Program
         // services
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<MoviesParserService>();
+        builder.Services.AddScoped<IMDbParserService>();
+        builder.Services.AddScoped<IMDbDetailsParserService>();
         
         // providers
         // ...

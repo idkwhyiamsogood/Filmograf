@@ -1,5 +1,6 @@
 using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.Providers;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Types;
 

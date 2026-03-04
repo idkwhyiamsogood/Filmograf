@@ -15,6 +15,7 @@ public class MovieRepo : RepoBase
     public TimeOnly? Time { get; set; }
     
     public string? ImageUrl { get; set; }
+    public string? PreviewImageUrl { get; set; }
     public string? MovieLink { get; set; }
     
     [DefaultValue(0.0f)]
@@ -23,5 +24,5 @@ public class MovieRepo : RepoBase
     [DefaultValue(0.0f)]
     public float RateKinopoisk { get; set; }
     
-    public Guid[] GenreIds { get; set; }
+    public Guid[]? GenreIds { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Filmograf.BaseLibrary.Models.Types;
+namespace Filmograf.BaseLibrary.Models.Entities;
 
 public class User : DeletableTypeBase
 {

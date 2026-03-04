@@ -1,19 +1,22 @@
-﻿using Filmograf.BaseLibrary.Integrations.Hosted;
+﻿using Filmograf.BaseLibrary.Integrations;
+using Filmograf.BaseLibrary.Integrations.Hosted;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Integration.Hosted;
 
 namespace Filmograf.MoviesService.Services.Integrations;
 
 public class RabbitMqHostedService : RabbitMqHostedServiceBase
 {
-    internal protected readonly static string[] Queues = new[] { "base_to_parser", "parser_to_base" }; // взаимодействуем
-    internal protected readonly static string[] Consumes = new[] { "parser_to_base" }; // слушаем
+    internal protected readonly static string[] Queues = new[] { "parser_to_movies", "movies_to_parser" }; // взаимодействуем
+    internal protected readonly static string[] Consumes = new[] { "parser_to_movies" }; // слушаем
 
     public RabbitMqHostedService(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory) 
         : base(settings, scopeFactory, Queues, Consumes) { }
 
     protected override void InitListeners()
     {
-        // todo
+        _integrationsBus = new Dictionary<string, IIntegrationHandler>();
+        _integrationsBus["distinct_films"] = new FilmsDistinctIntegration(_channel, "distinct_films");
     }
 }
 

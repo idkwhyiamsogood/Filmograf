@@ -1,8 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
-using Filmograf.BaseLibrary.Util;
-using Filmograf.ParsingService.Models.Types;
+using Filmograf.BaseLibrary.Models.Types;
 using Microsoft.Playwright;
 
 namespace Filmograf.ParsingService.Services.IMDb;
@@ -40,8 +39,8 @@ public class IMDbParserService
         // TimeOnly требует корректные часы (0-23)
         return new TimeOnly(Math.Min(hours, 23), Math.Min(minutes, 59));
     }
-    
-    private static async Task<IEnumerable<MovieIMDbInfo>> ExtractMoviesListAsync(IPage page)
+
+    private static async Task<IEnumerable<RawMovieInfo>> ExtractMoviesListAsync(IPage page)
     {
         // ожидание появления элементов с фильмами
         try
@@ -135,15 +134,16 @@ public class IMDbParserService
             // ссылка на страницу фильма
             var movieLink = await ExtractMovieLink(movieElement);
             
-            return new MovieIMDbInfo
+            return new RawMovieInfo
             {
                 Name = title,
-                RateIMDb = rating,
+                Rate = rating,
                 Year = year,
                 AgeLimit = ageLimit,
                 Time = duration,
-                ImageUrl = imageUrl,
-                MovieLink = movieLink
+                PreviewImageUrl = imageUrl,
+                MovieLink = movieLink,
+                Source = "IMDb"
             };
         }));
     }
@@ -231,7 +231,7 @@ public class IMDbParserService
         }
     }
     
-    public static async Task<List<MovieRepo>> ParseMoviesFromPage(string url)
+    public async Task<IEnumerable<RawMovieInfo>> ParseMoviesFromPage(string url)
     {
         using var playwright = await Playwright.CreateAsync();
         
@@ -258,19 +258,7 @@ public class IMDbParserService
             
             // извлекаем инфу о фильмах с этой страницы
             var moviesData = await ExtractMoviesListAsync(page);
-            return moviesData.Select(movie => new MovieRepo
-            {
-                Id = MongoDbUtil.GenerateNewId(),
-                Name = movie.Name,
-                Description = movie.Description,
-                Year = movie.Year,
-                AgeLimit = movie.AgeLimit,
-                Time = movie.Time,
-                ImageUrl = movie.ImageUrl,
-                MovieLink = movie.MovieLink,
-                RateIMDb = movie.RateIMDb,
-                GenreIds = new Guid[] { }
-            }).ToList();
+            return moviesData;
         }
         finally
         {

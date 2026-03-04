@@ -10,4 +10,12 @@ public class MovieRepository : RepositoryBase<MovieRepo>
     public MovieRepository(IMongoDatabase database) : base(database, CollectionName)
     {
     }
+    
+    public Task<MovieRepo?> GetByNameAndYearAsync(string name, string year, CancellationToken ct = default)
+    {
+        return _collection.Find(x =>
+                x.Name == name &&
+                x.Year == year)
+            .FirstOrDefaultAsync(ct);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.DbContext;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.Types;
 using Microsoft.EntityFrameworkCore;
 
