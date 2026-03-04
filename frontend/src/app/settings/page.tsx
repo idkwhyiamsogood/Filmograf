@@ -1,4 +1,5 @@
 import React from 'react';
+import { Widget } from '@/widgets/test-auth/widget';
 
 interface Props {
   className?: string;
@@ -7,7 +8,7 @@ interface Props {
 const Page: React.FC<Props> = ({ className }) => {
   return (
     <div className={className}>
-      
+      <Widget />
     </div>
   );
 };

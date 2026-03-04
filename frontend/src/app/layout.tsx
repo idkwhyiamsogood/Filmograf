@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { CollectionProvider } from "entities/collection/";
+import { CommonWrapper } from "@/shared/components/";
 import { AuthProvider, ModalProvider } from "@/shared/context/";
 import { ModalRenderer } from "@/shared/lib";
-import { CommonWrapper } from "@/shared/components/";
-import { BookmarkProvider } from "@/shared/context/bookmark.context";
 import "./globals.css";
 
 // components
-import { Footer } from "widgets/Footer";
 import { Header } from "@/widgets/Header/ui/Header";
+import { Footer } from "widgets/Footer";
 
 // const roboto = Roboto({
 //   variable: "--font-roboto",
@@ -42,7 +42,7 @@ export default function RootLayout({
       // className={`${roboto.variable} ${geistSans.variable} ${geistMono.variable} antialiased bg-black/80 m-2.5`}
       >
         <AuthProvider>
-          <BookmarkProvider>
+          <CollectionProvider>
             <ModalProvider>
               <CommonWrapper>
                 <Header />
@@ -50,7 +50,7 @@ export default function RootLayout({
                 <ModalRenderer />
               </CommonWrapper>
             </ModalProvider>
-          </BookmarkProvider>
+          </CollectionProvider>
         </AuthProvider>
         <div className="fixed bottom-0 left-0 right-0 border-t">
           <Footer />

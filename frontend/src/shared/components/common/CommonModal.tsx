@@ -1,7 +1,5 @@
 import React from "react";
 
-// todo: я хуй пойми как это реализовать чтобы не было пропаса на миллион параметров
-
 import {
   Dialog,
   DialogContent,

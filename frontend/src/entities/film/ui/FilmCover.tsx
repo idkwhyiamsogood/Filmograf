@@ -4,11 +4,8 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import type { IFilm } from "../model/types/types";
-
 import { FilmSkeleton } from "./FilmSkeleton";
-
 import { useInView } from "react-intersection-observer";
-
 import { mockFilm } from "../model/mock/film";
 
 interface Props {

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { type ReactNode, useRef, useEffect, useState } from "react";
+import React, { type ReactNode, useEffect, useRef, useState } from "react";
 
-import { Button } from "@/shared/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,24 +20,14 @@ export const CommonDropdownMenu: React.FC<Props> = ({
   align = "start",
 }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
-  const [contentWidth, setContentWidth] = useState<number | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (triggerRef.current) {
-      const width = triggerRef.current.offsetWidth;
-      setContentWidth(width);
-    }
-  }, [isOpen]);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild={true} ref={triggerRef}>
+      <DropdownMenuTrigger asChild={true} >
         {trigger}
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="max-h-[300px] overflow-auto"
-        style={contentWidth ? { width: `${contentWidth}px` } : {}}
         align={align}
       >
         {content}

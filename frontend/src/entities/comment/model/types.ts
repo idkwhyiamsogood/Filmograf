@@ -1,3 +1,5 @@
+export interface CommentBase {}
+
 export interface IComment {
   id: number;
   text: string;
