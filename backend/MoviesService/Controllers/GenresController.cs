@@ -1,4 +1,5 @@
 ﻿using Filmograf.BaseLibrary.Models.Entities;
+using Filmograf.MoviesService.Attributes;
 using Filmograf.MoviesService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ public class GenresController : CustomControllerBase
     }
 
     [HttpGet]
+    [UserTypePolicy]
     public async Task<ActionResult<List<Genre>>> ListAllGenresAsync()
     {
         var data = await _genresService.ListAllAsync();

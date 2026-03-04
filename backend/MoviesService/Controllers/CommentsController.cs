@@ -19,6 +19,7 @@ public class CommentsController : CustomControllerBase
     }
 
     [HttpGet("{id}")]
+    [UserTypePolicy]
     public async Task<ActionResult<CommentRepo>> GetAsync(string id)
     {
         var data = await _commentService.GetResponseCommentAsync(id);
@@ -26,6 +27,7 @@ public class CommentsController : CustomControllerBase
     }
 
     [HttpGet("{id}/full")]
+    [UserTypePolicy]
     public async Task<ActionResult<CommentRepo>> GetFullAsync(string id)
     {
         var data = await _commentService.GetFullResponseCommentAsync(id);

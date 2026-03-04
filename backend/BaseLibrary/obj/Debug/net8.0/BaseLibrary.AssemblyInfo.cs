@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Filmograf.BaseLibrary")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94a972dd43083c194d9c0d88258ffa0c11cf381c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8baed1086e0c5fd27c7637b4b1d4d9fbe1c64d70")]
 [assembly: System.Reflection.AssemblyProductAttribute("Filmograf.BaseLibrary")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Filmograf.BaseLibrary")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

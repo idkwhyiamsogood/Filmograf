@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.MoviesService.Caching;
@@ -65,5 +66,10 @@ public class MoviesService
     public async Task<IEnumerable<MovieResponseDto>> GetFilmografTopAsync(string chartType)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<MovieResponseDto> GetByUserAsync(string movieId, User user)
+    {
+        return await GetMovieResponseAsync(movieId);
     }
 }

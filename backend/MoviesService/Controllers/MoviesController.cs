@@ -1,7 +1,7 @@
-﻿using Filmograf.BaseLibrary.Models.Dto;
-using Filmograf.BaseLibrary.Models.IntegrationExceptions;
-using Filmograf.BaseLibrary.Models.Types;
-using Filmograf.MoviesService.Services;
+﻿using Filmograf.BaseLibrary.Models.Context;
+using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.MoviesService.Attributes;
+using Filmograf.MoviesService.Models.Dto;
 using Filmograf.MoviesService.Services.Movies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,13 +22,21 @@ public class MoviesController : CustomControllerBase
     }
 
     [HttpGet("top")]
-    [Authorize]
-    public async Task<ActionResult> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
+    [UserTypePolicy]
+    public async Task<ActionResult<List<MovieResponseDto>>> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
     {
         var data = await _movieTopPicksService.GetFromChartAsync(pagination);
         return Ok(data);
     }
-    
+
+    [HttpGet("{id}")]
+    [UserTypePolicy]
+    public async Task<ActionResult<MovieResponseDto>> GetFilmAsync(string id, [FromServices] AuthContext authContext)
+    {
+        var data = await _moviesService.GetByUserAsync(id, authContext.CurrentUser!);
+        return Ok(data);
+    }
+
     // [HttpGet("top-filmograf")]
     // [Authorize]
     // public async Task<ActionResult> GetFilmografTopMoviesAsync()

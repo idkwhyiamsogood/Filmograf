@@ -1,5 +1,6 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.MoviesService.Caching;
 
 namespace Filmograf.MoviesService.Services;
 
@@ -7,11 +8,13 @@ public class MoviesDetailsService
 {
     private readonly MovieRepository _movieRepository;
     private readonly GenresService _genresService;
+    private readonly MoviesCaching _moviesCaching;
     
-    public MoviesDetailsService(MovieRepository movieRepository, GenresService genresService)
+    public MoviesDetailsService(MovieRepository movieRepository, GenresService genresService, MoviesCaching moviesCaching)
     {
         _movieRepository = movieRepository;
         _genresService = genresService;
+        _moviesCaching = moviesCaching;
     }
 
     public async Task ApplyDetailsAsync(MovieDetailsParseResult[] detailsInfo)
@@ -30,6 +33,7 @@ public class MoviesDetailsService
             movie.GenreIds = genres.Select(i => i.Id).ToArray();
 
             await _movieRepository.UpdateAsync(movie.Id, movie);
+            await _moviesCaching.RemoveCachingAsync(movie.Id);
         }
     }
 }

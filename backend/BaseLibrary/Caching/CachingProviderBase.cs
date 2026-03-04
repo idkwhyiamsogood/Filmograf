@@ -38,6 +38,12 @@ public abstract class CachingProviderBase<BType>
         var payloadData = await createItem();
         await _cachingAtomic.CreateAsync(id, payloadData, DefaultExpirationTime);
     }
+    
+    public async Task<bool> RemoveCachingAsync(string id)
+    {
+        var key = _cachingAtomic.MakeIdKey(id);
+        return await _cachingAtomic.RemoveAsync(key);
+    }
 
     public async Task<bool> RemoveCachingAsync(Guid id)
     {
