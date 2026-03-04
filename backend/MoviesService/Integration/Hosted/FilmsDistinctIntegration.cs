@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 
 namespace Filmograf.MoviesService.Integration.Hosted;
 
-public class ParseFilmsIntegrationRequestPayload : IntegrationRequestPayloadBase
+public class FilmsDistinctIntegrationRequestPayload : IntegrationRequestPayloadBase
 {
     [RegularExpression("^(IMDb|Kinopoisk)$")]
     public string Source { get; set; }
@@ -16,24 +16,24 @@ public class ParseFilmsIntegrationRequestPayload : IntegrationRequestPayloadBase
     public RawMovieInfo[] Movies { get; set; }
 }
 
-public class ParseFilmsIntegrationContext : IntegrationContextBase
+public class FilmsDistinctIntegrationContext : IntegrationContextBase
 {
     public MoviesDistinctService MoviesDistinctService { get; set; }
 
-    public ParseFilmsIntegrationContext(MoviesDistinctService moviesDistinctService)
+    public FilmsDistinctIntegrationContext(MoviesDistinctService moviesDistinctService)
     {
         MoviesDistinctService = moviesDistinctService;
     }
 }
 
-public class FilmsDistinctIntegration : NoAskIntegrationBase<ParseFilmsIntegrationRequestPayload, ParseFilmsIntegrationContext>
+public class FilmsDistinctIntegration : NoAskIntegrationBase<FilmsDistinctIntegrationRequestPayload, FilmsDistinctIntegrationContext>
 {
     public FilmsDistinctIntegration(IChannel channel, string actionName) : base(channel, actionName)
     {
     }
 
-    protected override async Task ProcessingAsync(IntegrationRequest request, ParseFilmsIntegrationRequestPayload? payload,
-        ParseFilmsIntegrationContext context)
+    protected override async Task ProcessingAsync(IntegrationRequest request, FilmsDistinctIntegrationRequestPayload? payload,
+        FilmsDistinctIntegrationContext context)
     {
         if (payload == null) 
             throw new EmptyPayloadIntegrationException(_actionName);

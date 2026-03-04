@@ -161,7 +161,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
-        builder.Services.AddScoped<ParseFilmsIntegrationContext>();
+        builder.Services.AddScoped<FilmsDistinctIntegrationContext>();
         builder.Services.AddScoped<FilmsApplyDetailsIntegrationContext>();
         builder.Services.AddScoped<CompleteParsingIntegrationContext>();
     }

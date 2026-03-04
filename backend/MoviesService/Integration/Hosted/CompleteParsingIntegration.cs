@@ -22,9 +22,10 @@ public class CompleteParsingIntegrationContext : IntegrationContextBase
     public MoviesParserService MoviesParserService { get; set; }
     public MovieTopPicksService MovieTopPicksService { get; set; }
 
-    public CompleteParsingIntegrationContext(MoviesParserService moviesParserService)
+    public CompleteParsingIntegrationContext(MoviesParserService moviesParserService, MovieTopPicksService movieTopPicksService)
     {
         MoviesParserService = moviesParserService;
+        MovieTopPicksService = movieTopPicksService;
     }
 }
 

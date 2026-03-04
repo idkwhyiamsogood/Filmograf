@@ -91,6 +91,7 @@ public class MovieTopPicksService
 
             // сохраняем
             await _topPicksRepository.CreateAsync(newTopPick);
+            await _moviesCaching.RemoveCachingTopPickRootAsync(chartType);
             return;
         }
 

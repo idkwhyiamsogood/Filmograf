@@ -25,8 +25,8 @@ public class MoviesController : CustomControllerBase
     [Authorize]
     public async Task<ActionResult> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
     {
-        await _movieTopPicksService.GetFromChartAsync(pagination);
-        return Ok();
+        var data = await _movieTopPicksService.GetFromChartAsync(pagination);
+        return Ok(data);
     }
     
     // [HttpGet("top-filmograf")]
