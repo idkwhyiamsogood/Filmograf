@@ -181,7 +181,7 @@ public class Program
         builder.Services.AddScoped<CommentService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<FilmsDistinctService>();
+        builder.Services.AddScoped<MoviesDistinctService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

@@ -57,7 +57,7 @@ public class IMDbDetailsParserService
         }
     }
     
-    public async Task<List<MovieDetailsParseResult>> ParseMoviesDetailsAsync(List<MovieRepo> movieRepos)
+    public async Task<IEnumerable<MovieDetailsParseResult>> ParseMoviesDetailsAsync(List<MovieRepo> movieRepos)
     {
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });

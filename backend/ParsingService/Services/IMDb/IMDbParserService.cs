@@ -238,8 +238,8 @@ public class IMDbParserService
         // запуск браузера в headless режиме
         await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = true, // Режим без графического интерфейса
-            Args = new[] { "--no-sandbox", "--disable-dev-shm-usage" }
+            Headless = false, // Режим без графического интерфейса
+            // Args = new[] { "--no-sandbox", "--disable-dev-shm-usage" }
         });
         
         // создание контекста с настройками

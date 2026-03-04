@@ -41,12 +41,10 @@ public class ParseFilmsIntegration : NoAskIntegrationBase<ParseFilmsIntegrationR
         if (payload == null) 
             throw new EmptyPayloadIntegrationException(_actionName);
         
-        var data = await context.MoviesParserService.HandleParseAsync(
+        await context.MoviesParserService.HandleParseAsync(
             source: payload.Source,
             url: payload.Url,
             distinctAfter: payload.SendDistinctRequest
         );
-        
-        return;
     }
 }

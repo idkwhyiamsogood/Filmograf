@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
-using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Caching;
 using Filmograf.MoviesService.Models.Dto;

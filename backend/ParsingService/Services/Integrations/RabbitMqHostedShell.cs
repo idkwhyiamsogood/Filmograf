@@ -17,6 +17,7 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
     {
         _integrationsBus = new Dictionary<string, IIntegrationHandler>();
         _integrationsBus["parse_top_films"] = new ParseFilmsIntegration(_channel, "parse_top_films");
+        _integrationsBus["parse_details"] = new ParseFilmsDetailsIntegration(_channel, "parse_details");
     }
 }
 

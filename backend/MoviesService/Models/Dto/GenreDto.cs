@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Filmograf.BaseLibrary.Models.Dto;
-using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.BaseLibrary.Models.Entities;
 
 namespace Filmograf.MoviesService.Models.Dto;
 

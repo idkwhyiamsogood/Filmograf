@@ -133,6 +133,7 @@ public class Program
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
         builder.Services.AddScoped<ParseFilmsIntegrationContext>();
+        builder.Services.AddScoped<ParseFilmsDetailsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)

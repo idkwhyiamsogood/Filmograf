@@ -1,5 +1,5 @@
 ﻿using Filmograf.BaseLibrary.Caching;
-using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.BaseLibrary.Models.Entities;
 using StackExchange.Redis;
 
 namespace Filmograf.MoviesService.Caching;

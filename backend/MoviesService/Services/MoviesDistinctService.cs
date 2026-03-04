@@ -1,27 +1,31 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Integration.Requested;
 
 namespace Filmograf.MoviesService.Services;
 
-public class FilmsDistinctService
+public class MoviesDistinctService
 {
     private readonly MovieRepository _movieRepository;
+    private readonly IRabbitMqRequestedService _rabbitMqService;
     
-    public FilmsDistinctService(MovieRepository movieRepository)
+    public MoviesDistinctService(MovieRepository movieRepository, IRabbitMqRequestedService rabbitMqService)
     {
         _movieRepository = movieRepository;
+        _rabbitMqService = rabbitMqService;
     }
 
-    private async Task CheckMovieAsync(RawMovieInfo movieData, List<string> fetchMovies)
+    private async Task CheckMovieAsync(RawMovieInfo movieData, List<MovieRepo> fetchMovies)
     {
         var realMovie = await _movieRepository.GetByNameAndYearAsync(movieData.Name, movieData.Year);
         
         if (realMovie != null)
         {
-            if (!NullableUtil.AnyIsNull(realMovie.Description, realMovie.GenreIds, realMovie.ImageUrl))
-                fetchMovies.Add(realMovie.Id);
+            if (NullableUtil.AnyIsNull(realMovie.Description, realMovie.GenreIds, realMovie.ImageUrl))
+                fetchMovies.Add(realMovie);
             
             return;
         }
@@ -41,20 +45,23 @@ public class FilmsDistinctService
         };
 
         await _movieRepository.CreateAsync(newMovie);
-        fetchMovies.Add(realMovie.Id);
+        fetchMovies.Add(newMovie);
     }
     
-    public async Task DistinctMoviesAsync(IEnumerable<RawMovieInfo> movies)
+    public async Task DistinctMoviesAsync(string source, IEnumerable<RawMovieInfo> movies)
     {
         // тут будут лежать фильмы, у которых нужно дополнительно инфу спарсить
         // ну условно: жанры, описание и фотокарточка фулл качества - это только на странице отдельного фильма
-        List<string> fetchMovies = new List<string>();
+        List<MovieRepo> fetchMovies = new List<MovieRepo>();
 
         foreach (var movie in movies)
         {
             await CheckMovieAsync(movie, fetchMovies);
         }
+
+        var request = new ParseFilmsDetailsIntegrationRequest
+        { Source = source, Movies = fetchMovies.ToArray() };
         
-        
+        await _rabbitMqService.SendNoReplyAsync("parse_details", "movies_to_parser", request);
     }
 }
