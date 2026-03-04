@@ -24,6 +24,8 @@ public abstract class RabbitMqRequestedServiceBase : IRabbitMqRequestedService
 
     protected RabbitMqRequestedServiceBase(QueueDeclareData[] queues)
     {
+        _queues = queues;
+        
         var settings = AppSettingsUtil.AppSettings.RabbitConnectionSettings;
         
         _factory = new ConnectionFactory

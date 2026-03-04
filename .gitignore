@@ -48,3 +48,9 @@ node_modules
 /backend/BaseLibrary/obj
 /backend/AuthService/.idea
 backend/shared/env.json
+/backend/BaseLibrary/obj
+backend/ParsingService/imdb_page.html
+/backend/AnalyticsService/.idea
+/backend/AnalyticsService/.vs
+/backend/AnalyticsService/bin
+/backend/AnalyticsService/obj

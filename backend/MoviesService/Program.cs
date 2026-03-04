@@ -1,19 +1,28 @@
 using System.Text;
+using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.DbContext;
+using Filmograf.BaseLibrary.DataAccess.Providers;
+using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Requested;
+using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Caching;
+using Filmograf.MoviesService.Integration.Hosted;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
 using Filmograf.MoviesService.Services;
-using Filmograf.MoviesService.Services.Authentication;
 using Filmograf.MoviesService.Services.Integrations;
 using Filmograf.MoviesService.Services.Middlewares;
+using Filmograf.MoviesService.Services.Movies;
+using Filmograf.MoviesService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Filmograf.MoviesService;
 
@@ -24,23 +33,31 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
+        LocalAppSettingsUtil.LoadAppSettingsData();
         
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
+        // Add AutoMapper
+        builder.Services.AddAutoMapper(_ => { }, typeof(Program).Assembly);
+        
         SettingUpSwagger(builder);
         SettingUpCors(builder);
         SettingUpRedis(builder);
+        SettingUpMongoDB(builder);
         SettingRabbitMQ(builder);
         SettingComponents(builder);
         SettingUpAuthenticationService(builder);
         
         var app = builder.Build();
+        
+        // ловушка для ошибок
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (AppSettingsUtil.AppSettings.DevMode)
         {
             app.UseSwagger();
             app.UseSwaggerUI();
@@ -63,7 +80,7 @@ public class Program
                 Description = "Введите ваш JWT токен",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
+                Type = SecuritySchemeType.Http,
                 Scheme = "Bearer"
             });
 
@@ -100,7 +117,7 @@ public class Program
             options.AddPolicy("AllowFrontend",
                 policy => 
                 {
-                    policy.WithOrigins("http://localhost:3000")
+                    policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -116,6 +133,24 @@ public class Program
             ConnectionMultiplexer.Connect($"{redisSettings.Host}:6379,abortConnect=false"));
     }
     
+    private static void SettingUpMongoDB(WebApplicationBuilder builder)
+    {
+        var mongoDbSettings = AppSettingsUtil.AppSettings.MongoDbSettings;
+        
+        // mongoDB из коробки не понимает что надо хранить Guid в стандартном формате (Standard UUID)
+        var serializer = new MongoDB.Bson.Serialization.Serializers.GuidSerializer(GuidRepresentation.Standard);
+        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(serializer);
+
+        builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
+        {
+            var client = new MongoClient(mongoDbSettings.ConnectionString);
+            return client.GetDatabase(mongoDbSettings.DatabaseName);
+        });
+
+        builder.Services.AddScoped<MovieRepository>();
+        builder.Services.AddHostedService<MongoIndexService>();
+    }
+    
     private static void SettingRabbitMQ(WebApplicationBuilder builder)
     {
         // rabbitqm hosted service
@@ -126,6 +161,9 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
+        builder.Services.AddScoped<FilmsDistinctIntegrationContext>();
+        builder.Services.AddScoped<FilmsApplyDetailsIntegrationContext>();
+        builder.Services.AddScoped<CompleteParsingIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -137,23 +175,41 @@ public class Program
         builder.Services.AddScoped<DbContextBase>();
         
         // contexts
-        builder.Services.AddScoped<AuthService>();
+        builder.Services.AddScoped<AuthContext>();
         
         // services
-        builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<MoviesParserService>();
+        builder.Services.AddScoped<GenresService>();
+        builder.Services.AddScoped<CommentService>();
+        builder.Services.AddScoped<AuthValidationService>();
+        builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<MoviesDistinctService>();
+        builder.Services.AddScoped<MoviesDetailsService>();
+        builder.Services.AddScoped<Services.MoviesService>();
+        builder.Services.AddScoped<MovieTopPicksService>();
         
         // providers
-        // ...
+        builder.Services.AddScoped<GenreProvider>();
+        builder.Services.AddScoped<AuthProvider>();
+        builder.Services.AddScoped<UserProvider>();
+        
+        // repositories
+        builder.Services.AddScoped<CommentRepository>();
+        builder.Services.AddScoped<MovieRepository>();
+        builder.Services.AddScoped<TopPicksRepository>();
         
         // cache
-        // ...
+        builder.Services.AddScoped<GenreCaching>();
+        builder.Services.AddScoped<CommentsCaching>();
+        builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<MoviesCaching>();
+        builder.Services.AddScoped<ParsingPlannerCache>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
     {
-        // Добавляем AuthorizationMiddleware в Singleton
+        // Добавляем AuthorizationMiddleware в Scoped
         builder.Services.AddScoped<AuthorizationMiddleware>();
         
         // Настройка авторизации через JWT

@@ -77,6 +77,7 @@ public abstract class NoAskIntegrationBase<ReqPayload, TContext> : IIntegrationH
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.StackTrace);
             await ProcessingError(request, new { ErrorCode = "CommonException" }, ex.Message);
         }
     }

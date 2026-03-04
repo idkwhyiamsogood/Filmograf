@@ -5,7 +5,7 @@ namespace Filmograf.MoviesService.Services.Integrations;
 
 public class RabbitMqRequestedServiceShell : RabbitMqRequestedServiceBase
 {
-    internal protected readonly static string[] Queues = new[] { "base_to_parser", "parser_to_base" }; // взаимодействуем
+    internal protected readonly static string[] Queues = new[] { "parser_to_movies", "movies_to_parser" }; // взаимодействуем
     
     public RabbitMqRequestedServiceShell()
         : base(Queues) { }

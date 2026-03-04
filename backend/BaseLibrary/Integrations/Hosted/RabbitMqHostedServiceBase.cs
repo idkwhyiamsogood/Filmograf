@@ -25,7 +25,7 @@ public abstract class RabbitMqHostedServiceBase : IRabbitMqHostedService
     protected QueueConsumeData[] _consumes; // очереди которые обрабатываем
 
     protected RabbitMqHostedServiceBase(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory, string[] queues, string[] consumes)
-        : this(settings, scopeFactory, QueueDeclareData.MapQueues(queues), QueueConsumeData.MapConsumes(queues)) { }
+        : this(settings, scopeFactory, QueueDeclareData.MapQueues(queues), QueueConsumeData.MapConsumes(consumes)) { }
 
     protected RabbitMqHostedServiceBase(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory, QueueDeclareData[] queues, 
         QueueConsumeData[] consumes)

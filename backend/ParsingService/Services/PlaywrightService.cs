@@ -1,6 +1,6 @@
 ﻿using Microsoft.Playwright;
 
-namespace ParsingService.Services;
+namespace Filmograf.ParsingService.Services;
 
 public class PlaywrightService
 {

@@ -6,7 +6,7 @@ public class AppSettingsUtil
 {
     public static AppSettings AppSettings = null!;
     private static readonly string AppSettingsFileName = "env.json";
-    private static readonly string AppSettingsFilePath = Path.Combine(Directory.GetCurrentDirectory() + "/" + AppSettingsFileName);
+    private static readonly string AppSettingsFilePath = Path.Combine(Directory.GetCurrentDirectory() + "/../shared/" + AppSettingsFileName);
 
     public static void LoadAppSettingsData()
     {
@@ -30,10 +30,14 @@ public class AppSettingsUtil
 
 public class AppSettings
 {
+    public bool DevMode { get; set; }
     public SecretsSettings SecretsSettings { get; set; } = null!;
     public RedisSettings RedisSettings { get; set; } = null!;
     public RabbitConnectionSettings RabbitConnectionSettings  { get; set; } = null!;
     public DbConnectionSettings DbConnectionSettings { get; set; }
+    public GoogleO2AuthSettings GoogleO2AuthSettings { get; set; }
+    public OriginSettings OriginSettings { get; set; }
+    public MongoDbSettings MongoDbSettings { get; set; }
 }
 
 public class SecretsSettings
@@ -63,4 +67,21 @@ public class DbConnectionSettings
     public string Database { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
+}
+
+public class GoogleO2AuthSettings
+{
+    public string ClientId { get; set; }
+    public string ClientSecret { get; set; }
+}
+
+public class OriginSettings
+{
+    public string FrontendOrigin { get; set; }
+}
+
+public class MongoDbSettings
+{
+    public string ConnectionString { get; set; }
+    public string DatabaseName { get; set; }
 }

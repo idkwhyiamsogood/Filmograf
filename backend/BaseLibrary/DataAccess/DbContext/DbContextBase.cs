@@ -1,4 +1,5 @@
-﻿using Filmograf.BaseLibrary.Models.Types;
+﻿using Filmograf.BaseLibrary.Models.Entities;
+using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace Filmograf.BaseLibrary.DataAccess.DbContext;
 public class DbContextBase : Microsoft.EntityFrameworkCore.DbContext
 {
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Genre> Genres { get; set; } = null!;
 
     public static DbContextBase MakeInstance() =>
         new DbContextBase();

@@ -1,22 +1,58 @@
-﻿using Filmograf.BaseLibrary.Integrations.Payload;
+﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Integrations.Requested;
-using Filmograf.BaseLibrary.Models.Types;
-using Filmograf.MoviesService.Services.Integrations;
+using Filmograf.MoviesService.Caching;
+using Filmograf.MoviesService.Integration.Requested;
+using Filmograf.MoviesService.Models.Types;
+using Filmograf.MoviesService.Util;
 
 namespace Filmograf.MoviesService.Services;
 
 public class MoviesParserService
 {
     private readonly IRabbitMqRequestedService _rabbitMqService;
+    private readonly ParsingPlannerCache _parsingPlannerCache;
 
-    public MoviesParserService(IRabbitMqRequestedService rabbitMqService)
+    public MoviesParserService(IRabbitMqRequestedService rabbitMqService, MovieRepository movieRepository,
+        ParsingPlannerCache parsingPlannerCache)
     {
         _rabbitMqService = rabbitMqService;
+        _parsingPlannerCache = parsingPlannerCache;
     }
 
-    public async Task<List<Movie>> ParseMoviesAsync(string url)
+    public async Task ParseMoviesAsync(string chartType)
     {
-        // todo
-        throw new NotImplementedException();
+        var request = new ParseTopFilmsIntegrationRequest
+        {
+            Source = chartType,
+            Url = LocalAppSettingsUtil.AppSettings.IMDbSettings.TopChartLink,
+            SendDistinctRequest = true
+        };
+        
+        await _rabbitMqService.SendNoReplyAsync("parse_top_films", "movies_to_parser", request);
+    }
+    
+    public async Task CheckLastParsingAsync(string chartType)
+    {
+        // проверяем, не настало ли время чекнуть еще раз imdb и кинопоиск
+        var parsingLast = await _parsingPlannerCache.GetLastAsync(chartType);
+        
+        // проверяем, не чекаем ли площадки прямо щас
+        var parsingTask = await _parsingPlannerCache.GetTaskAsync(chartType);
+        
+        if (parsingLast != null || parsingTask != null) return;
+
+        // отмечаем, что прямо сейчас чекаем площадки
+        var newParsingTask = new ParsingTaskCache();
+        await _parsingPlannerCache.SetTaskAsync(chartType, newParsingTask);
+        
+        // создаем запрос на парсинг
+        await ParseMoviesAsync(chartType);
+    }
+
+    public async Task CompleteParsingAsync(string chartType)
+    {
+        var newParsingLast = new ParsingTaskCache();
+        await _parsingPlannerCache.SetLastAsync(chartType, newParsingLast);
+        await _parsingPlannerCache.RemoveTaskAsync(chartType);
     }
 }
