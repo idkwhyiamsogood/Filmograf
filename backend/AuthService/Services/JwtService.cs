@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Microsoft.IdentityModel.Tokens;
