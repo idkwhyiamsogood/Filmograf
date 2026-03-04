@@ -9,16 +9,12 @@ public class PaginationQueryDto
     [DefaultValue(0)]
     public int Page { get; set; }
     
-    [DefaultValue(50)]
+    [DefaultValue(20)]
     public int Count { get; set; }
-    
-    [DefaultValue("asc")]
-    [RegularExpression("^(asc|desc)$", ErrorMessage = "SortDirection must be either 'asc' or 'desc'")]
-    public string? SortDirection { get; set; }
 
     public override string ToString()
     {
-        var keyStr = $"{Page}-{Count}-{SortDirection}";
+        var keyStr = $"{Page}-{Count}";
         return HashUtil.HashSHA256(keyStr);
     }
 }

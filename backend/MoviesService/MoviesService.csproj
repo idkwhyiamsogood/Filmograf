@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Context\" />
-    <Folder Include="Models\Types\" />
   </ItemGroup>
 
   <ItemGroup>

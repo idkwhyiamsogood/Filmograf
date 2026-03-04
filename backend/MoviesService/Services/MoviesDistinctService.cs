@@ -11,11 +11,14 @@ public class MoviesDistinctService
 {
     private readonly MovieRepository _movieRepository;
     private readonly IRabbitMqRequestedService _rabbitMqService;
+    private readonly TopPicksRepository _topPicksRepository;
     
-    public MoviesDistinctService(MovieRepository movieRepository, IRabbitMqRequestedService rabbitMqService)
+    public MoviesDistinctService(MovieRepository movieRepository, IRabbitMqRequestedService rabbitMqService,
+        TopPicksRepository topPicksRepository)
     {
         _movieRepository = movieRepository;
         _rabbitMqService = rabbitMqService;
+        _topPicksRepository = topPicksRepository;
     }
 
     private async Task CheckMovieAsync(RawMovieInfo movieData, List<MovieRepo> fetchMovies)
@@ -47,7 +50,7 @@ public class MoviesDistinctService
         await _movieRepository.CreateAsync(newMovie);
         fetchMovies.Add(newMovie);
     }
-    
+
     public async Task DistinctMoviesAsync(string source, IEnumerable<RawMovieInfo> movies)
     {
         // тут будут лежать фильмы, у которых нужно дополнительно инфу спарсить

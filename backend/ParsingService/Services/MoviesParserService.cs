@@ -51,10 +51,12 @@ public class MoviesParserService
         var movies = await parseMethod(url);
         if (!distinctAfter) return movies;
 
-        var request = new FilmsDistinctIntegrationRequest
-        { Movies = movies.ToArray(), Source = source };
+        var distinctRequest = new FilmsDistinctIntegrationRequest { Movies = movies.ToArray(), Source = source };
+        await _rabbitMqService.SendNoReplyAsync("distinct_films", "parser_to_movies", distinctRequest);
 
-        await _rabbitMqService.SendNoReplyAsync("distinct_films", "parser_to_movies", request);
+        var completeParsingRequest = new CompleteParsingIntegrationRequest { Movies = movies.ToArray(), Source = source };
+        await _rabbitMqService.SendNoReplyAsync("complete_parsing", "parser_to_movies", completeParsingRequest);
+        
         return movies;
     }
 

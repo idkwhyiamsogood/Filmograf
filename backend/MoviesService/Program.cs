@@ -17,6 +17,7 @@ using StackExchange.Redis;
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Integrations;
 using Filmograf.MoviesService.Services.Middlewares;
+using Filmograf.MoviesService.Services.Movies;
 using Filmograf.MoviesService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -162,6 +163,7 @@ public class Program
         builder.Services.AddScoped<IntegrationContextBase>();
         builder.Services.AddScoped<ParseFilmsIntegrationContext>();
         builder.Services.AddScoped<FilmsApplyDetailsIntegrationContext>();
+        builder.Services.AddScoped<CompleteParsingIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -184,6 +186,8 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<MoviesDistinctService>();
         builder.Services.AddScoped<MoviesDetailsService>();
+        builder.Services.AddScoped<Services.MoviesService>();
+        builder.Services.AddScoped<MovieTopPicksService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -193,11 +197,14 @@ public class Program
         // repositories
         builder.Services.AddScoped<CommentRepository>();
         builder.Services.AddScoped<MovieRepository>();
+        builder.Services.AddScoped<TopPicksRepository>();
         
         // cache
         builder.Services.AddScoped<GenreCaching>();
         builder.Services.AddScoped<CommentsCaching>();
         builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<MoviesCaching>();
+        builder.Services.AddScoped<ParsingPlannerCache>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

@@ -7,12 +7,14 @@ namespace Filmograf.MoviesService.Services;
 public class MongoIndexService : IHostedService
 {
     private readonly IMongoCollection<MovieRepo> _movies;
+    private readonly IMongoCollection<TopPicksRepo> _topPicks;
     private readonly IMongoCollection<CommentRepo> _comments;
     private readonly IMongoCollection<CommentLikeRepo> _commentLikes;
 
     public MongoIndexService(IMongoDatabase database)
     {
         _movies = database.GetCollection<MovieRepo>(MovieRepository.CollectionName);
+        _topPicks = database.GetCollection<TopPicksRepo>(TopPicksRepository.CollectionName);
         _comments = database.GetCollection<CommentRepo>(CommentRepository.CollectionName);
         _commentLikes = database.GetCollection<CommentLikeRepo>(CommentLikeRepository.CollectionName);
     }
@@ -27,6 +29,14 @@ public class MongoIndexService : IHostedService
                     Builders<MovieRepo>.IndexKeys
                         .Ascending(x => x.Name)
                         .Ascending(x => x.Year)
+                )
+            });
+            
+            await _topPicks.Indexes.CreateManyAsync(new[]
+            {
+                new CreateIndexModel<TopPicksRepo>(
+                    Builders<TopPicksRepo>.IndexKeys
+                        .Ascending(x => x.ChartType)
                 )
             });
             

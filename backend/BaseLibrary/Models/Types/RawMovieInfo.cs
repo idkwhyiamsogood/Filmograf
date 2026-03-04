@@ -22,5 +22,8 @@ public class RawMovieInfo
     
     public float Rate { get; set; }
     
+    // служебная переменная, используется ток при парсинге чартов, чтобы получать место в рейтингах
+    public int? ChartIndex { get; set; }
+    
     public List<string> Genres { get; set; } = new();
 }

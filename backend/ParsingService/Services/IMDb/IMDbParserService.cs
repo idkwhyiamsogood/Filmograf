@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
-using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.BaseLibrary.Models.Types;
 using Microsoft.Playwright;
 
@@ -38,6 +37,12 @@ public class IMDbParserService
 
         // TimeOnly требует корректные часы (0-23)
         return new TimeOnly(Math.Min(hours, 23), Math.Min(minutes, 59));
+    }
+
+    private static int? ParseChartIndex(string? raw)
+    {
+        if (raw == null) return null;
+        return Int32.Parse(raw.Replace("#", ""));
     }
 
     private static async Task<IEnumerable<RawMovieInfo>> ExtractMoviesListAsync(IPage page)
@@ -86,6 +91,11 @@ public class IMDbParserService
         // извлечение данных о фильмах
         return await Task.WhenAll(movieElements.Select(async movieElement =>
         {
+            // позиция в чарте (опционально)
+            var chartIndexElement = await movieElement.QuerySelectorAsync(".ipc-signpost__text");
+            var chartValueRaw = chartIndexElement != null ? await chartIndexElement.InnerTextAsync() : null;
+            var chartValue = ParseChartIndex(chartValueRaw);
+            
             // название фильма
             var titleElement = await movieElement.QuerySelectorAsync(".ipc-title__text");
             var title = titleElement != null ? await titleElement.InnerTextAsync() : "Не найдено";
@@ -143,7 +153,8 @@ public class IMDbParserService
                 Time = duration,
                 PreviewImageUrl = imageUrl,
                 MovieLink = movieLink,
-                Source = "IMDb"
+                Source = "IMDb",
+                ChartIndex = chartValue 
             };
         }));
     }
