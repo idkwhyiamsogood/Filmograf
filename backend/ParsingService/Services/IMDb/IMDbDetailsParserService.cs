@@ -24,19 +24,33 @@ public class IMDbDetailsParserService
     {
         try
         {
-            var genres = new List<string>();
+            // URL постера прямо со страницы
+            var posterElement = await page.QuerySelectorAsync("[data-testid='hero-media__poster'] img.ipc-image");
+            if (posterElement != null)
+            {
+                var src = await posterElement.GetAttributeAsync("src");
+                if (!string.IsNullOrEmpty(src)) info.PreviewImageUrl = src;
+            }
             
             // жанры (по чипам/тегам)
-            var genreElements = await page.QuerySelectorAllAsync("[data-testid='genres'] .ipc-chip__text");
+            var genres = new List<string>();
+            var genreElements = await page.QuerySelectorAllAsync("[data-testid='interests'] .ipc-chip__text, [data-testid='genres'] .ipc-chip__text");
+            
             foreach (var el in genreElements)
             {
-                genres.Add(await el.InnerTextAsync());
+                var text = await el.InnerTextAsync();
+                if (!string.IsNullOrWhiteSpace(text)) genres.Add(text.Trim());
             }
 
             // описание 
-            var plotElement = await page.QuerySelectorAsync("[data-testid='plot-xl']"); 
-            if (plotElement == null) plotElement = await page.QuerySelectorAsync("[data-testid='plot-l']");
-            if (plotElement != null) info.Description = await plotElement.InnerTextAsync();
+            string description = "Описание не найдено";
+            var plotElement = await page.QuerySelectorAsync("[data-testid='plot-xl']");
+            if (plotElement == null) plotElement = await page.QuerySelectorAsync("[data-testid='plot']");
+            
+            if (plotElement != null)
+            {
+                description = await plotElement.InnerTextAsync();
+            }
 
             // норм качество картинки, если она уже была найдена
             info.ImageUrl = GetFullQualityImageUrl(info.PreviewImageUrl);
@@ -46,7 +60,7 @@ public class IMDbDetailsParserService
                 Id = info.Id,
                 ImageUrl = info.ImageUrl,
                 PreviewImageUrl = info.PreviewImageUrl,
-                Description = info.Id,
+                Description = description,
                 Genres = genres,
             };
         }
@@ -60,7 +74,7 @@ public class IMDbDetailsParserService
     public async Task<IEnumerable<MovieDetailsParseResult>> ParseMoviesDetailsAsync(List<MovieRepo> movieRepos)
     {
         using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
+        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
         var context = await browser.NewContextAsync();
         var parseResult = new List<MovieDetailsParseResult>();
 

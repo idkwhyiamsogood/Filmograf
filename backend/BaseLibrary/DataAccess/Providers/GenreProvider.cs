@@ -1,7 +1,7 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.DbContext;
 using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.Types;
-using MongoDB.Driver.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Filmograf.BaseLibrary.DataAccess.Providers;
 

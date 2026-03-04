@@ -161,6 +161,7 @@ public class Program
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
         builder.Services.AddScoped<ParseFilmsIntegrationContext>();
+        builder.Services.AddScoped<FilmsApplyDetailsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -182,6 +183,7 @@ public class Program
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<MoviesDistinctService>();
+        builder.Services.AddScoped<MoviesDetailsService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
