@@ -10,11 +10,11 @@ interface Props {
 }
 
 export const UserLogoWithText: React.FC<Props> = ({ user }) => {
-  const validURL = getValidURL(user.logo);
+  const validURL = getValidURL(user.avatarURL);
 
   return (
     <div className='flex gap-2 items-center justify-between'>
-      <p className='text-sm'>{user.username}</p>
+      <p className='text-sm'>{user.name}</p>
       
       <UserLogo logo={validURL} />
     </div>

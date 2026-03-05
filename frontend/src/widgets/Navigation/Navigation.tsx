@@ -1,20 +1,22 @@
 "use client";
 
-import type { FC } from "react";
 import type { INavigationItem } from "@/shared/types";
+import type { FC } from "react";
 
-import { FooterItem } from "./FooterItem";
+import { NavigationItem } from "./ui/NavigationItem";
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { navigationMenu } from "@/shared/constants";
+import { useModals } from "@/shared/hooks";
 
-export const Footer: FC = () => {
+export const Navigation: FC = () => {
   const [current, setCurrent] = useState<number | undefined>(undefined);
 
   const router = useRouter();
   const pathname = usePathname();
+  const { openModal } = useModals();
 
   useEffect(() => {
     const current = navigationMenu.items.find((item) => item.url === pathname);
@@ -22,6 +24,11 @@ export const Footer: FC = () => {
   }, []);
 
   const handleClick = (index: number, url: string) => {
+    if (index === 4) {
+      openModal("right-menu");
+      return;
+    }
+    
     router.push(url);
     setCurrent(index);
   };
@@ -29,7 +36,7 @@ export const Footer: FC = () => {
   return (
     <div className="px-4 py-2 flex justify-around items-center bg-accent">
       {navigationMenu.items.map((item: INavigationItem) => (
-        <FooterItem
+        <NavigationItem
           item={item}
           key={item.label}
           isActive={current === item.id}

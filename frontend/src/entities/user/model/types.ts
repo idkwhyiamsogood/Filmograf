@@ -1,9 +1,11 @@
+import type { BaseModel } from "@/shared/types";
+
 export type UserRole = "Guest" | "Member";
 
-export interface IUser {
-  id: number;
-  username: string;
+export interface IUser extends BaseModel {
+  userType: UserRole;
   email: string;
-
-  logo: string;
+  googleId: string;
+  name: string;
+  avatarURL: string;
 }

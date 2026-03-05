@@ -9,10 +9,10 @@ import { useAuth } from "@/shared/hooks";
 
 const Page: FC = () => {
   const { openModal } = useModals();
-  const { isTemporaryLogged } = useAuth();
+  const { token } = useAuth();
 
   useEffect(() => {
-    isTemporaryLogged && openModal("authorization");
+    !token && openModal("authorization");
   }, [])
 
   return null;

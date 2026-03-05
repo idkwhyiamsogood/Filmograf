@@ -11,7 +11,7 @@ import "./globals.css";
 
 // components
 import { Header } from "@/widgets/Header/ui/Header";
-import { Footer } from "widgets/Footer";
+import { Navigation } from "@/widgets/Navigation";
 
 // const roboto = Roboto({
 //   variable: "--font-roboto",
@@ -46,8 +46,8 @@ export default function RootLayout({
       >
         <AuthProvider>
           <ThemeProvider>
-            <CollectionProvider>
-              <ModalProvider>
+            <ModalProvider>
+              <CollectionProvider>
                 <UserProvider>
                   <CommonWrapper>
                     <Header />
@@ -56,11 +56,11 @@ export default function RootLayout({
                     <ThemeLayout />
                   </CommonWrapper>
                 </UserProvider>
-              </ModalProvider>
-            </CollectionProvider>
-            <div className="fixed bottom-0 left-0 right-0 border-t">
-              <Footer />
-            </div>
+              </CollectionProvider>
+              <div className="fixed bottom-0 left-0 right-0 border-t">
+                <Navigation />
+              </div>
+            </ModalProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>

@@ -1,12 +1,13 @@
 import React from 'react';
 
+
 interface Props {
-  className?: string;
+  films: number[]
 }
 
-export const Collection: React.FC<Props> = ({ className }) => {
+export const Collection: React.FC<Props> = ({ films }) => {
   return (
-    <div className={className}>
+    <div className=''>
       
     </div>
   );

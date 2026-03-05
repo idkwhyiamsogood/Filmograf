@@ -5,7 +5,6 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useState
 } from "react";
 import { authApi } from "../lib";
@@ -15,7 +14,6 @@ import { toast } from "sonner";
 
 interface AuthContextType {
   token: JWT;
-  isAuth: Promise<boolean>;
   isTemporaryLogged: boolean;
 
   temporaryToken: () => Promise<void>;
@@ -31,10 +29,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<JWT>({ jwt: "" });
   const [isTemporaryLogged, setIsTemporaryLogged] = useState<boolean>(true);
-
-  const isAuth = useMemo(async () => {
-    return await authApi.isAuthenticated();
-  }, [token]);
 
   const callAuthError = () =>
     toast.error("При авторазации произошла ошибка попробуйте позже");
@@ -90,7 +84,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         token,
         isTemporaryLogged,
-        isAuth,
         verifyToken,
         temporaryToken,
         logout,

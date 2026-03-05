@@ -12,7 +12,7 @@ interface Props {
   onClick?: () => void;
 }
 
-export const FooterItem: FC<Props> = ({
+export const NavigationItem: FC<Props> = ({
   item,
   isActive = false,
   className,
