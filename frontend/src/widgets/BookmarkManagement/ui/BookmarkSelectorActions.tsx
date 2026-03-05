@@ -10,7 +10,6 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import type { ICollection } from "entities/collection";
 import { useCollections } from "entities/collection";
 
-
 export const BookmarkSelectorActions: React.FC = () => {
   const { collections, deleteCollection } = useCollections();
   const { openModal } = useModals();
@@ -26,14 +25,13 @@ export const BookmarkSelectorActions: React.FC = () => {
       >
         <Plus size={24} className="h-6! w-6!" strokeWidth={1.5} />
       </Button>
-      
+
       <CommonDropdownMenu
         trigger={
           <Button className="rounded-full bg-accent-foreground w-10 h-10">
             <Pencil size={24} className="h-6! w-6!" strokeWidth={1.5} />
           </Button>
         }
-        
         content={
           <>
             {collections.map((item: ICollection) => (
@@ -44,7 +42,7 @@ export const BookmarkSelectorActions: React.FC = () => {
                 <div className="flex justify-between items-center p-2 gap-1">
                   <span className="text-sm">{item.label}</span>
                   <div className="flex gap-1">
-                    <div 
+                    <div
                       className="p-1 rounded hover:bg-accent-foreground/10"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -58,7 +56,7 @@ export const BookmarkSelectorActions: React.FC = () => {
                       />
                     </div>
 
-                    <div 
+                    <div
                       className="p-1 rounded hover:bg-accent-foreground/10"
                       onClick={(e) => {
                         e.stopPropagation();

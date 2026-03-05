@@ -1,21 +1,21 @@
 "use client";
 
 // types
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 // components
-import { Rating, ratingMock } from "@/features/RenderStarRating";
-
-import { useAuth } from "@/shared/hooks/useAuth";
+import { useModals } from "@/shared/hooks";
+import { useAuth } from "@/shared/hooks";
 
 const Page: FC = () => {
-  const auth = useAuth();
+  const { openModal } = useModals();
+  const { isTemporaryLogged } = useAuth();
 
-  return (
-    <div>
-      <Rating data={ratingMock} />
-    </div>
-  );
+  useEffect(() => {
+    isTemporaryLogged && openModal("authorization");
+  }, [])
+
+  return null;
 };
 
 export default Page;

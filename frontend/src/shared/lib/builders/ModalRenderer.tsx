@@ -3,6 +3,9 @@
 import { useModals } from "@/shared/hooks/useModals";
 import { MODALS } from "@/shared/constants";
 
+import { Suspense } from "react";
+import { LoadingSplashScreen } from "@/shared/components";
+
 export function ModalRenderer() {
   const { isOpen, modalType, modalProps, closeModal } = useModals();
 
@@ -15,5 +18,9 @@ export function ModalRenderer() {
     return null;
   }
 
-  return <ModalComponent onClose={closeModal} {...modalProps} />;
-};
+  return (
+    <Suspense fallback={<LoadingSplashScreen />}>
+      <ModalComponent onClose={closeModal} {...modalProps} />
+    </Suspense>
+  );
+}

@@ -1,0 +1,68 @@
+"use client";
+
+import React, { useCallback } from "react";
+
+import { useUser } from "@/entities/user";
+import { useAuth, useModals } from "@/shared/hooks";
+
+import { Button } from "@/shared/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/ui/dialog";
+import { useRouter } from "next/navigation";
+
+import { authApi } from "@/shared/lib";
+
+export const AuthorizationModal: React.FC = () => {
+  const { isOpen, closeModal } = useModals();
+  const { temporaryToken, callAuthError, token } = useAuth();
+  const { setCurrentUser } = useUser();
+
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    authApi.googleLogin(router);
+  };
+
+  const handleLater = useCallback(() => {
+    try {
+      temporaryToken().then(() => {
+        setCurrentUser(token.jwt);
+      });
+    } catch (e) {
+      callAuthError();
+    };
+  }, []);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={closeModal}>
+      <DialogContent showCloseButton={false}>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <DialogHeader className="text-left">
+            <DialogTitle>Авторизация</DialogTitle>
+            <DialogDescription>
+              Для использования всех возможностей приложения необходимо
+              авторизоваться, используя учетную запись gmail
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex flex-row justify-end">
+            <DialogClose asChild>
+              <Button variant="outline" onClick={handleLater}>
+                Позже
+              </Button>
+            </DialogClose>
+            <Button type="submit">Продолжить</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};

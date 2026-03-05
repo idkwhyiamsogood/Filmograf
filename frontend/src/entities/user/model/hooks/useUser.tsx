@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { type CollectionContextType, CollectionContext } from "../context/collection.context";
+import { type UserContextType, UserContext } from "../context/user.context";
 
-export const useCollections = (): CollectionContextType => {
-  const context = useContext(CollectionContext);
+export const useUser = (): UserContextType => {
+  const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error("Необходимо подключение соответствующего провайдера.");
   }

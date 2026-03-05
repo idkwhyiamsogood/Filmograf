@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/shared/ui/dialog";
 
-interface IConfirmationModal {
+interface IConfirmationModalProps {
   title: string;
   function: Function;
   data: number;
@@ -25,7 +25,7 @@ interface IConfirmationModal {
 export const ConfirmationModal: React.FC = () => {
   const { isOpen, closeModal, modalProps } = useModals();
 
-  const receivedData = modalProps as IConfirmationModal;
+  const receivedData = modalProps as IConfirmationModalProps;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

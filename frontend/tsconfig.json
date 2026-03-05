@@ -24,6 +24,7 @@
       // Основные алиасы для папок
         "@/api/*": ["api/*"],
         "@/components/*": ["components/*"],
+        "@/entities/*": ["entities/*"],
         "@/widgets/*": ["widgets/*"],
         "@/shared/*": ["shared/*"],
         "@/features/*": ["features/*"],
