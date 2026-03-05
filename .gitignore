@@ -24,3 +24,6 @@ gradle-app.setting
 ./frontend/build
 ./frontend/.next
 ./frontend/android
+
+# потом если не впадлу будет сделаю
+./frontend/src/core 
