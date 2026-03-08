@@ -177,6 +177,10 @@ public class Program
         builder.Services.AddScoped<CommentService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<CommentCachingService>();
+        builder.Services.AddScoped<CommentCreationService>();
+        builder.Services.AddScoped<CommentLikesService>();
+        builder.Services.AddScoped<MoviesCommentService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -185,12 +189,14 @@ public class Program
         
         // repositories
         builder.Services.AddScoped<CommentRepository>();
+        builder.Services.AddScoped<CommentLikeRepository>();
         builder.Services.AddScoped<MovieRepository>();
         builder.Services.AddScoped<TopPicksRepository>();
         
         // cache
         builder.Services.AddScoped<CommentsCaching>();
         builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<MoviesCommentCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

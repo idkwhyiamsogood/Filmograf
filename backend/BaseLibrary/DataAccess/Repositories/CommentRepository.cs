@@ -18,7 +18,7 @@ public class CommentRepository : RepositoryBase<CommentRepo>
         return _collection.Find(x =>
                 x.EntityId == entityId &&
                 x.EntityType == type &&
-                x.Depth == 0 &&
+                x.Depth == 1 &&
                 !x.IsDeleted)
             .SortByDescending(x => x.CreateDate)
             .Skip(skip)

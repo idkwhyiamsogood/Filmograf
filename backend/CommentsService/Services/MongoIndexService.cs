@@ -23,47 +23,6 @@ public class MongoIndexService : IHostedService
     {
         try
         {
-            await _movies.Indexes.CreateManyAsync(new[]
-            {
-                new CreateIndexModel<MovieRepo>(
-                    Builders<MovieRepo>.IndexKeys
-                        .Ascending(x => x.Name)
-                        .Ascending(x => x.Year)
-                )
-            });
-            
-            await _topPicks.Indexes.CreateManyAsync(new[]
-            {
-                new CreateIndexModel<TopPicksRepo>(
-                    Builders<TopPicksRepo>.IndexKeys
-                        .Ascending(x => x.ChartType)
-                )
-            });
-            
-            await _comments.Indexes.CreateManyAsync(new[]
-            {
-                // быстрый выбор комментариев сущности
-                new CreateIndexModel<CommentRepo>(
-                    Builders<CommentRepo>.IndexKeys
-                        .Ascending(x => x.EntityId)
-                        .Ascending(x => x.EntityType)
-                        .Ascending(x => x.Path)
-                ),
-
-                // быстрый выбор root-комментов
-                new CreateIndexModel<CommentRepo>(
-                    Builders<CommentRepo>.IndexKeys
-                        .Ascending(x => x.EntityId)
-                        .Ascending(x => x.Depth)
-                ),
-
-                // быстрый поиск детей
-                new CreateIndexModel<CommentRepo>(
-                    Builders<CommentRepo>.IndexKeys
-                        .Ascending(x => x.ParentId)
-                )
-            });
-            
             await _commentLikes.Indexes.CreateManyAsync(new[]
             {
                 // уникальность лайка

@@ -3,8 +3,6 @@ using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
-using Filmograf.BaseLibrary.Util;
-using Filmograf.CommentsService.Caching;
 using Filmograf.CommentsService.Models.Dto;
 
 namespace Filmograf.CommentsService.Services;
@@ -12,13 +10,16 @@ namespace Filmograf.CommentsService.Services;
 public class CommentService
 {
     private readonly CommentRepository _commentRepository;
-    private readonly CommentsCaching _commentsCaching;
+    private readonly CommentCachingService _commentCachingService;
+    private readonly CommentLikeRepository _commentLikeRepository;
     private readonly IMapper _mapper;
     
-    public CommentService(CommentRepository commentRepository, CommentsCaching commentsCaching, IMapper mapper)
+    public CommentService(CommentRepository commentRepository, CommentCachingService commentCachingService, 
+        CommentLikeRepository commentLikeRepository, IMapper mapper)
     {
         _commentRepository = commentRepository;
-        _commentsCaching = commentsCaching;
+        _commentCachingService = commentCachingService;
+        _commentLikeRepository = commentLikeRepository;
         _mapper = mapper;
     }
     
@@ -35,38 +36,59 @@ public class CommentService
     public async Task<CommentRepo> GetCommentAsync(string commentId)
     {
         var method = async () => await CreateCacheForCommentAsync(commentId);
-        return await _commentsCaching.CachingAsync(commentId, method);
+        return await _commentCachingService.CachingAsync(commentId, method);
+    }
+
+    public CommentResponseDto MapCommentResponse(CommentRepo comment)
+    {
+        var dto = _mapper.Map<CommentResponseDto>(comment);
+        if (comment.IsDeleted) dto.Text = "";
+        return dto;
     }
 
     // ~response comment
-    private async Task<CommentResponseDto> CreateResponseCacheForCommentAsync(string commentId)
+    public async Task<CommentResponseDto> FillResponseCacheForCommentAsync(CommentRepo comment)
+    {
+        var commentDto = MapCommentResponse(comment);
+        var reactions = await _commentLikeRepository.GetByCommentAsync(comment.Id);
+        
+        commentDto.Likes = reactions
+            .Where(i => i.Value == 1)
+            .Select(i => i.UserId)
+            .ToArray();
+        
+        commentDto.Dislikes = reactions
+            .Where(i => i.Value == -1)
+            .Select(i => i.UserId)
+            .ToArray();
+
+        return commentDto;
+    }
+    
+    public async Task<CommentResponseDto> CreateResponseCacheForCommentAsync(string commentId)
     {
         var comment = await _commentRepository.GetByIdAsync(commentId);
         if (comment == null) throw new NotFoundHttpException(
             "CommentNotFound", $"Comment with id={commentId} not found.");
 
-        var commentDto = _mapper.Map<CommentResponseDto>(comment);
-
-        return commentDto;
+        return await FillResponseCacheForCommentAsync(comment);
     }
 
     public async Task<CommentResponseDto> GetResponseCommentAsync(string commentId)
     {
         var method = async () => await CreateResponseCacheForCommentAsync(commentId);
-        return await _commentsCaching.CachingResponseAsync(commentId, method);
+        return await _commentCachingService.CachingResponseAsync(commentId, method);
     }
     
     // ~full-response comment
     private async Task<CommentResponseDto> CreateFullResponseCacheForCommentAsync(string commentId)
     {
-        var comment = await _commentRepository.GetByIdAsync(commentId);
-        if (comment == null) throw new NotFoundHttpException(
-            "CommentNotFound", $"Comment with id={commentId} not found.");
+        var commentDto = await CreateResponseCacheForCommentAsync(commentId);
+        
+        var children = await _commentRepository.GetChildrenAsync(commentId);
+        var childrenDtos = await Task.WhenAll(children.Select(async child => 
+            await FillResponseCacheForCommentAsync(child)));
 
-        var children = await _commentRepository.GetChildrenAsync(comment.Id);
-        var childrenDtos = _mapper.Map<CommentResponseDto[]>(children);
-
-        var commentDto = _mapper.Map<CommentResponseDto>(comment);
         commentDto.Childs = childrenDtos;
 
         return commentDto;
@@ -75,52 +97,18 @@ public class CommentService
     public async Task<CommentResponseDto> GetFullResponseCommentAsync(string commentId)
     {
         var method = async () => await CreateFullResponseCacheForCommentAsync(commentId);
-        return await _commentsCaching.CachingFullResponseAsync(commentId, method);
+        return await _commentCachingService.CachingFullResponseAsync(commentId, method);
     }
 
-    
-    public string MakePath(CommentRepo? parentComment, string childCommentId)
+    public async Task<CommentRepo> GetCommentWithCheckAsync(string commentId, User user)
     {
-        if (parentComment == null) return childCommentId;
-        return $"{parentComment.Path}/{childCommentId}";
-    }
-
-    private async Task RemoveFullPathCacheAsync(string path)
-    {
-        var pathParts = path.Split("/");
-        await Task.WhenAll(pathParts.Select(async part => 
-            await _commentsCaching.RemoveCachingFullResponseAsync(part)));
-    }
-
-    public async Task<CommentResponseDto> CreateCommentAsync(string commentId, string text, User user)
-    {
-        // если комментария нет - на этапе формирования кеша - выплюнет NF-htex
         var comment = await GetCommentAsync(commentId);
+        if (comment.IsDeleted) throw new BadRequestHttpException(
+            "CommentAlreadyDeleted", $"Comment with id={commentId} has been deleted.");
 
-        // заранее генерим id, формируем path, расчитываем глубину
-        var newId = MongoDbUtil.GenerateNewId();
-        var path = MakePath(comment, newId);
-        var depth = path.Count(i => i == '/') + 1;
+        if (!user.IsAdmin && comment.UserId != user.Id) throw new ForbiddenHttpException(
+            "NoAccessToComment", $"User has no access to comment with id={commentId}");
 
-        // собираем новый коммент
-        var newComment = new CommentRepo
-        {
-            Id = newId,
-            EntityType = CommentEntityType.Movie,
-            ParentId = commentId,
-            Path = path,
-            UserId = user.Id,
-            Text = text,
-            Depth = depth
-        };
-        
-        // отправляем в репу
-        await _commentRepository.CreateAsync(newComment);
-        
-        // удаляем фулл-кеш родителя, родителя родителя и тд (т.к. у него появился новый child)
-        await RemoveFullPathCacheAsync(comment.Path);
-        
-        // отдаем response (заодно и кеш сгенерим)
-        return await GetResponseCommentAsync(newComment.Id);
+        return comment;
     }
 }
