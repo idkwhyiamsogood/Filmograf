@@ -31,8 +31,8 @@ public class AuthController : CustomControllerBase
     public IActionResult GoogleLogin()
     {
         // путь к методу, который продолжит авторизацию (перекидываем на 2ой этап)
-        // var redirectUrl = Url.Action(nameof(GoogleResponse), "Auth", null, Request.Scheme);
-        var redirectUrl = $"https://filmograf.online/api/auth/google-response";
+        var redirectUrl = Url.Action(nameof(GoogleResponse), "Auth", null, Request.Scheme);
+        // var redirectUrl = $"https://filmograf.online/api/auth/google-response";
 
         var properties = new AuthenticationProperties
         { RedirectUri = redirectUrl };

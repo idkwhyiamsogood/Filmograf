@@ -4,10 +4,10 @@ using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.BaseLibrary.Util;
-using Filmograf.MoviesService.Caching;
-using Filmograf.MoviesService.Models.Dto;
+using Filmograf.CommentsService.Caching;
+using Filmograf.CommentsService.Models.Dto;
 
-namespace Filmograf.MoviesService.Services;
+namespace Filmograf.CommentsService.Services;
 
 public class CommentService
 {

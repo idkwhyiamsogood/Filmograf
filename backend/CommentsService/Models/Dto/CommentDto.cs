@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Filmograf.MoviesService.Models.Dto;
+namespace Filmograf.CommentsService.Models.Dto;
 
 public class CommentResponseDto
 {

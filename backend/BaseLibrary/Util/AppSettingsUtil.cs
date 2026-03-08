@@ -32,6 +32,7 @@ public class AppSettings
 {
     public bool DevMode { get; set; }
     public bool HttpsForwardedHeaders { get; set; }
+    
     public SecretsSettings SecretsSettings { get; set; } = null!;
     public RedisSettings RedisSettings { get; set; } = null!;
     public RabbitConnectionSettings RabbitConnectionSettings  { get; set; } = null!;
@@ -74,6 +75,7 @@ public class GoogleO2AuthSettings
 {
     public string ClientId { get; set; }
     public string ClientSecret { get; set; }
+    public string LoginRedirect { get; set; }
 }
 
 public class OriginSettings

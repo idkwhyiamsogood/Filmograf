@@ -43,7 +43,7 @@ public class MoviesCaching : CachingProviderBase<MovieResponseDto>
 
     public async Task<long> RemoveCachingTopPickRootAsync(string topPickName)
     {
-        var topPickTempSpecificAtomic = new CachingProviderAtomic<CommentResponseDto>(
+        var topPickTempSpecificAtomic = new CachingProviderAtomic<MovieResponseDto>(
             _redis, 
             $"movies:top-pick:{topPickName}"
         );

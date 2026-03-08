@@ -1,9 +1,9 @@
 ﻿using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.Models.Repo;
-using Filmograf.MoviesService.Models.Dto;
+using Filmograf.CommentsService.Models.Dto;
 using StackExchange.Redis;
 
-namespace Filmograf.MoviesService.Caching;
+namespace Filmograf.CommentsService.Caching;
 
 public class CommentsCaching : CachingProviderBase<CommentRepo>
 {

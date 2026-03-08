@@ -4,7 +4,7 @@ services:
     container_name: film-rabbitmq
     ports:
       - "5672:5672"
-      - "4500:15672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=film_admin
       - RABBITMQ_DEFAULT_PASS=mwEjflvu4ZHRDGVG

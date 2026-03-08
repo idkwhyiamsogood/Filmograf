@@ -55,3 +55,8 @@ backend/ParsingService/imdb_page.html
 /backend/AnalyticsService/bin
 /backend/AnalyticsService/obj
 backend/shared/env.docker.json
+/backend/CommentsService/.idea
+/backend/CommentsService/.vs
+/backend/CommentsService/bin
+/backend/CommentsService/obj
+/backend/BaseLibrary/obj

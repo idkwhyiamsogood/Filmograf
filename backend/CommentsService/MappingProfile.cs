@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Filmograf.BaseLibrary.Models.Repo;
-using Filmograf.MoviesService.Models.Dto;
+using Filmograf.CommentsService.Models.Dto;
 
-namespace Filmograf.MoviesService;
+namespace Filmograf.CommentsService;
 
 public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<MovieRepo, MovieResponseDto>();
+        CreateMap<CommentRepo, CommentResponseDto>();
     }
 }

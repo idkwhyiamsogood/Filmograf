@@ -8,23 +8,21 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
-using Filmograf.MoviesService.Caching;
-using Filmograf.MoviesService.Integration.Hosted;
+using Filmograf.CommentsService.Caching;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
-using Filmograf.MoviesService.Services;
-using Filmograf.MoviesService.Services.Integrations;
-using Filmograf.MoviesService.Services.Middlewares;
-using Filmograf.MoviesService.Services.Movies;
-using Filmograf.MoviesService.Util;
+using Filmograf.CommentsService.Services;
+using Filmograf.CommentsService.Services.Integrations;
+using Filmograf.CommentsService.Services.Middlewares;
+using Filmograf.CommentsService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Filmograf.MoviesService;
+namespace Filmograf.CommentsService;
 
 public class Program
 {
@@ -161,9 +159,6 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
-        builder.Services.AddScoped<FilmsDistinctIntegrationContext>();
-        builder.Services.AddScoped<FilmsApplyDetailsIntegrationContext>();
-        builder.Services.AddScoped<CompleteParsingIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -179,14 +174,9 @@ public class Program
         
         // services
         builder.Services.AddScoped<RedisService>();
-        builder.Services.AddScoped<MoviesParserService>();
-        builder.Services.AddScoped<GenresService>();
+        builder.Services.AddScoped<CommentService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<MoviesDistinctService>();
-        builder.Services.AddScoped<MoviesDetailsService>();
-        builder.Services.AddScoped<Services.MoviesService>();
-        builder.Services.AddScoped<MovieTopPicksService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -199,10 +189,8 @@ public class Program
         builder.Services.AddScoped<TopPicksRepository>();
         
         // cache
-        builder.Services.AddScoped<GenreCaching>();
+        builder.Services.AddScoped<CommentsCaching>();
         builder.Services.AddScoped<UserCaching>();
-        builder.Services.AddScoped<MoviesCaching>();
-        builder.Services.AddScoped<ParsingPlannerCache>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
