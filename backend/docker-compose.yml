@@ -5,6 +5,10 @@ services:
     ports:
       - "5672:5672"
       - "4500:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=film_admin
+      - RABBITMQ_DEFAULT_PASS=mwEjflvu4ZHRDGVG
+      - RABBITMQ_DEFAULT_VHOST=/
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 5s

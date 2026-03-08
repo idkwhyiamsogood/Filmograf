@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const authLink =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5090";
+  process.env.NEXT_PUBLIC_API_URL || "https://filmograf.online";
 
 const settingUpAxiosInstance = (link: string) => {
   const axiosInstance = axios.create({
