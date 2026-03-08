@@ -33,9 +33,12 @@ const AuthSuccessPage: FC = () => {
   }, []);
 
   useEffect(() => {
-    setCurrentUser(token.jwt);
-    router.push("/");
-  }, [loading])
+    try {
+      setCurrentUser();
+    } finally {
+      router.push("/");
+    }
+  }, [loading]);
 
   return <div>{loading && <LoadingSplashScreen />}</div>;
 };

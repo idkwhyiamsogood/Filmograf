@@ -1,33 +1,15 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import { CollectionProvider } from "entities/collection/";
 import { CommonWrapper } from "@/shared/components/";
 import { ModalProvider, AuthProvider } from "@/shared/context/";
 import { UserProvider } from "@/entities/user";
 import { ModalRenderer } from "@/shared/lib";
-import { ThemeLayout } from "@/widgets/ThemeLayout/ThemeLayout";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 // components
 import { Header } from "@/widgets/Header/ui/Header";
 import { Navigation } from "@/widgets/Navigation";
-
-// const roboto = Roboto({
-//   variable: "--font-roboto",
-//   subsets: ["latin", "cyrillic"],
-//   weight: ["300", "400", "500", "700"],
-// });
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata: Metadata = {
   title: "Filmograf",
@@ -41,11 +23,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body
-      // className={`${roboto.variable} ${geistSans.variable} ${geistMono.variable} antialiased bg-black/80 m-2.5`}
-      >
-        <AuthProvider>
-          <ThemeProvider>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
             <ModalProvider>
               <CollectionProvider>
                 <UserProvider>
@@ -53,7 +38,6 @@ export default function RootLayout({
                     <Header />
                     {children}
                     <ModalRenderer />
-                    <ThemeLayout />
                   </CommonWrapper>
                 </UserProvider>
               </CollectionProvider>
@@ -61,8 +45,8 @@ export default function RootLayout({
                 <Navigation />
               </div>
             </ModalProvider>
-          </ThemeProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

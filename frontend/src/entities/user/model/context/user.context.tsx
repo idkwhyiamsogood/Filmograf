@@ -10,6 +10,9 @@ import {
 
 import type { IUser } from "../types";
 import { userApi } from "../api/user.api";
+import { authApi } from "@/shared/lib";
+
+import { useAuth } from "@/shared/hooks";
 
 import { toast } from "sonner";
 
@@ -17,7 +20,8 @@ export interface UserContextType {
   user: IUser | undefined;
 
   userError: () => void;
-  setCurrentUser: (token: string | null) => void;
+  setCurrentUser: () => void;
+  logout: () => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -27,14 +31,14 @@ export const UserContext = createContext<UserContextType | undefined>(
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | undefined>(undefined);
 
+  const { token } = useAuth();
+
   const userError = () =>
     toast.error("Произошла непредвиденная ошибка, попробуйте позже");
 
-  const setCurrentUser = useCallback(async (token: string | null) => {
+  const setCurrentUser = useCallback(async () => {
     try {
       if (token) await userApi.getMe().then((res) => setUser(res.data));
-      
-      // что-то потом может добавить ???
       else return;
     } catch (e) {
       console.log(e);
@@ -42,10 +46,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // dev only
+  const logout = useCallback(async () => {
+    try {
+      if (user || authApi.getAccessToken() !== null) {
+        authApi.logout();
+        setUser(undefined);
+      }
+    } catch (e) {
+      console.log(e);
+      userError();
+    }
+  }, []);
+
   useEffect(() => {
-    console.log(user);
-  }, [user])
+    setCurrentUser();
+  }, [token, user]);
 
   return (
     <UserContext.Provider
@@ -53,6 +68,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         user,
         userError,
         setCurrentUser,
+        logout,
       }}
     >
       {children}

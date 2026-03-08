@@ -1,24 +1,72 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { useModals } from "@/shared/hooks";
-import { Sheet, SheetContent } from "@/shared/ui/sheet";
 import { useUser } from "@/entities/user";
+import { useModals } from "@/shared/hooks";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetDescription,
+  SheetHeader,
+} from "@/shared/ui/sheet";
+
+import { UserFull, LogoutButton } from "@/entities/user";
+import { Separator } from "@/shared/ui/separator";
+import { NavigationMenu } from "./ui/NavigationMenu";
+
+import { WrapperContent } from "./ui/WrapperContent";
+import { ThemeSwitchSelector } from "@/shared/components";
 
 export const RightMenu: React.FC = () => {
-  const { isOpen, closeModal, modalProps } = useModals();
+  const { isOpen, closeModal, openModal } = useModals();
   const { user } = useUser();
 
+  const [userAvailable, setUserAvailable] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!user) {
+      openModal("authorization", { function: openModal("right-menu") });
+      setUserAvailable(false);
+    }
+  }, []);
+
+  if (!userAvailable || !user) return null;
+
   return (
-    <Sheet open={isOpen} onOpenChange={closeModal}>
-      <SheetContent 
-        side="right" 
-        className="p-0"
-        showCloseButton={false}
-      >
-        
-      </SheetContent>
-    </Sheet>
+    <div className="bg-background border-accent-foreground">
+      <Sheet open={isOpen} onOpenChange={closeModal}>
+        <SheetHeader>
+          <SheetHeader>
+            <SheetTitle hidden>Боковая менюшка</SheetTitle>
+            <SheetDescription hidden>
+              Меню для упралвения текущим пользователем и доступа к расширенной
+              навигации
+            </SheetDescription>
+          </SheetHeader>
+        </SheetHeader>
+
+        <SheetContent side="right" className="p-0" showCloseButton={false}>
+          <WrapperContent>
+            <div className="flex flex-col gap-4">
+              <UserFull user={user} isComment={false} />
+
+              <Separator />
+
+              <NavigationMenu />
+
+              <Separator />
+
+              <ThemeSwitchSelector />
+
+              <Separator />
+            </div>
+
+            <LogoutButton />
+          </WrapperContent>
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 };

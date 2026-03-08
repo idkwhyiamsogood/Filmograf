@@ -1,7 +1,9 @@
 export type { IUser } from "./model/types";
 
+// ui
 export { UserLogo } from "./ui/UserLogo";
-export { UserLogoWithText } from "./ui/UserLogoWithText";
+export { UserFull } from "./ui/UserFull";
+export { LogoutButton } from "./ui/LogoutButton";
 
 export { userApi } from "./model/api/user.api";
 

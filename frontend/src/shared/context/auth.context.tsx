@@ -16,7 +16,7 @@ interface AuthContextType {
   token: JWT;
   isTemporaryLogged: boolean;
 
-  temporaryToken: () => Promise<void>;
+  temporaryToken: () => Promise<JWT>;
   verifyToken: (idempotence: string) => Promise<void>;
   logout: () => void;
   callAuthError: () => string | number;
@@ -42,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.log(e);
       callAuthError();
+    } finally {
+      return token;
     }
   }, []);
 
@@ -63,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!token) {
+    if (!token.jwt) {
       const storedToken = authApi.getAccessToken();
       if (storedToken) {
         setToken({ jwt: storedToken });
@@ -72,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    authApi.setAccessToken(token.jwt);
+    if (token.jwt) authApi.setAccessToken(token.jwt);
 
     // dev only
     // console.log(token);

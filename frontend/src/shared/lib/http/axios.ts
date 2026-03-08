@@ -13,7 +13,7 @@ export class BaseHttpClient {
         'Content-Type': 'application/json',
       },
       timeout: 10000,
-      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5090",
+      baseURL: process.env.NEXT_PUBLIC_API_URL || "https://filmograf.online/",
       withCredentials: true,
       ...this.config
     })

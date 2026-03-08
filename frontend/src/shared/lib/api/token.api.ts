@@ -2,7 +2,6 @@ import { BaseHttpClient } from "../http/axios";
 
 export class TokenApi extends BaseHttpClient {
   public getAccessToken = () => {
-    if (typeof window === "undefined") return null;
     return localStorage.getItem("access_token");
   };
 

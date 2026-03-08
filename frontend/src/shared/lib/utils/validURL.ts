@@ -3,6 +3,6 @@ export const getValidURL = (url: string): string => {
     new URL(url);
     return url;
   } catch {
-    return "/default-avatar.png";
+    return "Filmograf/frontend/public/default-logo.png";
   }
 }

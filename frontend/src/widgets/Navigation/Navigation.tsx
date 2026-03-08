@@ -21,7 +21,7 @@ export const Navigation: FC = () => {
   useEffect(() => {
     const current = navigationMenu.items.find((item) => item.url === pathname);
     setCurrent(current ? current.id : 2);
-  }, []);
+  }, [pathname]);
 
   const handleClick = (index: number, url: string) => {
     if (index === 4) {
@@ -30,7 +30,6 @@ export const Navigation: FC = () => {
     }
     
     router.push(url);
-    setCurrent(index);
   };
 
   return (

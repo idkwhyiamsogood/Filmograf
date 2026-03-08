@@ -20,8 +20,8 @@ import { useRouter } from "next/navigation";
 import { authApi } from "@/shared/lib";
 
 export const AuthorizationModal: React.FC = () => {
-  const { isOpen, closeModal } = useModals();
-  const { temporaryToken, callAuthError, token } = useAuth();
+  const { isOpen, closeModal, modalProps } = useModals();
+  const { temporaryToken, callAuthError } = useAuth();
   const { setCurrentUser } = useUser();
 
   const router = useRouter();
@@ -34,11 +34,11 @@ export const AuthorizationModal: React.FC = () => {
   const handleLater = useCallback(() => {
     try {
       temporaryToken().then(() => {
-        setCurrentUser(token.jwt);
+        setCurrentUser();
       });
     } catch (e) {
       callAuthError();
-    };
+    }
   }, []);
 
   return (

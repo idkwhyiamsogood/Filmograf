@@ -6,7 +6,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 
 class AuthApi extends TokenApi {
   public googleLogin = (router: AppRouterInstance): void => {
-    router.push(`http://localhost:5090/api/auth/google`);
+    router.push(`https://filmograf.online/api/auth/google`);
   };
 
   public createTemporaryToken = async (): ApiResponse<JWT> => {
