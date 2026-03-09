@@ -1,2 +1,2 @@
-export { navigationMenu } from "./navigation";
+export { navigationMenu, fullNavigation } from "./navigation";
 export { MODALS } from "./modals";

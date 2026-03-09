@@ -10,10 +10,11 @@ import { TemporaryUserFull } from "./TemporaryUserFull";
 interface Props {
   user: IUser;
   isComment: boolean;
+  openModal: () => void;
 }
 
-export const UserFull: React.FC<Props> = ({ user, isComment = true }) => {
-  if (user.userType === "Guest") return <TemporaryUserFull user={user} />;
+export const UserFull: React.FC<Props> = ({ user, isComment = true, openModal }) => {
+  if (user.userType === "Guest") return <TemporaryUserFull user={user} onClick={openModal}/>;
 
   const validURL = getValidURL(user.avatarURL);
 

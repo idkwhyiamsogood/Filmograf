@@ -30,7 +30,7 @@ export const NavigationItem: FC<Props> = ({
       )}
       onClick={onClick}
     >
-      <item.icon size={24} />
+      {item.icon && <item.icon size={24} />}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 
 import { useUser } from "@/entities/user";
 import { useModals } from "@/shared/hooks";
@@ -19,9 +19,9 @@ import { NavigationMenu } from "./ui/NavigationMenu";
 import { WrapperContent } from "./ui/WrapperContent";
 import { ThemeSwitchSelector } from "@/shared/components";
 
-export const RightMenu: React.FC = () => {
+export const RightMenu: React.FC = memo(() => {
   const { isOpen, closeModal, openModal } = useModals();
-  const { user } = useUser();
+  const { user, logout } = useUser();
 
   const [userAvailable, setUserAvailable] = useState<boolean>(true);
 
@@ -50,7 +50,11 @@ export const RightMenu: React.FC = () => {
         <SheetContent side="right" className="p-0" showCloseButton={false}>
           <WrapperContent>
             <div className="flex flex-col gap-4">
-              <UserFull user={user} isComment={false} />
+              <UserFull
+                user={user}
+                isComment={false}
+                openModal={() => openModal("authorization")}
+              />
 
               <Separator />
 
@@ -63,10 +67,12 @@ export const RightMenu: React.FC = () => {
               <Separator />
             </div>
 
-            <LogoutButton />
+            <LogoutButton onClick={logout} onComplete={closeModal} />
           </WrapperContent>
         </SheetContent>
       </Sheet>
     </div>
   );
-};
+});
+
+RightMenu.displayName = "RightMenu";

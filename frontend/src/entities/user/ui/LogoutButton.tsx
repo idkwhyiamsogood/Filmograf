@@ -1,26 +1,24 @@
-"use client";
-
 import React from "react";
 
 import { Button } from "@/shared/ui/button";
 import { LogOut } from "lucide-react";
 
-import { useUser } from "../model/hooks/useUser";
-import { useModals } from "@/shared/hooks";
-
 interface Props {
   className?: string;
+  onClick: () => void;
+  onComplete: () => void;
 }
 
-export const LogoutButton: React.FC<Props> = ({ className }) => {
-  const { logout } = useUser();
-  const { closeModal } = useModals();
-
+export const LogoutButton: React.FC<Props> = ({
+  className,
+  onClick,
+  onComplete,
+}) => {
   const handleLogout = () => {
     try {
-      logout();
+      onClick();
     } finally {
-      closeModal();
+      onComplete();
     }
   };
 

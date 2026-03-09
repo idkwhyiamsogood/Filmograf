@@ -55,7 +55,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } catch (e) {
       console.log(e);
       userError();
-    }
+    } 
   }, []);
 
   useEffect(() => {
