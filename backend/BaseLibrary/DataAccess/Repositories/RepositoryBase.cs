@@ -34,6 +34,7 @@ public abstract class RepositoryBase<TBase> where TBase : RepoBase
     {
         var filter = Builders<TBase>.Filter.Eq("_id", ObjectId.Parse(id));
         item.LastUsedAt = DateTime.UtcNow;
+        item.UpdateDate = DateTime.UtcNow;
         var result = await _collection.ReplaceOneAsync(filter, item);
         return result.ModifiedCount > 0;
     }

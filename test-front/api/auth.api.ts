@@ -1,4 +1,4 @@
-import { authInstance } from "@/lib/axios";
+import { authInstance, authLink } from "@/lib/axios";
 import { AxiosResponse } from "axios";
 
 export interface IUser {
@@ -14,7 +14,7 @@ export interface IVerifyIdempotenceResponse {
 
 class AuthApi {
   private API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5090";
+    process.env.NEXT_PUBLIC_API_URL || authLink;
 
   // ======================
   // AUTH FLOW

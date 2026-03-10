@@ -7,8 +7,18 @@ public class CommentLikeRepository : RepositoryBase<CommentLikeRepo>
 {
     public static readonly string CollectionName = "comment_likes";
     
-    public CommentLikeRepository(IMongoDatabase database, string collectionName) : base(database, collectionName)
+    public CommentLikeRepository(IMongoDatabase database) : base(database, CollectionName)
     {
+    }
+    
+    // Посчитать реакции
+    public async Task<List<CommentLikeRepo>> GetByCommentAsync(string commentId, CancellationToken ct = default)
+    {
+        var filter = Builders<CommentLikeRepo>.Filter
+            .Eq(x => x.CommentId, commentId);
+    
+        return await _collection.Find(filter)
+            .ToListAsync(ct);
     }
     
     // Поставить или изменить лайк

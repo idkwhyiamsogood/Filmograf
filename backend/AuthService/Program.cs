@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Filmograf.MoviesService;
@@ -33,6 +34,13 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
+        // builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        // {
+        //     options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+        //     options.KnownNetworks.Clear();
+        //     options.KnownProxies.Clear();
+        // });
+        
         SettingUpSwagger(builder);
         SettingUpCors(builder);
         SettingUpContexts(builder);
@@ -44,6 +52,15 @@ public class Program
         
         // ловушка для ошибок
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+        
+        // наебалово для nginx
+        if (AppSettingsUtil.AppSettings.HttpsForwardedHeaders)
+        {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+        }
 
         // Configure the HTTP request pipeline.
         if (AppSettingsUtil.AppSettings.DevMode)
