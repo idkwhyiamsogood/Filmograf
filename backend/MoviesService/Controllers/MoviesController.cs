@@ -45,11 +45,5 @@ public class MoviesController : CustomControllerBase
     //     return Ok();
     // }
 
-    // [HttpGet("test")]
-    // [Authorize]
-    // public async Task<ActionResult> TestAsync()
-    // {
-    //     await _moviesParserService.ParseTestAsync();
-    //     return Ok();
-    // }
+    
 }

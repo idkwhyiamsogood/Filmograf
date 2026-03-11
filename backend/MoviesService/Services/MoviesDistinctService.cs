@@ -21,13 +21,31 @@ public class MoviesDistinctService
         _topPicksRepository = topPicksRepository;
     }
 
+    private bool CheckIfEmptyFields(MovieRepo movieData)
+    {
+        if (NullableUtil.AnyIsNull(movieData.Description, movieData.GenreIds, movieData.ImageUrl))
+            return true;
+        
+        if (movieData.GenreIds == null || !movieData.GenreIds.Any())
+            return true;
+        
+        if (movieData.Description == "Описание не найдено")
+            return true;
+        
+        if (movieData.ImageUrl == "Не найдена")
+            return true;
+
+        return false;
+    }
+    
+
     private async Task CheckMovieAsync(RawMovieInfo movieData, List<MovieRepo> fetchMovies)
     {
         var realMovie = await _movieRepository.GetByNameAndYearAsync(movieData.Name, movieData.Year);
         
         if (realMovie != null)
         {
-            if (NullableUtil.AnyIsNull(realMovie.Description, realMovie.GenreIds, realMovie.ImageUrl))
+            if (CheckIfEmptyFields(realMovie))
                 fetchMovies.Add(realMovie);
             
             return;
@@ -59,7 +77,7 @@ public class MoviesDistinctService
 
         foreach (var movie in movies)
         {
-            await CheckMovieAsync(movie, fetchMovies);
+             await CheckMovieAsync(movie, fetchMovies);
         }
 
         var request = new ParseFilmsDetailsIntegrationRequest

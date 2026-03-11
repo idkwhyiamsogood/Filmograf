@@ -19,16 +19,21 @@ public class MoviesParserService
         _parsingPlannerCache = parsingPlannerCache;
     }
 
-    public async Task ParseMoviesAsync(string chartType)
+    public async Task ParseMoviesAsync(string chartType, string url)
     {
         var request = new ParseTopFilmsIntegrationRequest
         {
             Source = chartType,
-            Url = LocalAppSettingsUtil.AppSettings.IMDbSettings.TopChartLink,
+            Url = url,
             SendDistinctRequest = true
         };
         
         await _rabbitMqService.SendNoReplyAsync("parse_top_films", "movies_to_parser", request);
+    }
+
+    public async Task ParseMoviesAsync(string chartType)
+    {
+        await ParseMoviesAsync(chartType, LocalAppSettingsUtil.AppSettings.IMDbSettings.TopChartLink);
     }
     
     public async Task CheckLastParsingAsync(string chartType)
