@@ -1,6 +1,6 @@
 "use client";
 
-import { FilmWrapper } from '@/entities/movie';
+import { MovieWrapper } from '@/entities/movie';
 import React, { memo, useState } from 'react';
 
 import { useCollections } from 'entities/collection';
@@ -18,7 +18,7 @@ export const BookmarkManagement: React.FC = memo(() => {
   return (
     <div className='flex flex-col gap-5'>
       <CollectionSelector selected={selected} setSelected={setSelected}/>
-      <FilmWrapper items={items}/>
+      <MovieWrapper items={items}/>
     </div>
   );
 });
