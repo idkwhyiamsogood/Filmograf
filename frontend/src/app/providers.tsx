@@ -12,7 +12,12 @@ import { Header } from "@/widgets/Header/ui/Header";
 import { Navigation } from "@/widgets/Navigation/";
 import { ThemeProvider } from "next-themes";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
+  const queryClient = new QueryClient();
+
   return (
     <>
       <ThemeProvider
@@ -23,15 +28,18 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
       >
         <AuthProvider>
           <ModalProvider>
-            <CollectionProvider>
-              <UserProvider>
-                <CommonWrapper>
-                  <Header />
-                  {children}
-                  <ModalRenderer />
-                </CommonWrapper>
-              </UserProvider>
-            </CollectionProvider>
+            <QueryClientProvider client={queryClient}>
+              <CollectionProvider>
+                <UserProvider>
+                  <CommonWrapper>
+                    <Header />
+                    {children}
+                    <ReactQueryDevtools initialIsOpen={false} />
+                    <ModalRenderer />
+                  </CommonWrapper>
+                </UserProvider>
+              </CollectionProvider>
+            </QueryClientProvider>
             <Navigation />
           </ModalProvider>
         </AuthProvider>

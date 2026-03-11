@@ -1,15 +1,17 @@
-import React from "react";
+"use client";
+
 
 import type { FC } from "react";
 
-import { Rating } from "@/features/RenderStarRating";
-import { ratingMock } from "@/features/RenderStarRating";
-
-import { FilmWrapper, FilmCover } from "entities/film";
+import { useTopMovies } from "@/entities/movie";
 
 const Page: FC = () => {
+  const topMovies = useTopMovies();
+
+  console.log(topMovies.data, "qwertj")
+
   return (
-    <FilmWrapper items={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}/>
+    null
   );
 };
 

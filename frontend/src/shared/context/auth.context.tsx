@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isTemporaryLogged, setIsTemporaryLogged] = useState<boolean>(true);
 
   const callAuthError = () =>
-    toast.error("При авторазации произошла ошибка попробуйте позже");
+    toast.error("При авторbизации произошла ошибка попробуйте позже");
 
   const temporaryToken = useCallback(async () => {
     try {

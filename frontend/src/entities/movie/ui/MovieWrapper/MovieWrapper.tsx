@@ -1,14 +1,14 @@
 import React from "react";
 
-import styles from "./FilmWrapper.module.css";
+import styles from "./MovieWrapper.module.css"
 
-import { FilmCover } from "./FilmCover";
+import { MovieCover } from "../FilmCover";
 
 interface Props {
   items: number[] | undefined;
 }
 
-export const FilmWrapper: React.FC<Props> = ({ items }) => {
+export const MovieWrapper: React.FC<Props> = ({ items }) => {
   if (!items || items.length < 1)
     return (
       <div>
@@ -22,9 +22,9 @@ export const FilmWrapper: React.FC<Props> = ({ items }) => {
 
   return (
     <div className={styles.FilmWrapper}>
-      {items.map((id, index) => (
-        <FilmCover filmId={id} key={`film-cover-${id + index}`} />
-      ))}
+      {/* {items.map((id, index) => (
+        <MovieCover filmId={id} key={`film-cover-${id + index}`} />
+      ))} */}
     </div>
   );
 };

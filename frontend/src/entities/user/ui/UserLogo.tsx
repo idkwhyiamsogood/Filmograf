@@ -8,11 +8,10 @@ interface Props {
 }
 
 export const UserLogo: React.FC<Props> = ({ logo }) => {
-  const logoURL = getValidURL(logo);
 
   return (
     <Avatar>
-      <AvatarImage src={logoURL} alt="user-log" />
+      <AvatarImage src={logo} alt="user-log" />
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   );

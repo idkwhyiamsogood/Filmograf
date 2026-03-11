@@ -1,6 +1,6 @@
 import React from "react";
 
-import { getValidURL, getDaysFromReg } from "@/shared/lib";
+import { getDaysFromReg } from "@/shared/lib";
 
 import type { IUser } from "../model/types";
 import { UserLogo } from "./UserLogo";
@@ -16,8 +16,6 @@ interface Props {
 export const UserFull: React.FC<Props> = ({ user, isComment = true, openModal }) => {
   if (user.userType === "Guest") return <TemporaryUserFull user={user} onClick={openModal}/>;
 
-  const validURL = getValidURL(user.avatarURL);
-
   return (
     <div className="flex gap-2 items-center justify-between">
       <div>
@@ -29,7 +27,7 @@ export const UserFull: React.FC<Props> = ({ user, isComment = true, openModal })
         )}
       </div>
 
-      <UserLogo logo={validURL} />
+      <UserLogo logo={user.avatarURL} />
     </div>
   );
 };

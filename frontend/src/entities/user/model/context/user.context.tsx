@@ -60,7 +60,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setCurrentUser();
-  }, [token, user]);
+  }, [token]);
 
   return (
     <UserContext.Provider

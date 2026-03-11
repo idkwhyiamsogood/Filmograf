@@ -1,4 +1,4 @@
-import { Review } from "entities/film";
+import { Review } from "@/entities/movie";
 
 export const mock: Record<Review, number | undefined>[] = [
   {

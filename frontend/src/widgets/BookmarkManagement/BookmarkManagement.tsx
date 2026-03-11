@@ -1,6 +1,6 @@
 "use client";
 
-import { FilmWrapper } from 'entities/film';
+import { FilmWrapper } from '@/entities/movie';
 import React, { memo, useState } from 'react';
 
 import { useCollections } from 'entities/collection';

@@ -2,15 +2,15 @@
 import type { FC } from "react";
 
 // enums
-import { Review } from "entities/film";
+import { Review } from "@/entities/movie";
 
 // components
 import { RatingItem } from "./RatingItem";
 
 // icons
+import IMDB from "@/public/imdb.png";
+import Kinopoisk from "@/public/kp.png";
 import { User } from "lucide-react";
-import IMDB from "@/public/imdb.png"
-import Kinopoisk from "@/public/kp.png"
 
 interface Props {
   data: Record<Review, number | undefined>[]
