@@ -19,13 +19,14 @@ public class MoviesParserService
         _parsingPlannerCache = parsingPlannerCache;
     }
 
-    public async Task ParseMoviesAsync(string chartType, string url)
+    public async Task ParseMoviesAsync(string chartType, string url, bool distinct = true, bool updateTopPick = true)
     {
         var request = new ParseTopFilmsIntegrationRequest
         {
             Source = chartType,
             Url = url,
-            SendDistinctRequest = true
+            SendDistinctRequest = distinct,
+            SendUpdateTopPickRequest = updateTopPick
         };
         
         await _rabbitMqService.SendNoReplyAsync("parse_top_films", "movies_to_parser", request);

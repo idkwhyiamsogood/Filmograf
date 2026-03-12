@@ -60,3 +60,7 @@ backend/shared/env.docker.json
 /backend/CommentsService/bin
 /backend/CommentsService/obj
 /backend/BaseLibrary/obj
+/backend/BaseLibrary/obj
+/backend/CollectionsService/.idea
+/backend/CollectionsService/bin
+/backend/CollectionsService/obj

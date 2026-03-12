@@ -13,6 +13,7 @@ using StackExchange.Redis;
 using Filmograf.ParsingService.Services;
 using Filmograf.ParsingService.Services.IMDb;
 using Filmograf.ParsingService.Services.Integrations;
+using Filmograf.ParsingService.Services.Kinopoisk;
 using Filmograf.ParsingService.Services.Middlewares;
 using Filmograf.ParsingService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -152,6 +153,7 @@ public class Program
         builder.Services.AddScoped<MoviesParserService>();
         builder.Services.AddScoped<IMDbParserService>();
         builder.Services.AddScoped<IMDbDetailsParserService>();
+        builder.Services.AddScoped<KinopoiskParserService>();
         
         // providers
         // ...

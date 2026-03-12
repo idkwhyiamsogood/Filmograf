@@ -17,10 +17,10 @@ public class FeedController : CustomControllerBase
     }
     
     [Admin]
-    [HttpPost("from-imdb")]
-    public async Task<ActionResult> FeedFromIMDbAsync([FromBody] FeedMoviesDto data)
+    [HttpPost]
+    public async Task<ActionResult> FeedAsync([FromBody] FeedMoviesDto data)
     {
-        await _moviesParserService.ParseMoviesAsync("IMDb", data.Url);
+        await _moviesParserService.ParseMoviesAsync(data.Source, data.Url, true, false);
         return Ok();
     }
 }
