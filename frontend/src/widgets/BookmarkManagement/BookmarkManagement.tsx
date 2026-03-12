@@ -18,7 +18,7 @@ export const BookmarkManagement: React.FC = memo(() => {
   return (
     <div className='flex flex-col gap-5'>
       <CollectionSelector selected={selected} setSelected={setSelected}/>
-      <MovieWrapper items={items}/>
+      {/* <MovieWrapper items={items}/> */}
     </div>
   );
 });

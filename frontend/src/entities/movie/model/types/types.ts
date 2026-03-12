@@ -3,7 +3,7 @@ import { BaseModel } from "@/shared/types";
 export enum Review {
   IMDB,
   Kinopoisk,
-  my,
+  Film,
 }
 
 // movie genres
@@ -22,5 +22,5 @@ export interface IMovie extends BaseModel {
   movieLink: string;
   genresIds: string[];
 
-  // todo
+  rates: Record<Review, number>
 };

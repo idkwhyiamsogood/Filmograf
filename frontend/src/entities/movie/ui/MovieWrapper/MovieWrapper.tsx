@@ -4,12 +4,15 @@ import styles from "./MovieWrapper.module.css"
 
 import { MovieCover } from "../FilmCover";
 
+import type { IMovie } from "../../model/types/types";
+
 interface Props {
-  items: number[] | undefined;
+  movies: IMovie[];
+  isLoading: boolean;
 }
 
-export const MovieWrapper: React.FC<Props> = ({ items }) => {
-  if (!items || items.length < 1)
+export const MovieWrapper: React.FC<Props> = ({ movies, isLoading}) => {
+  if (!movies || movies.length < 1)
     return (
       <div>
         <p className="text-lg">В данной коллекции пока еще нет фильмов.</p>
@@ -22,9 +25,9 @@ export const MovieWrapper: React.FC<Props> = ({ items }) => {
 
   return (
     <div className={styles.FilmWrapper}>
-      {/* {items.map((id, index) => (
-        <MovieCover filmId={id} key={`film-cover-${id + index}`} />
-      ))} */}
+      {movies.map((movie) => (
+        <MovieCover movie={movie} key={`film-cover-${movie.id}`} isLoading={isLoading}/>
+      ))}
     </div>
   );
 };

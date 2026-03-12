@@ -7,8 +7,16 @@
   gap: 5px;
 }
 
+@media (min-width: 640px) {
+  .FilmWrapper {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+/* 
 @media (max-width: 390px) {
   .FilmWrapper {
     grid-template-columns: repeat(2, 1fr);
   }
-}
+} */
