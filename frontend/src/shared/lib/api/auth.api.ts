@@ -17,21 +17,12 @@ class AuthApi extends TokenApi {
     return this.post("/api/auth/verify-idempotence-code", { code });
   };
 
-  public getAuthStatus = async (): ApiResponse<any> => {
+  public getAuthStatus = async (): ApiResponse<boolean> => {
     return this.get("/api/auth/status");
   };
 
   public logout = (): void => {
     this.clearAccessToken();
-  };
-
-  public isAuthenticated = async (): Promise<boolean> => {
-    try {
-      await this.getAuthStatus();
-      return true;
-    } catch {
-      return false;
-    }
   };
 }
 

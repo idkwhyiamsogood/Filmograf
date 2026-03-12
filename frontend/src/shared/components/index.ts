@@ -1,6 +1,7 @@
 // common
 export { CommonDropdownMenu } from "./common/CommonDropdownMenu";
 export { CommonWrapper } from "./common/CommonWrapper";
+export { CommonSwiper } from "./common/CommonSwiper";
 
 // modals
 export { ConfirmationModal } from "./modals/ConfirmationModal";

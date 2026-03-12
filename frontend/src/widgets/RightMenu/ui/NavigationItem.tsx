@@ -25,7 +25,7 @@ export const NavigationItem: React.FC<Props> = ({ item, onClick }) => {
   return (
     <div className="w-full">
       <div
-        className="group relative flex items-center py-2.5 cursor-pointer justify-between w-full hover:bg-gray-50 transition-colors"
+        className="group relative flex items-center py-2.5 cursor-pointer justify-between w-full hover:bg-muted transition-colors"
         onClick={(e) => handleClick(e, item.id)}
       >
         <div className="flex gap-3 items-center">
@@ -45,7 +45,7 @@ export const NavigationItem: React.FC<Props> = ({ item, onClick }) => {
       </div>
 
       {item.childs && isExpanded && (
-        <div className="flex flex-col pl-2">
+        <div className="flex flex-col pl-5">
           {item.childs.map((childItem) => (
             <NavigationItem
               key={childItem.id}

@@ -12,6 +12,8 @@ import type { JWT } from "../types";
 
 import { toast } from "sonner";
 
+// todo refresh token function
+
 interface AuthContextType {
   token: JWT;
   isTemporaryLogged: boolean;

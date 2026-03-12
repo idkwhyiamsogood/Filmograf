@@ -53,7 +53,8 @@ export const MovieCover: React.FC<Props> = memo(({ movie, isLoading }) => {
                 height={300}
               /> */}
               <Badge
-                className="absolute bottom-1.5 right-1.5 bg-accent-foreground"
+                variant={"secondary"}
+                className="absolute bottom-1.5 right-1.5"
               >
                 {getAverageGrade(movie.rates)}
               </Badge>
