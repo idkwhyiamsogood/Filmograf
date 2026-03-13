@@ -1,4 +1,5 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.SearchService.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,19 +11,29 @@ public class SearchController : CustomControllerBase
 {
     
     private readonly MovieRepository _movieRepository;
+    private readonly CollectionRepository _collecRepository;
     
-    public SearchController(MovieRepository movieRepository)
+    
+    public SearchController(MovieRepository movieRepository, CollectionRepository collecRepository)
     {
         _movieRepository = movieRepository;
+        _collecRepository = collecRepository;
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult> SearchAsync([FromQuery] string query)
+    //todo to separate layer 
+    public async Task<ActionResult<SearchResponseDto>> SearchAsync([FromQuery] string query)
     {
-        var data = await _movieRepository.GetByNameAsync(query);
+        var moviesTask = _movieRepository.GetByNameAsync(query);
+        var collectionsTask = _collecRepository.GetByNameAsync(query);
         
-        var sortedData = data
+        await Task.WhenAll(moviesTask, collectionsTask);
+        
+        var movies = await moviesTask;
+        var collections = await collectionsTask;
+        
+        var sortedMovies = movies
             .Select(m => new
             {
                 Movie = m,
@@ -33,7 +44,48 @@ public class SearchController : CustomControllerBase
             .ThenBy(x => x.Movie.Name.Length) // При равной позиции - более короткие названия
             .Select(x => x.Movie)
             .ToList();
-    
-        return Ok(sortedData);
+        
+        var sortedCollections = collections
+            .Select(m => new
+            {
+                Movie = m,
+                Index = m.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
+            })
+            .Where(x => x.Index >= 0)
+            .OrderBy(x => x.Index) 
+            .ThenBy(x => x.Movie.Name.Length) 
+            .Select(x => x.Movie)
+            .ToList();
+        
+        var response = new SearchResponseDto
+        {
+            Parts = new[]
+            {
+                new SearchPartResponseDto
+                {
+                    Type = SearchPartType.Movie,
+                    EntityIds = sortedMovies.Select(m => m.Id).ToArray()
+                },
+                new SearchPartResponseDto
+                {
+                    Type = SearchPartType.Collection,
+                    EntityIds = sortedCollections.Select(c => c.Id).ToArray()
+                }
+            }
+        };
+
+        return Ok(response);
     }
+
+    
+    
+    //todo поиск тегов
+    
+    
+    
+    //todo поиск в кеше
+    
+    
+    
+    //todo сокеты
 }
