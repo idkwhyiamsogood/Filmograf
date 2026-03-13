@@ -11,10 +11,10 @@ public class MoviesCaching : CachingProviderBase<MovieResponseDto>
     
     public MoviesCaching(IConnectionMultiplexer redis) : base(redis, "movies")
     {
-        _cachingTopPickAtomic = new CachingProviderAtomic<IEnumerable<MovieResponseDto>>(redis, $"movies:top-pick");
+        _cachingTopPickAtomic = new CachingProviderAtomic<IEnumerable<MovieResponseDto>>(redis, $"{_baseKey}:top-pick");
     }
 
-    private string MakeKey(string topPickName, PaginationQueryDto pagination)
+    private string MakeTopPickKey(string topPickName, PaginationQueryDto pagination)
     {
         var paginationHash = pagination.ToString();
         return _cachingTopPickAtomic.MakeIdKey($"{topPickName}:{paginationHash}");
@@ -23,21 +23,21 @@ public class MoviesCaching : CachingProviderBase<MovieResponseDto>
     public virtual async Task<IEnumerable<MovieResponseDto>> CachingTopPickAsync(string topPickName, PaginationQueryDto pagination, 
         Func<Task<IEnumerable<MovieResponseDto>>> createItem)
     {
-        var key = MakeKey(topPickName, pagination);
+        var key = MakeTopPickKey(topPickName, pagination);
         return await _cachingTopPickAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
     }
 
     public async Task ResetCachingTopPickAsync(string topPickName, PaginationQueryDto pagination, 
         Func<Task<IEnumerable<MovieResponseDto>>> createItem)
     {
-        var key = MakeKey(topPickName, pagination);
+        var key = MakeTopPickKey(topPickName, pagination);
         var payloadData = await createItem();
         await _cachingTopPickAtomic.CreateAsync(key, payloadData, DefaultExpirationTime);
     }
 
     public async Task<bool> RemoveCachingTopPickAsync(string topPickName, PaginationQueryDto pagination)
     {
-        var key = MakeKey(topPickName, pagination);
+        var key = MakeTopPickKey(topPickName, pagination);
         return await _cachingTopPickAtomic.RemoveAsync(key);
     }
 

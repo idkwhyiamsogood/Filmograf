@@ -5,6 +5,7 @@ using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.MoviesService.Caching;
 using Filmograf.MoviesService.Models.Dto;
+using Filmograf.MoviesService.Services.MovieRates;
 
 namespace Filmograf.MoviesService.Services;
 
@@ -13,10 +14,14 @@ public class MoviesService
     private readonly MovieRepository _movieRepository;
     private readonly MoviesCaching _moviesCaching;
     private readonly IMapper _mapper;
-    public MoviesService(MovieRepository movieRepository, MoviesCaching moviesCaching, IMapper mapper)
+    private readonly MovieRateService _movieRateService;
+    
+    public MoviesService(MovieRepository movieRepository, MoviesCaching moviesCaching, MovieRateService movieRateService, 
+        IMapper mapper)
     {
         _movieRepository = movieRepository;
         _moviesCaching = moviesCaching;
+        _movieRateService = movieRateService;
         _mapper = mapper;
     }
 
@@ -70,6 +75,14 @@ public class MoviesService
 
     public async Task<MovieResponseDto> GetByUserAsync(string movieId, User user)
     {
-        return await GetMovieResponseAsync(movieId);
+        var movieRateTask = _movieRateService.GetByUserAsync(user.Id, movieId);
+        var movieResponseTask = GetMovieResponseAsync(movieId);
+
+        await Task.WhenAll(movieRateTask, movieResponseTask);
+        var movieRate = movieRateTask.Result;
+        var movieResponse = movieResponseTask.Result;
+
+        movieResponse.Rates["ByUser"] = movieRate?.Rate ?? -1;
+        return movieResponse;
     }
 }
