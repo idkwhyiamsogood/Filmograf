@@ -7,12 +7,13 @@ namespace Filmograf.BaseLibrary.Models.Repo;
 
 public class CollectionRepo : RepoBase
 {
+    public string? SourceCollectionId { get; set; }
+    
     [MaxLength(128)]
     public string Name { get; set; }
     
     [Required]
     public Guid UserId { get; set; }
-    public User User { get; set; }
     
     public Guid[] Movies { get; set; }
     public Guid[] Tags { get; set; }
@@ -22,4 +23,10 @@ public class CollectionRepo : RepoBase
     
     [DefaultValue(false)]
     public bool IsCommentable { get; set; } = false;
+    
+    [DefaultValue(false)]
+    public bool IsCopiable { get; set; } = false;
+    
+    [DefaultValue(false)]
+    public bool IsByFilmograf { get; set; } = false;
 }

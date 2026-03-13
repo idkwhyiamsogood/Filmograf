@@ -8,6 +8,7 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.MoviesService.Caching;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
@@ -183,6 +184,7 @@ public class Program
         builder.Services.AddScoped<GenreProvider>();
         builder.Services.AddScoped<AuthProvider>();
         builder.Services.AddScoped<UserProvider>();
+        builder.Services.AddScoped<CollectionTagProvider>();
         
         // repositories
         builder.Services.AddScoped<CommentRepository>();
@@ -191,6 +193,7 @@ public class Program
         
         // cache
         builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<CollectionTagsCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

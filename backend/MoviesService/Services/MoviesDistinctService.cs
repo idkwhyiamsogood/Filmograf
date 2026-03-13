@@ -71,13 +71,53 @@ public class MoviesDistinctService
 
     public async Task DistinctMoviesAsync(string source, IEnumerable<RawMovieInfo> movies)
     {
-        // тут будут лежать фильмы, у которых нужно дополнительно инфу спарсить
-        // ну условно: жанры, описание и фотокарточка фулл качества - это только на странице отдельного фильма
-        List<MovieRepo> fetchMovies = new List<MovieRepo>();
+        var rawMovies = movies.ToList();
+        var fetchMovies = new List<MovieRepo>();
+        var moviesToInsert = new List<MovieRepo>();
 
-        foreach (var movie in movies)
+        // получаем все уникальные имена и годы из входящего списка, чтобы проверить их одним запросом
+        var names = rawMovies.Select(m => m.Name).Distinct().ToList();
+        var years = rawMovies.Select(m => m.Year).Distinct().ToList();
+
+        // вытягиваем из базы все фильмы, которые уже есть
+        var existingMovies = await _movieRepository.GetByNamesAndYearsAsync(names, years);
+
+        foreach (var movieData in rawMovies)
         {
-             await CheckMovieAsync(movie, fetchMovies);
+            // Ищем в памяти среди загруженных из БД
+            var realMovie = existingMovies.FirstOrDefault(x => 
+                x.Name == movieData.Name && x.Year == movieData.Year);
+
+            if (realMovie != null)
+            {
+                if (CheckIfEmptyFields(realMovie))
+                    fetchMovies.Add(realMovie);
+                continue;
+            }
+
+            // если в БД нет - создаем
+            var newMovie = new MovieRepo
+            {
+                Id = MongoDbUtil.GenerateNewId(),
+                Name = movieData.Name,
+                Description = movieData.Description,
+                Year = movieData.Year,
+                AgeLimit = movieData.AgeLimit,
+                Time = movieData.Time,
+                ImageUrl = movieData.ImageUrl,
+                MovieLink = movieData.MovieLink,
+                RateIMDb = movieData.Rate,
+                GenreIds = null
+            };
+
+            moviesToInsert.Add(newMovie);
+            fetchMovies.Add(newMovie);
+        }
+
+        // вставка новых фильмов
+        if (moviesToInsert.Any())
+        {
+            await _movieRepository.CreateManyAsync(moviesToInsert);
         }
 
         var request = new ParseFilmsDetailsIntegrationRequest

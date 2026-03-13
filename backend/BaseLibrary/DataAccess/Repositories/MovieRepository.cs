@@ -18,4 +18,18 @@ public class MovieRepository : RepositoryBase<MovieRepo>
                 x.Year == year)
             .FirstOrDefaultAsync(ct);
     }
+    
+    public async Task<List<MovieRepo>> GetByNamesAndYearsAsync(List<string> names, List<string> years)
+    {
+        var filter = Builders<MovieRepo>.Filter.And(
+            Builders<MovieRepo>.Filter.In(x => x.Name, names),
+            Builders<MovieRepo>.Filter.In(x => x.Year, years)
+        );
+        return await _collection.Find(filter).ToListAsync();
+    }
+
+    public async Task CreateManyAsync(IEnumerable<MovieRepo> items)
+    {
+        await _collection.InsertManyAsync(items);
+    }
 }

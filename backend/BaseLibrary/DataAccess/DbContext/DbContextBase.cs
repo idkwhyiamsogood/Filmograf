@@ -9,6 +9,7 @@ public class DbContextBase : Microsoft.EntityFrameworkCore.DbContext
 {
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Genre> Genres { get; set; } = null!;
+    public DbSet<CollectionTag> CollectionTags { get; set; } = null!;
 
     public static DbContextBase MakeInstance() =>
         new DbContextBase();
