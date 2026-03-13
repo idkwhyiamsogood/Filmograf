@@ -12,13 +12,16 @@ public class MovieRateService
 {
     private readonly MovieRateCaching _movieRateCaching;
     private readonly MovieRateRepository _movieRateRepository;
+    private readonly MoviesCaching _moviesCaching;
     private readonly IMapper _mapper;
     
-    public MovieRateService(MovieRateCaching movieRateCaching, MovieRateRepository movieRateRepository, IMapper mapper)
+    public MovieRateService(MovieRateCaching movieRateCaching, MovieRateRepository movieRateRepository, IMapper mapper,
+        MoviesCaching moviesCaching)
     {
         _movieRateCaching = movieRateCaching;
         _movieRateRepository = movieRateRepository;
         _mapper = mapper;
+        _moviesCaching = moviesCaching;
     }
 
     private async Task<IEnumerable<MovieRateResponseDto>> CreateCacheForUserAllAsync(Guid userId)
@@ -32,12 +35,33 @@ public class MovieRateService
         var method = async () => await CreateCacheForUserAllAsync(userId);
         return await _movieRateCaching.CachingUserAllAsync(userId, method);
     }
+    
+    
+    private async Task<IEnumerable<RateMovieRequestDto>> CreateCacheForMovieAsync(string movieId)
+    {
+        var data = await _movieRateRepository.GetMovieRatesAsync(movieId);
+        return _mapper.Map<RateMovieRequestDto[]>(data);
+    }
+
+    public async Task<IEnumerable<RateMovieRequestDto>> ListByMovieAsync(string movieId)
+    {
+        var method = async () => await CreateCacheForMovieAsync(movieId);
+        return await _movieRateCaching.CachingByMovieAsync(movieId, method);
+    }
+
+    public async Task<float> CalcRateForMovieAsync(string movieId)
+    {
+        var movieRates = await ListByMovieAsync(movieId);
+        if (movieRates == null || !movieRates.Any()) return -1;
+
+        return (float)movieRates.Average(m => m.Rate);
+    }
 
 
     private async Task<MovieRateRepo> CreateCacheForUserAsync(Guid userId, string movieId)
     {
         var userRate = await _movieRateRepository.GetByUserAndMovieAsync(userId, movieId);
-        if (userRate == null) throw new NotFoundHttpException("NotFound",
+        if (userRate == null) throw new NotFoundHttpException("NotFound", 
             $"Rate for movie with id={movieId} by user with id={userId} not found.");
 
         return userRate;
@@ -58,8 +82,12 @@ public class MovieRateService
 
     public async Task DeleteCacheForUserAsync(Guid userId, string movieId)
     {
-        await _movieRateCaching.RemoveCachingUserAllAsync(userId);
-        await _movieRateCaching.RemoveCachingUserMovieAsync(userId, movieId);
+        await Task.WhenAll 
+        (
+            _movieRateCaching.RemoveCachingUserAllAsync(userId),
+            _movieRateCaching.RemoveCachingByMovieAsync(movieId),
+            _movieRateCaching.RemoveCachingUserMovieAsync(userId, movieId)
+        );
     }
 
     public async Task RateMovieAsync(string movieId, Guid userId, int rate)
@@ -79,6 +107,9 @@ public class MovieRateService
             // удаляем кеш
             await DeleteCacheForUserAsync(userId, movieId);
             
+            // удаляем кеш отдлельного фильма
+            await _moviesCaching.RemoveCachingAsync(movieId);
+            
             return;
         }
         
@@ -95,5 +126,8 @@ public class MovieRateService
         
         // удаляем кеш
         await DeleteCacheForUserAsync(userId, movieId);
+            
+        // удаляем кеш отдлельного фильма
+        await _moviesCaching.RemoveCachingAsync(movieId);
     }
 }

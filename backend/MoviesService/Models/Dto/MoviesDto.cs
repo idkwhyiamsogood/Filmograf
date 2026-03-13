@@ -2,7 +2,7 @@
 
 public class MoviesListResponseDto
 {
-    public string Ids { get; set; }
+    public string[] Ids { get; set; }
 }
 
 public class MovieResponseDto

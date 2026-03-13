@@ -206,6 +206,7 @@ public class Program
         builder.Services.AddScoped<UserCaching>();
         builder.Services.AddScoped<MoviesCaching>();
         builder.Services.AddScoped<ParsingPlannerCache>();
+        builder.Services.AddScoped<MovieRateCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

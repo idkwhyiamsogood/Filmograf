@@ -29,13 +29,13 @@ public class MoviesService
     {
         var dto = _mapper.Map<MovieResponseDto>(movieRepo);
 
-        var filmografRate = 10.0f;
+        var filmografRate = await _movieRateService.CalcRateForMovieAsync(movieRepo.Id);
 
         dto.Rates = new Dictionary<string, float>
         {
             { "IMDb", MathF.Round(movieRepo.RateIMDb, 1) },
             { "Kinopoisk", MathF.Round(movieRepo.RateKinopoisk, 1) },
-            { "Film", filmografRate },
+            { "Film", MathF.Round(filmografRate, 1) },
         };
 
         return dto;
@@ -55,6 +55,7 @@ public class MoviesService
         return await _moviesCaching.CachingAsync(movieId, method);
     }
 
+    // todo: caching
     public async Task<IEnumerable<MovieResponseDto>> ListManyMovieResponsesAsync(IEnumerable<string> ids)
     {
         List<MovieResponseDto> outputValue = new List<MovieResponseDto>();

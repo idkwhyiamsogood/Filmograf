@@ -2,14 +2,14 @@
 
 namespace Filmograf.MoviesService.Models.Dto;
 
-public class MovieRateResponseDto
+public class RateMovieRequestDto
 {
     [Required]
     [Range(minimum: 1, maximum: 10)]
     public int Rate { get; set; }
 }
 
-public class RateMovieRequestDto
+public class MovieRateResponseDto
 {
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }

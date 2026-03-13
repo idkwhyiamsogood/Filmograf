@@ -9,6 +9,7 @@ public class MovieRateCaching
 {
     protected readonly CachingProviderAtomic<MovieRateRepo> _cachingByUserAtomic;
     protected readonly CachingProviderAtomic<IEnumerable<MovieRateResponseDto>> _cachingAllByUserAtomic;
+    protected readonly CachingProviderAtomic<IEnumerable<RateMovieRequestDto>> _cachingByMovieAtomic;
     protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(1, 0, 0);
     protected readonly IConnectionMultiplexer _redis;
     protected readonly string _baseKey = "movies-rates";
@@ -17,6 +18,7 @@ public class MovieRateCaching
     {
         _cachingByUserAtomic = new CachingProviderAtomic<MovieRateRepo>(redis, $"{_baseKey}:byUser");
         _cachingAllByUserAtomic = new CachingProviderAtomic<IEnumerable<MovieRateResponseDto>>(redis, $"{_baseKey}:byUser:all");
+        _cachingByMovieAtomic = new CachingProviderAtomic<IEnumerable<RateMovieRequestDto>>(redis, $"{_baseKey}:byMovie");
     }
     
     private string MakeUserMovieKey(Guid userId, string movieId)
@@ -56,7 +58,6 @@ public class MovieRateCaching
     }
     
     
-    
     private string MakeUserKey(Guid userId)
     {
         return _cachingAllByUserAtomic.MakeIdKey($"{userId.ToString()}");
@@ -81,5 +82,32 @@ public class MovieRateCaching
     {
         var key = MakeUserKey(userId);
         return await _cachingAllByUserAtomic.RemoveAsync(key);
+    }
+
+
+    private string MakeMovieKey(string movieId)
+    {
+        return _cachingByMovieAtomic.MakeIdKey($"{movieId}");
+    }
+    
+    public virtual async Task<IEnumerable<RateMovieRequestDto>> CachingByMovieAsync(string movieId, 
+        Func<Task<IEnumerable<RateMovieRequestDto>>> createItem)
+    {
+        var key = MakeMovieKey(movieId);
+        return await _cachingByMovieAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
+    }
+
+    public async Task ResetCachingByMovieAsync(string movieId, 
+        Func<Task<IEnumerable<RateMovieRequestDto>>> createItem)
+    {
+        var key = MakeMovieKey(movieId);
+        var payloadData = await createItem();
+        await _cachingByMovieAtomic.CreateAsync(key, payloadData, DefaultExpirationTime);
+    }
+
+    public async Task<bool> RemoveCachingByMovieAsync(string movieId)
+    {
+        var key = MakeMovieKey(movieId);
+        return await _cachingByMovieAtomic.RemoveAsync(key);
     }
 }

@@ -7,11 +7,11 @@ namespace Filmograf.MoviesService.Caching;
 
 public class MoviesCaching : CachingProviderBase<MovieResponseDto>
 {
-    protected readonly CachingProviderAtomic<IEnumerable<MovieResponseDto>> _cachingTopPickAtomic;
+    protected readonly CachingProviderAtomic<MoviesListResponseDto> _cachingTopPickAtomic;
     
     public MoviesCaching(IConnectionMultiplexer redis) : base(redis, "movies")
     {
-        _cachingTopPickAtomic = new CachingProviderAtomic<IEnumerable<MovieResponseDto>>(redis, $"{_baseKey}:top-pick");
+        _cachingTopPickAtomic = new CachingProviderAtomic<MoviesListResponseDto>(redis, $"{_baseKey}:top-pick");
     }
 
     private string MakeTopPickKey(string topPickName, PaginationQueryDto pagination)
@@ -20,15 +20,15 @@ public class MoviesCaching : CachingProviderBase<MovieResponseDto>
         return _cachingTopPickAtomic.MakeIdKey($"{topPickName}:{paginationHash}");
     }
     
-    public virtual async Task<IEnumerable<MovieResponseDto>> CachingTopPickAsync(string topPickName, PaginationQueryDto pagination, 
-        Func<Task<IEnumerable<MovieResponseDto>>> createItem)
+    public virtual async Task<MoviesListResponseDto> CachingTopPickAsync(string topPickName, PaginationQueryDto pagination, 
+        Func<Task<MoviesListResponseDto>> createItem)
     {
         var key = MakeTopPickKey(topPickName, pagination);
         return await _cachingTopPickAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
     }
 
     public async Task ResetCachingTopPickAsync(string topPickName, PaginationQueryDto pagination, 
-        Func<Task<IEnumerable<MovieResponseDto>>> createItem)
+        Func<Task<MoviesListResponseDto>> createItem)
     {
         var key = MakeTopPickKey(topPickName, pagination);
         var payloadData = await createItem();
@@ -43,7 +43,7 @@ public class MoviesCaching : CachingProviderBase<MovieResponseDto>
 
     public async Task<long> RemoveCachingTopPickRootAsync(string topPickName)
     {
-        var topPickTempSpecificAtomic = new CachingProviderAtomic<MovieResponseDto>(
+        var topPickTempSpecificAtomic = new CachingProviderAtomic<MoviesListResponseDto>(
             _redis, 
             $"movies:top-pick:{topPickName}"
         );

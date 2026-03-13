@@ -22,7 +22,7 @@ public class MoviesController : CustomControllerBase
 
     [HttpGet("top")]
     [UserTypePolicy]
-    public async Task<ActionResult<List<MovieResponseDto>>> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
+    public async Task<ActionResult<MoviesListResponseDto>> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
     {
         var result = await _movieTopPicksService.GetFromChartAsync(pagination);
         return Ok(result);
@@ -36,7 +36,7 @@ public class MoviesController : CustomControllerBase
         return Ok(result);
     }
 
-    [HttpPost("batch")]
+    [HttpPost("batch-many")]
     [UserTypePolicy]
     public async Task<ActionResult<List<MovieResponseDto>>> BatchMoviesAsync([FromBody] BatchMoviesRequestDto data)
     {

@@ -19,7 +19,7 @@ public class MovieRateController : CustomControllerBase
 
     [HttpGet("my")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<List<RateMovieRequestDto>>> ListMyRatesAsync([FromServices] AuthContext authContext)
+    public async Task<ActionResult<List<MovieRateResponseDto>>> ListMyRatesAsync([FromServices] AuthContext authContext)
     {
         var result = await _movieRateService.ListByUserAsync(authContext.CurrentUser!.Id);
         return Ok(result);
@@ -28,7 +28,7 @@ public class MovieRateController : CustomControllerBase
     [HttpPut("{movieId}")]
     [UserTypePolicy(Guest = false)]
     public async Task<ActionResult> RateMovieAsync(string movieId, [FromServices] AuthContext authContext, 
-        [FromBody] MovieRateResponseDto data)
+        [FromBody] RateMovieRequestDto data)
     {
         await _movieRateService.RateMovieAsync(movieId, authContext.CurrentUser!.Id, data.Rate);
         return NoContent();
