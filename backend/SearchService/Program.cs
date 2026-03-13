@@ -28,7 +28,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
-        LocalAppSettingsUtil.LoadAppSettingsData();
+        //LocalAppSettingsUtil.LoadAppSettingsData();
         
         // Add services to the container.
         builder.Services.AddControllers();
@@ -178,7 +178,7 @@ public class Program
         builder.Services.AddScoped<UserProvider>();
         
         // repositories
-        // ...
+        builder.Services.AddScoped<MovieRepository>();
         
         // cache
         builder.Services.AddScoped<UserCaching>();
