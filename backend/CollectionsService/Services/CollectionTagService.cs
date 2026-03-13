@@ -2,10 +2,10 @@
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Entities;
-using Filmograf.MoviesService.Caching;
-using Filmograf.MoviesService.Models.Dto;
+using Filmograf.CollectionsService.Caching;
+using Filmograf.CollectionsService.Models.Dto;
 
-namespace Filmograf.MoviesService.Services.Tags;
+namespace Filmograf.CollectionsService.Services.Tags;
 
 public class CollectionTagService
 {

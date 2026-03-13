@@ -8,21 +8,22 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
-using Filmograf.MoviesService.Caching;
+using Filmograf.CollectionsService.Caching;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
-using Filmograf.MoviesService.Services;
-using Filmograf.MoviesService.Services.Integrations;
-using Filmograf.MoviesService.Services.Middlewares;
-using Filmograf.MoviesService.Util;
+using Filmograf.CollectionsService.Services;
+using Filmograf.CollectionsService.Services.Integrations;
+using Filmograf.CollectionsService.Services.Middlewares;
+using Filmograf.CollectionsService.Services.Tags;
+using Filmograf.CollectionsService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Filmograf.MoviesService;
+namespace Filmograf.CollectionsService;
 
 public class Program
 {
@@ -146,7 +147,7 @@ public class Program
         });
 
         builder.Services.AddScoped<MovieRepository>();
-        // builder.Services.AddHostedService<MongoIndexService>();
+        builder.Services.AddHostedService<MongoIndexService>();
     }
     
     private static void SettingRabbitMQ(WebApplicationBuilder builder)
@@ -179,6 +180,8 @@ public class Program
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<CollectionTagService>();
+        builder.Services.AddScoped<CollectionService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -187,9 +190,8 @@ public class Program
         builder.Services.AddScoped<CollectionTagProvider>();
         
         // repositories
-        builder.Services.AddScoped<CommentRepository>();
-        builder.Services.AddScoped<MovieRepository>();
-        builder.Services.AddScoped<TopPicksRepository>();
+        builder.Services.AddScoped<CollectionRepository>();
+        builder.Services.AddScoped<CollectionPinRepository>();
         
         // cache
         builder.Services.AddScoped<UserCaching>();

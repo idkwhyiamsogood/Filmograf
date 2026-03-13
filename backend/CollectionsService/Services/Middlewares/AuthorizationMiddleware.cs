@@ -5,7 +5,7 @@ using Filmograf.BaseLibrary.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.JsonWebTokens;
 
-namespace Filmograf.MoviesService.Services.Middlewares;
+namespace Filmograf.CollectionsService.Services.Middlewares;
 
 public class AuthorizationMiddleware
 {

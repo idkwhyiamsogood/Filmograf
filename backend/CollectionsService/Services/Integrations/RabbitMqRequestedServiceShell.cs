@@ -1,7 +1,7 @@
 ﻿using Filmograf.BaseLibrary.Integrations.Hosted;
 using Filmograf.BaseLibrary.Integrations.Requested;
 
-namespace Filmograf.MoviesService.Services.Integrations;
+namespace Filmograf.CollectionsService.Services.Integrations;
 
 public class RabbitMqRequestedServiceShell : RabbitMqRequestedServiceBase
 {

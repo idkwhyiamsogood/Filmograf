@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Filmograf.MoviesService.Util;
+namespace Filmograf.CollectionsService.Util;
 
 public class LocalAppSettingsUtil
 {

@@ -1,17 +1,16 @@
-﻿using Filmograf.MoviesService.Attributes;
+﻿using Filmograf.CollectionsService.Attributes;
+using Filmograf.CollectionsService.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Filmograf.MoviesService.Controllers;
+namespace Filmograf.CollectionsService.Controllers;
 
 [ApiController]
 [Route("api/collections")]
 public class CollectionsController : CustomControllerBase
 {
     
-    
     public CollectionsController()
     {
-        
     }
     
     [HttpGet("{collectionId}")]

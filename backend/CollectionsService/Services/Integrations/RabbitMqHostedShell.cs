@@ -2,7 +2,7 @@
 using Filmograf.BaseLibrary.Integrations.Hosted;
 using Filmograf.BaseLibrary.Util;
 
-namespace Filmograf.MoviesService.Services.Integrations;
+namespace Filmograf.CollectionsService.Services.Integrations;
 
 public class RabbitMqHostedService : RabbitMqHostedServiceBase
 {

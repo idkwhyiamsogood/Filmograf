@@ -1,9 +1,9 @@
 ﻿using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.Models.Dto;
-using Filmograf.MoviesService.Models.Dto;
+using Filmograf.CollectionsService.Models.Dto;
 using StackExchange.Redis;
 
-namespace Filmograf.MoviesService.Caching;
+namespace Filmograf.CollectionsService.Caching;
 
 public class CollectionTagsCaching
 {

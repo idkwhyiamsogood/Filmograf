@@ -3,7 +3,7 @@ using System.Text.Json;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Util;
 
-namespace Filmograf.MoviesService.Services.Middlewares;
+namespace Filmograf.CollectionsService.Services.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {

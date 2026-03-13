@@ -1,12 +1,11 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Models.Dto;
-using Filmograf.BaseLibrary.Models.Entities;
-using Filmograf.MoviesService.Attributes;
-using Filmograf.MoviesService.Models.Dto;
-using Filmograf.MoviesService.Services.Tags;
+using Filmograf.CollectionsService.Attributes;
+using Filmograf.CollectionsService.Models.Dto;
+using Filmograf.CollectionsService.Services.Tags;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Filmograf.MoviesService.Controllers;
+namespace Filmograf.CollectionsService.Controllers;
 
 [ApiController]
 [Route("api/collections/tags")]

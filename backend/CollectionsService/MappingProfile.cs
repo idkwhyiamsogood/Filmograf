@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Filmograf.BaseLibrary.Models.Entities;
-using Filmograf.MoviesService.Models.Dto;
+using Filmograf.CollectionsService.Models.Dto;
 
-namespace Filmograf.MoviesService;
+namespace Filmograf.CollectionsService;
 
 public class MappingProfile : Profile
 {

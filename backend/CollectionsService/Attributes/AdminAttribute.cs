@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Filmograf.MoviesService.Attributes;
+namespace Filmograf.CollectionsService.Attributes;
 
 public class AdminAttribute : AuthorizeAttribute, IAuthorizationFilter
 {

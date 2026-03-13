@@ -1,4 +1,4 @@
-﻿namespace Filmograf.MoviesService.Models.Dto;
+﻿namespace Filmograf.CollectionsService.Models.Dto;
 
 public class CollectionTagResponseDto
 {
