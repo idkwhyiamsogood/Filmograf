@@ -17,6 +17,7 @@ using StackExchange.Redis;
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Integrations;
 using Filmograf.MoviesService.Services.Middlewares;
+using Filmograf.MoviesService.Services.MovieRates;
 using Filmograf.MoviesService.Services.Movies;
 using Filmograf.MoviesService.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -187,6 +188,7 @@ public class Program
         builder.Services.AddScoped<MoviesDetailsService>();
         builder.Services.AddScoped<Services.MoviesService>();
         builder.Services.AddScoped<MovieTopPicksService>();
+        builder.Services.AddScoped<MovieRateService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -197,12 +199,14 @@ public class Program
         builder.Services.AddScoped<CommentRepository>();
         builder.Services.AddScoped<MovieRepository>();
         builder.Services.AddScoped<TopPicksRepository>();
+        builder.Services.AddScoped<MovieRateRepository>();
         
         // cache
         builder.Services.AddScoped<GenreCaching>();
         builder.Services.AddScoped<UserCaching>();
         builder.Services.AddScoped<MoviesCaching>();
         builder.Services.AddScoped<ParsingPlannerCache>();
+        builder.Services.AddScoped<MovieRateCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

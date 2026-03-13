@@ -25,14 +25,15 @@ public class AuthProvider
 
         var authJson = JsonConvert.SerializeObject(item);
         var transaction = _redisDb.CreateTransaction();
+        var expired = new TimeSpan(10, 0, 0);
 
         // byId
-        transaction.StringSetAsync($"{AuthByIdPrefix}{item.Id}", authJson);
+        transaction.StringSetAsync($"{AuthByIdPrefix}{item.Id}", authJson, expired);
 
         // byJwt
         if (!string.IsNullOrEmpty(item.Jwt))
         {
-            transaction.StringSetAsync($"{AuthByJwtPrefix}{item.Jwt}", authJson);
+            transaction.StringSetAsync($"{AuthByJwtPrefix}{item.Jwt}", authJson, expired);
         }
 
         // byUser (SET of authIds)

@@ -5,6 +5,7 @@ using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.MoviesService.Caching;
 using Filmograf.MoviesService.Models.Dto;
+using Filmograf.MoviesService.Services.MovieRates;
 
 namespace Filmograf.MoviesService.Services;
 
@@ -13,10 +14,14 @@ public class MoviesService
     private readonly MovieRepository _movieRepository;
     private readonly MoviesCaching _moviesCaching;
     private readonly IMapper _mapper;
-    public MoviesService(MovieRepository movieRepository, MoviesCaching moviesCaching, IMapper mapper)
+    private readonly MovieRateService _movieRateService;
+    
+    public MoviesService(MovieRepository movieRepository, MoviesCaching moviesCaching, MovieRateService movieRateService, 
+        IMapper mapper)
     {
         _movieRepository = movieRepository;
         _moviesCaching = moviesCaching;
+        _movieRateService = movieRateService;
         _mapper = mapper;
     }
 
@@ -24,13 +29,13 @@ public class MoviesService
     {
         var dto = _mapper.Map<MovieResponseDto>(movieRepo);
 
-        var filmografRate = 10.0f;
+        var filmografRate = await _movieRateService.CalcRateForMovieAsync(movieRepo.Id);
 
         dto.Rates = new Dictionary<string, float>
         {
             { "IMDb", MathF.Round(movieRepo.RateIMDb, 1) },
             { "Kinopoisk", MathF.Round(movieRepo.RateKinopoisk, 1) },
-            { "Film", filmografRate },
+            { "Film", MathF.Round(filmografRate, 1) },
         };
 
         return dto;
@@ -50,6 +55,7 @@ public class MoviesService
         return await _moviesCaching.CachingAsync(movieId, method);
     }
 
+    // todo: caching
     public async Task<IEnumerable<MovieResponseDto>> ListManyMovieResponsesAsync(IEnumerable<string> ids)
     {
         List<MovieResponseDto> outputValue = new List<MovieResponseDto>();
@@ -70,6 +76,14 @@ public class MoviesService
 
     public async Task<MovieResponseDto> GetByUserAsync(string movieId, User user)
     {
-        return await GetMovieResponseAsync(movieId);
+        var movieRateTask = _movieRateService.GetByUserAsync(user.Id, movieId);
+        var movieResponseTask = GetMovieResponseAsync(movieId);
+
+        await Task.WhenAll(movieRateTask, movieResponseTask);
+        var movieRate = movieRateTask.Result;
+        var movieResponse = movieResponseTask.Result;
+
+        movieResponse.Rates["ByUser"] = movieRate?.Rate ?? -1;
+        return movieResponse;
     }
 }

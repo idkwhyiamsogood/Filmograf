@@ -13,4 +13,7 @@ public class ParseTopFilmsIntegrationRequest : IntegrationRequestPayloadBase
     
     [DefaultValue(true)]
     public bool SendDistinctRequest { get; set; } = true;
+
+    [DefaultValue(true)]
+    public bool SendUpdateTopPickRequest { get; set; } = true;
 }

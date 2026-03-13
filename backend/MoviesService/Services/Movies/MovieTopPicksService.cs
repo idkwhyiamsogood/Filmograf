@@ -26,10 +26,10 @@ public class MovieTopPicksService
         _moviesService = moviesService;
     }
     
-    private async Task<IEnumerable<MovieResponseDto>> CreateCacheForChartAsync(PaginationQueryDto pagination, string chartType)
+    private async Task<MoviesListResponseDto> CreateCacheForChartAsync(PaginationQueryDto pagination, string chartType)
     {
         var chartRepo = await _topPicksRepository.GetByChartTypeAsync(chartType);
-        if (chartRepo == null) return Array.Empty<MovieResponseDto>();
+        if (chartRepo == null) return new MoviesListResponseDto();
         
         var sortedChartIds = chartRepo.Chart
             .OrderBy(pair => pair.Key)
@@ -41,13 +41,13 @@ public class MovieTopPicksService
             .Take(pagination.Count)
             .ToList();
         
-        if (!pagedIds.Any()) return Array.Empty<MovieResponseDto>();
+        if (!pagedIds.Any()) return new MoviesListResponseDto();
 
-        return await _moviesService.ListManyMovieResponsesAsync(pagedIds);
+        return new MoviesListResponseDto { Ids = pagedIds.ToArray() };
     }
 
     // chartType: 'IMDb', 'Kinopoisk'
-    public async Task<IEnumerable<MovieResponseDto>> GetFromChartAsync(PaginationQueryDto pagination, string chartType = "IMDb")
+    public async Task<MoviesListResponseDto> GetFromChartAsync(PaginationQueryDto pagination, string chartType = "IMDb")
     {
         await _moviesParserService.CheckLastParsingAsync(chartType);
 
