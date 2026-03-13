@@ -179,6 +179,7 @@ public class Program
         
         // repositories
         builder.Services.AddScoped<MovieRepository>();
+        builder.Services.AddScoped<CollectionRepository>();
         
         // cache
         builder.Services.AddScoped<UserCaching>();
