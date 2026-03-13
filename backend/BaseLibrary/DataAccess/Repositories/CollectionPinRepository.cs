@@ -10,4 +10,13 @@ public class CollectionPinRepository : RepositoryBase<CollectionPinRepo>
     public CollectionPinRepository(IMongoDatabase database) : base(database, CollectionName)
     {
     }
+
+    public async Task<CollectionPinRepo?> GetByUserAsync(Guid userId, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionPinRepo>.Filter
+            .Eq(x => x.UserId, userId);
+    
+        return await _collection.Find(filter)
+            .FirstOrDefaultAsync(ct);
+    }
 }

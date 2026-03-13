@@ -48,11 +48,6 @@ public class MongoIndexService : IHostedService
                 new CreateIndexModel<CollectionPinRepo>(
                     Builders<CollectionPinRepo>.IndexKeys
                         .Ascending(x => x.UserId)
-                ),
-                new CreateIndexModel<CollectionPinRepo>(
-                    Builders<CollectionPinRepo>.IndexKeys
-                        .Ascending(x => x.UserId)
-                        .Ascending(x => x.CollectionId)
                 )
             });
         }

@@ -20,12 +20,25 @@ public class CollectionPinsController : CustomControllerBase
     [UserTypePolicy(Guest = false)]
     public async Task<ActionResult<CollectionPinsResponseDto>> GetMyPinsAsync([FromServices] AuthContext authContext)
     {
-        
+        var result = await _collectionPinService.GetUserPinsAsync(authContext.CurrentUser!.Id);
+        return Ok(result);
     }
-    
+
     [HttpPut("{collectionId}")]
     [UserTypePolicy(Guest = false)]
+    public async Task<ActionResult<CollectionPinsResponseDto>> PinCollectionAsync(string collectionId,
+        [FromServices] AuthContext authContext)
+    {
+        var result = await _collectionPinService.PinCollectionAsync(authContext.CurrentUser!.Id, collectionId);
+        return Ok(result);
+    }
     
     [HttpDelete("{collectionId}")]
     [UserTypePolicy(Guest = false)]
+    public async Task<ActionResult<CollectionPinsResponseDto>> DeletePinCollectionAsync(string collectionId,
+        [FromServices] AuthContext authContext)
+    {
+        var result = await _collectionPinService.DeletePinCollectionAsync(authContext.CurrentUser!.Id, collectionId);
+        return Ok(result);
+    }
 }
