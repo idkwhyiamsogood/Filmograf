@@ -3,4 +3,4 @@ export type { ModalType } from "./modals";
 export type { JWT } from "./user";
 export type { ApiResponse } from "./api";
 
-export type { BaseModel } from "./base-model";
+export type { BaseModel, BaseID } from "./base";

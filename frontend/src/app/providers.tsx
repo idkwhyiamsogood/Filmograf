@@ -13,7 +13,9 @@ import { Navigation } from "@/widgets/Navigation/";
 import { ThemeProvider } from "next-themes";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TooltipProvider } from "@/shared/ui/tooltip";
+import { FilterProvider } from "@/features/filter/model/context/filter.context";
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   const queryClient = new QueryClient();
@@ -31,12 +33,16 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
             <QueryClientProvider client={queryClient}>
               <CollectionProvider>
                 <UserProvider>
-                  <CommonWrapper>
-                    <Header />
-                    {children}
-                    <ReactQueryDevtools initialIsOpen={false} />
-                    <ModalRenderer />
-                  </CommonWrapper>
+                  <FilterProvider>
+                    <TooltipProvider>
+                      <CommonWrapper>
+                        {/* <Header /> */}
+                        {children}
+                        <ReactQueryDevtools initialIsOpen={false} />
+                        <ModalRenderer />
+                      </CommonWrapper>
+                    </TooltipProvider>
+                  </FilterProvider>
                 </UserProvider>
               </CollectionProvider>
             </QueryClientProvider>

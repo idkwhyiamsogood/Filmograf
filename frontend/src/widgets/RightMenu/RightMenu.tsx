@@ -17,7 +17,7 @@ import { Separator } from "@/shared/ui/separator";
 import { NavigationMenu } from "./ui/NavigationMenu";
 
 import { WrapperContent } from "./ui/WrapperContent";
-import { ThemeSwitchSelector } from "@/shared/components";
+import { ThemeToggleFull } from "@/features/change-theme";
 
 export const RightMenu: React.FC = memo(() => {
   const { isOpen, closeModal, openModal } = useModals();
@@ -27,7 +27,7 @@ export const RightMenu: React.FC = memo(() => {
 
   useEffect(() => {
     if (!user) {
-      openModal("authorization", { function: openModal("right-menu") });
+      openModal("authorization-menu", { function: openModal("right-menu") });
       setUserAvailable(false);
     }
   }, []);
@@ -53,7 +53,7 @@ export const RightMenu: React.FC = memo(() => {
               <UserFull
                 user={user}
                 isComment={false}
-                openModal={() => openModal("authorization")}
+                openModal={() => openModal("authorization-menu")}
               />
 
               <Separator />
@@ -62,7 +62,7 @@ export const RightMenu: React.FC = memo(() => {
 
               <Separator />
 
-              <ThemeSwitchSelector />
+              <ThemeToggleFull />
 
               <Separator />
             </div>

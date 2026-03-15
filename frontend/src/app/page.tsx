@@ -12,7 +12,7 @@ const Page: FC = () => {
   const { token } = useAuth();
 
   useEffect(() => {
-    !token && openModal("authorization");
+    !token && openModal("authorization-menu");
   }, [])
 
   return null;

@@ -60,7 +60,7 @@ export const BookmarkSelectorActions: React.FC = () => {
                       className="p-1 rounded hover:bg-accent-foreground/10"
                       onClick={(e) => {
                         e.stopPropagation();
-                        openModal("confirmation", {
+                        openModal("confirmation-menu", {
                           title: `Вы уверены, что хотите удалить коллкцию "${item.label}"`,
                           function: deleteCollection,
                           data: item.id,

@@ -21,7 +21,7 @@ export const TemporaryUserFull: React.FC<Props> = ({ user, onClick }) => {
   return (
     <div
       className="flex gap-2 items-center justify-between"
-      onClick={() => onClick("authorization")}
+      onClick={() => onClick("authorization-menu")}
     >
       <div>
         <p className="text-sm">Временный пользователь</p>
