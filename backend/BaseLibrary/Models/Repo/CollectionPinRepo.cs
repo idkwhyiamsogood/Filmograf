@@ -5,8 +5,8 @@ namespace Filmograf.BaseLibrary.Models.Repo;
 public class CollectionPinRepo : RepoBase
 {
     [Required]
-    public string CollectionId { get; set; }
+    public Guid UserId { get; set; }
     
     [Required]
-    public Guid UserId { get; set; }
+    public string[] CollectionIds { get; set; }
 }
