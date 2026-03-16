@@ -4,6 +4,8 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.AnalyticsService.Caching;
+using Filmograf.AnalyticsService.DataAccess.Repositories;
+using Filmograf.AnalyticsService.Integration.Hosted;
 using StackExchange.Redis;
 
 using Filmograf.AnalyticsService.Services;
@@ -71,8 +73,12 @@ public class Program
         var mongoDbSettings = AppSettingsUtil.AppSettings.MongoDbSettings;
         
         // mongoDB из коробки не понимает что надо хранить Guid в стандартном формате (Standard UUID)
-        var serializer = new MongoDB.Bson.Serialization.Serializers.GuidSerializer(GuidRepresentation.Standard);
-        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(serializer);
+        var guidSerializer = new MongoDB.Bson.Serialization.Serializers.GuidSerializer(GuidRepresentation.Standard);
+        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(guidSerializer);
+        
+        // с date only этот еблан тоже не дружит
+        var dateOnlySerializer = new DateOnlySerializer()
+        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer();
 
         builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
         {
@@ -94,6 +100,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
+        builder.Services.AddScoped<ClickMovieIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -103,12 +110,14 @@ public class Program
         
         // services
         builder.Services.AddScoped<RedisService>();
+        builder.Services.AddScoped<MovieClicksService>();
         
         // providers
         // ...
         
         // repositories
-        // ...
+        builder.Services.AddScoped<MoviesClicksAnalyticRepository>();
+        builder.Services.AddScoped<UserMoviesActivityDailyRepository>();
         
         // cache
         builder.Services.AddScoped<PickMoviesCaching>();

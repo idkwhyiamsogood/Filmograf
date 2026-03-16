@@ -1571,31 +1571,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\personal pc\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/aleksandr/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\personal pc\\Documents\\шарага\\3 курс\\2\\Filmograf\\backend\\BaseLibrary\\BaseLibrary.csproj",
+      "projectUniqueName": "/Users/aleksandr/Downloads/Everyday open this folder/Filmograf/backend/BaseLibrary/BaseLibrary.csproj",
       "projectName": "Filmograf.BaseLibrary",
-      "projectPath": "C:\\Users\\personal pc\\Documents\\шарага\\3 курс\\2\\Filmograf\\backend\\BaseLibrary\\BaseLibrary.csproj",
-      "packagesPath": "C:\\Users\\personal pc\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\personal pc\\Documents\\шарага\\3 курс\\2\\Filmograf\\backend\\BaseLibrary\\obj\\",
+      "projectPath": "/Users/aleksandr/Downloads/Everyday open this folder/Filmograf/backend/BaseLibrary/BaseLibrary.csproj",
+      "packagesPath": "/Users/aleksandr/.nuget/packages/",
+      "outputPath": "/Users/aleksandr/Downloads/Everyday open this folder/Filmograf/backend/BaseLibrary/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\personal pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/aleksandr/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "/usr/local/share/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1660,21 +1654,23 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.14, 8.0.14]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.14, 8.0.14]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file C:\\Users\\personal pc\\Documents\\шарага\\3 курс\\2\\Filmograf\\backend\\BaseLibrary\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    }
-  ]
+  }
 }
