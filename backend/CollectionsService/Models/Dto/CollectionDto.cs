@@ -1,5 +1,10 @@
 ﻿namespace Filmograf.CollectionsService.Models.Dto;
 
+public class CollectionListResponseDto
+{
+    public Guid[] Ids { get; set; }
+}
+
 public class CollectionResponseDto
 {
     public string Id { get; set; }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Filmograf.AnalyticsService.Util;
 
@@ -30,4 +31,6 @@ public class LocalAppSettingsUtil
 
 public class LocalAppSettings
 {
+    [DefaultValue(300)] // 300 sec
+    public int UserMovieClickChickInterval { get; set; } = 300;
 }

@@ -1,36 +1,49 @@
-﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
-using Filmograf.BaseLibrary.Models.Repo;
+﻿using Filmograf.AnalyticsService.DataAccess.Repositories;
+using Filmograf.AnalyticsService.Models.Repo;
 using MongoDB.Driver;
 
 namespace Filmograf.AnalyticsService.Services;
 
 public class MongoIndexService : IHostedService
 {
-    private readonly IMongoCollection<MovieRepo> _movies;
-    private readonly IMongoCollection<TopPicksRepo> _topPicks;
-    private readonly IMongoCollection<CommentRepo> _comments;
-    private readonly IMongoCollection<CommentLikeRepo> _commentLikes;
+    private readonly IMongoCollection<MoviesClicksAnalyticRepo> _movieClicks;
+    private readonly IMongoCollection<UserMoviesActivityDailyRepo> _userMovieClicks;
 
     public MongoIndexService(IMongoDatabase database)
     {
-        _movies = database.GetCollection<MovieRepo>(MovieRepository.CollectionName);
-        _topPicks = database.GetCollection<TopPicksRepo>(TopPicksRepository.CollectionName);
-        _comments = database.GetCollection<CommentRepo>(CommentRepository.CollectionName);
-        _commentLikes = database.GetCollection<CommentLikeRepo>(CommentLikeRepository.CollectionName);
+        _movieClicks = database.GetCollection<MoviesClicksAnalyticRepo>(MoviesClicksAnalyticRepository.CollectionName);
+        _userMovieClicks = database.GetCollection<UserMoviesActivityDailyRepo>(UserMoviesActivityDailyRepository.CollectionName);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
         {
-            // await _movies.Indexes.CreateManyAsync(new[]
-            // {
-            //     new CreateIndexModel<MovieRepo>(
-            //         Builders<MovieRepo>.IndexKeys
-            //             .Ascending(x => x.Name)
-            //             .Ascending(x => x.Year)
-            //     )
-            // });
+            await _movieClicks.Indexes.CreateManyAsync(new[]
+            {
+                new CreateIndexModel<MoviesClicksAnalyticRepo>(
+                    Builders<MoviesClicksAnalyticRepo>.IndexKeys
+                        .Ascending(x => x.MovieId)
+                ),
+                new CreateIndexModel<MoviesClicksAnalyticRepo>(
+                    Builders<MoviesClicksAnalyticRepo>.IndexKeys
+                        .Ascending(x => x.MovieId)
+                        .Ascending(x => x.TargetDate)
+                )
+            }, cancellationToken);
+            
+            await _userMovieClicks.Indexes.CreateManyAsync(new[]
+            {
+                new CreateIndexModel<UserMoviesActivityDailyRepo>(
+                    Builders<UserMoviesActivityDailyRepo>.IndexKeys
+                        .Ascending(x => x.UserId)
+                ),
+                new CreateIndexModel<UserMoviesActivityDailyRepo>(
+                    Builders<UserMoviesActivityDailyRepo>.IndexKeys
+                        .Ascending(x => x.UserId)
+                        .Descending(x => x.Date)
+                )
+            }, cancellationToken);
         }
         catch (Exception ex)
         {

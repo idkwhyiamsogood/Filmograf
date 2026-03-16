@@ -25,9 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Models\Context\" />
-    <Folder Include="Models\Dto\" />
-    <Folder Include="Models\Types\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,7 +9,7 @@ public class MovieRateCaching
 {
     protected readonly CachingProviderAtomic<MovieRateRepo> _cachingByUserAtomic;
     protected readonly CachingProviderAtomic<IEnumerable<MovieRateResponseDto>> _cachingAllByUserAtomic;
-    protected readonly CachingProviderAtomic<IEnumerable<RateMovieRequestDto>> _cachingByMovieAtomic;
+    protected readonly CachingProviderAtomic<IEnumerable<MovieRateResponseDto>> _cachingByMovieAtomic;
     protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(1, 0, 0);
     protected readonly IConnectionMultiplexer _redis;
     protected readonly string _baseKey = "movies-rates";
@@ -18,7 +18,7 @@ public class MovieRateCaching
     {
         _cachingByUserAtomic = new CachingProviderAtomic<MovieRateRepo>(redis, $"{_baseKey}:byUser");
         _cachingAllByUserAtomic = new CachingProviderAtomic<IEnumerable<MovieRateResponseDto>>(redis, $"{_baseKey}:byUser:all");
-        _cachingByMovieAtomic = new CachingProviderAtomic<IEnumerable<RateMovieRequestDto>>(redis, $"{_baseKey}:byMovie");
+        _cachingByMovieAtomic = new CachingProviderAtomic<IEnumerable<MovieRateResponseDto>>(redis, $"{_baseKey}:byMovie");
     }
     
     private string MakeUserMovieKey(Guid userId, string movieId)
@@ -90,15 +90,15 @@ public class MovieRateCaching
         return _cachingByMovieAtomic.MakeIdKey($"{movieId}");
     }
     
-    public virtual async Task<IEnumerable<RateMovieRequestDto>> CachingByMovieAsync(string movieId, 
-        Func<Task<IEnumerable<RateMovieRequestDto>>> createItem)
+    public virtual async Task<IEnumerable<MovieRateResponseDto>> CachingByMovieAsync(string movieId, 
+        Func<Task<IEnumerable<MovieRateResponseDto>>> createItem)
     {
         var key = MakeMovieKey(movieId);
         return await _cachingByMovieAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
     }
 
     public async Task ResetCachingByMovieAsync(string movieId, 
-        Func<Task<IEnumerable<RateMovieRequestDto>>> createItem)
+        Func<Task<IEnumerable<MovieRateResponseDto>>> createItem)
     {
         var key = MakeMovieKey(movieId);
         var payloadData = await createItem();

@@ -1,6 +1,9 @@
-﻿namespace Filmograf.CollectionsService.Services;
+﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+
+namespace Filmograf.CollectionsService.Services;
 
 public class CollectionService
 {
-    private readonly ColRepo
+    private readonly CollectionRepository _collectionRepository;
+    
 }

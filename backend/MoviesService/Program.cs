@@ -148,7 +148,6 @@ public class Program
             return client.GetDatabase(mongoDbSettings.DatabaseName);
         });
 
-        builder.Services.AddScoped<MovieRepository>();
         builder.Services.AddHostedService<MongoIndexService>();
     }
     
