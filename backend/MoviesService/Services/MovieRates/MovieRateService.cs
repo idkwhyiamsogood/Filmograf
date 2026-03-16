@@ -37,13 +37,13 @@ public class MovieRateService
     }
     
     
-    private async Task<IEnumerable<RateMovieRequestDto>> CreateCacheForMovieAsync(string movieId)
+    private async Task<IEnumerable<MovieRateResponseDto>> CreateCacheForMovieAsync(string movieId)
     {
         var data = await _movieRateRepository.GetMovieRatesAsync(movieId);
-        return _mapper.Map<RateMovieRequestDto[]>(data);
+        return _mapper.Map<MovieRateResponseDto[]>(data);
     }
 
-    public async Task<IEnumerable<RateMovieRequestDto>> ListByMovieAsync(string movieId)
+    public async Task<IEnumerable<MovieRateResponseDto>> ListByMovieAsync(string movieId)
     {
         var method = async () => await CreateCacheForMovieAsync(movieId);
         return await _movieRateCaching.CachingByMovieAsync(movieId, method);
