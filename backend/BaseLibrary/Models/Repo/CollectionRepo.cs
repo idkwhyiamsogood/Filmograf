@@ -29,4 +29,7 @@ public class CollectionRepo : RepoBase
     
     [DefaultValue(false)]
     public bool IsByFilmograf { get; set; } = false;
+    
+    [DefaultValue(false)]
+    public bool IsDeleted { get; set; } = false;
 }

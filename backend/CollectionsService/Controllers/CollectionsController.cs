@@ -1,5 +1,6 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.CollectionsService.Attributes;
 using Filmograf.CollectionsService.Models.Dto;
 using Filmograf.CollectionsService.Services;
@@ -32,7 +33,7 @@ public class CollectionsController : CustomControllerBase
     public async Task<ActionResult<CollectionListResponseDto>> GetMyCollectionsAsync(
         [FromQuery] PaginationQueryDto pagination, [FromServices] AuthContext authContext)
     {
-        var result = async () => await _collectionService.GetByUserAsync(authContext.CurrentUser!, pagination);
+        var result = await _collectionService.GetByUserAsync(authContext.CurrentUser!, pagination);
         return Ok(result);
     }
 
@@ -52,30 +53,37 @@ public class CollectionsController : CustomControllerBase
     
     [HttpPost]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> CreateCollectionAsync()
+    public async Task<ActionResult> CreateCollectionAsync([FromBody] CreateCollectionRequestDto data, 
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        var result = await _collectionService.CreateAsync(data, authContext.CurrentUser!);
+        return Ok(result);
     }
     
     [HttpPatch("{collectionId}")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> EditCollectionAsync()
+    public async Task<ActionResult> EditCollectionAsync(string collectionId, [FromBody] CreateCollectionRequestDto data, 
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        await _collectionService.EditAsync(collectionId, data, authContext.CurrentUser!);
+        return NoContent();
     }
     
     [HttpDelete("{collectionId}")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> DeleteCollectionAsync()
+    public async Task<ActionResult> DeleteCollectionAsync(string collectionId, [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        await _collectionService.DeleteAsync(collectionId, authContext.CurrentUser!);
+        return NoContent();
     }
     
     [HttpPost("{collectionId}/copy")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> CopyCollectionAsync()
+    public async Task<ActionResult> CopyCollectionAsync(string collectionId, [FromBody] CopyCollectionRequestDto data,
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        await _collectionService.CopyAsync(collectionId, data, authContext.CurrentUser!);
+        return NoContent();
     }
     
     [HttpPut("{collectionId}/movie/{movieId}")]

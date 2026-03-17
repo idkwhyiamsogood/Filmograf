@@ -1,4 +1,6 @@
-﻿namespace Filmograf.CollectionsService.Models.Dto;
+﻿using System.ComponentModel;
+
+namespace Filmograf.CollectionsService.Models.Dto;
 
 public class CollectionListResponseDto
 {
@@ -21,6 +23,7 @@ public class CollectionResponseDto
     public bool IsCommentable { get; set; } = false;
     public bool IsCopiable { get; set; } = false;
     public bool IsByFilmograf { get; set; } = false;
+    public bool IsDeleted { get; set; } = false;
 }
 
 public class CreateCollectionRequestDto
@@ -28,6 +31,15 @@ public class CreateCollectionRequestDto
     public string Name { get; set; }
     public Guid[] Tags { get; set; }
     
+    public bool IsPublic { get; set; } = false;
+    public bool IsCommentable { get; set; } = false;
+    public bool IsCopiable { get; set; } = false;
+}
+
+public class CopyCollectionRequestDto
+{
+    public string Name { get; set; }
+    public Guid[] Tags { get; set; }
     public bool IsPublic { get; set; } = false;
     public bool IsCommentable { get; set; } = false;
     public bool IsCopiable { get; set; } = false;
