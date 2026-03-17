@@ -23,25 +23,36 @@ public class MongoIndexService : IHostedService
             {
                 new CreateIndexModel<CollectionRepo>(
                     Builders<CollectionRepo>.IndexKeys
-                        .Ascending(x => x.Name)
+                        .Ascending(x => x.UserId)
+                        .Descending(x => x.CreateDate)
                 ),
+
                 new CreateIndexModel<CollectionRepo>(
                     Builders<CollectionRepo>.IndexKeys
-                        .Ascending(x => x.UserId)
+                        .Ascending(x => x.Tags)
                 ),
+
+                new CreateIndexModel<CollectionRepo>(
+                    Builders<CollectionRepo>.IndexKeys
+                        .Ascending(x => x.Name)
+                ),
+
                 new CreateIndexModel<CollectionRepo>(
                     Builders<CollectionRepo>.IndexKeys
                         .Ascending(x => x.IsPublic)
                 ),
+            
                 new CreateIndexModel<CollectionRepo>(
                     Builders<CollectionRepo>.IndexKeys
                         .Ascending(x => x.IsByFilmograf)
                 ),
+
                 new CreateIndexModel<CollectionRepo>(
                     Builders<CollectionRepo>.IndexKeys
-                        .Ascending(x => x.SourceCollectionId)
+                        .Ascending(x => x.SourceCollectionId),
+                    new CreateIndexOptions { Sparse = true } // не индексировать null
                 )
-            });
+            }, cancellationToken);
             
             await _collectionPins.Indexes.CreateManyAsync(new[]
             {

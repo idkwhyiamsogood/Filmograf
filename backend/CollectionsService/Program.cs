@@ -197,6 +197,7 @@ public class Program
         builder.Services.AddScoped<UserCaching>();
         builder.Services.AddScoped<CollectionTagsCaching>();
         builder.Services.AddScoped<CollectionPinsCaching>();
+        builder.Services.AddScoped<CollectionsCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

@@ -1,5 +1,8 @@
-﻿using Filmograf.CollectionsService.Attributes;
+﻿using Filmograf.BaseLibrary.Models.Context;
+using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.CollectionsService.Attributes;
 using Filmograf.CollectionsService.Models.Dto;
+using Filmograf.CollectionsService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmograf.CollectionsService.Controllers;
@@ -8,22 +11,29 @@ namespace Filmograf.CollectionsService.Controllers;
 [Route("api/collections")]
 public class CollectionsController : CustomControllerBase
 {
-    public CollectionsController()
+    private readonly CollectionService _collectionService;
+    
+    public CollectionsController(CollectionService collectionService)
     {
+        _collectionService = collectionService;
     }
 
     [HttpGet("{collectionId}")]
     [UserTypePolicy]
-    public async Task<ActionResult<CollectionResponseDto>> GetCollectionAsync()
+    public async Task<ActionResult<CollectionResponseDto>> GetCollectionAsync(string collectionId, 
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        var result = await _collectionService.GetCollectionAsync(collectionId, authContext.CurrentUser!);
+        return Ok(result);
     }
 
     [HttpGet("my")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<CollectionListResponseDto>> GetMyCollectionsAsync()
+    public async Task<ActionResult<CollectionListResponseDto>> GetMyCollectionsAsync(
+        [FromQuery] PaginationQueryDto pagination, [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        var result = async () => await _collectionService.GetByUserAsync(authContext.CurrentUser!, pagination);
+        return Ok(result);
     }
 
     [HttpGet("top")]

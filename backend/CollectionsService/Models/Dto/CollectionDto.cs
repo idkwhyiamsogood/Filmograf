@@ -2,7 +2,7 @@
 
 public class CollectionListResponseDto
 {
-    public Guid[] Ids { get; set; }
+    public string[] Ids { get; set; }
 }
 
 public class CollectionResponseDto

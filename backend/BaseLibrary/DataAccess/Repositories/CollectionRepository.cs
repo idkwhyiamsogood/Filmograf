@@ -24,6 +24,50 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
             .ToListAsync(ct);
     }
     
+    public Task<List<CollectionRepo>> GetByUserAsync(Guid userId, int skip, int limit, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionRepo>.Filter.Eq(x => x.UserId, userId);
     
+        return _collection.Find(filter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
     
+    public Task<List<CollectionRepo>> GetByTagAsync(Guid tagId, int skip, int limit, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionRepo>.Filter
+            .AnyEq(x => x.Tags, tagId);
+
+        return _collection.Find(filter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
+    
+    public Task<List<CollectionRepo>> GetByRequiredTagsAsync(Guid[] tagIds, int skip, int limit, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionRepo>.Filter
+            .All(x => x.Tags, tagIds);
+
+        return _collection.Find(filter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
+    
+    public Task<List<CollectionRepo>> GetByAnyTagsAsync(Guid[] tagIds, int skip, int limit, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionRepo>.Filter
+            .AnyIn(x => x.Tags, tagIds);
+
+        return _collection.Find(filter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
 }
