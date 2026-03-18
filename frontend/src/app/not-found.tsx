@@ -10,7 +10,7 @@ export default function NotFound({ className = "" }: Props) {
   return (
     <main className={`relative grid min-h-screen place-items-center bg-background overflow-hidden ${className}`}>
       
-      {/* Слой фона: z-0 и прозрачность 10% гарантируют, что он не мешает тексту */}
+    
       <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
         <Image
           src="/404.png" 
@@ -22,7 +22,7 @@ export default function NotFound({ className = "" }: Props) {
         />
       </div>
 
-      {/* Слой контента: z-10 делает его ярким и четким */}
+   
       <div className="relative z-10 text-center px-6 ">
         <p className="text-base font-semibold text-primary animate-bounce">
           Упс :(
