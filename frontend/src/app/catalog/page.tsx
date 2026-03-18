@@ -19,9 +19,9 @@ const Page: React.FC<Props> = ({ className }) => {
   const { openModal } = useModals();
 
   return (
-    <div className={className}>
+    <div className={`flex items-center gap-3 ${className}`}>
       <Button onClick={() => openModal("search-filter")}>
-        open modal chlen
+        Фильтры
       </Button>
       <SortingButton />
     </div>
