@@ -8,12 +8,12 @@ namespace Filmograf.CommentsService.Services;
 public class CommentCachingService
 {
     private readonly CommentsCaching _commentsCaching;
-    private readonly MoviesCommentCaching _moviesCommentCaching;
+    private readonly EntitiesCommentCaching _entitiesCommentCaching;
     
-    public CommentCachingService(CommentsCaching commentsCaching, MoviesCommentCaching moviesCommentCaching)
+    public CommentCachingService(CommentsCaching commentsCaching, EntitiesCommentCaching entitiesCommentCaching)
     {
         _commentsCaching = commentsCaching;
-        _moviesCommentCaching = moviesCommentCaching;
+        _entitiesCommentCaching = entitiesCommentCaching;
     }
     
     public async Task<CommentRepo> CachingAsync(string commentId,
@@ -34,20 +34,15 @@ public class CommentCachingService
         return await _commentsCaching.CachingFullResponseAsync(commentId, cacheFunc);
     }
 
-    public async Task<IEnumerable<CommentResponseDto>> CachingMovieAsync(string movieId, PaginationQueryDto pagination,
+    public async Task<IEnumerable<CommentResponseDto>> CachingEntityAsync(CommentEntityType entityType, string entityId, PaginationQueryDto pagination,
         Func<Task<IEnumerable<CommentResponseDto>>> cacheFunc)
     {
-        return await _moviesCommentCaching.CachingResponseAsync(movieId, pagination, cacheFunc);
+        return await _entitiesCommentCaching.CachingResponseAsync(entityType, entityId, pagination, cacheFunc);
     }
 
-    public async Task RemoveCacheForMovieAsync(string movieId)
+    public async Task RemoveCacheForEntityAsync(CommentEntityType entityType, string entityId)
     {
-        await _moviesCommentCaching.RemoveCachingMovieRootAsync(movieId);
-    }
-
-    public async Task RemoveCacheForCollectionAsync(string collectionId)
-    {// TODO: FOR COLLECTIONS  !!!!!!!
-        await _moviesCommentCaching.RemoveCachingMovieRootAsync(collectionId);
+        await _entitiesCommentCaching.RemoveCachingMovieRootAsync(entityType, entityId);
     }
 
     public async Task RemoveFullCacheAsync(string commentId)
@@ -78,11 +73,9 @@ public class CommentCachingService
         var removeCacheTask = RemoveFullCacheAsync(commentRepo.Id);
         
         // удаляем кеш родителя
-        var removeParentCacheTask = commentRepo.ParentId != null  
-            ? RemoveFullCacheAsync(commentRepo.ParentId) 
-            : commentRepo.EntityType == CommentEntityType.Movie
-                ? RemoveCacheForMovieAsync(commentRepo.Id)
-                : RemoveCacheForCollectionAsync(commentRepo.Id); 
+        var removeParentCacheTask = commentRepo.ParentId != null
+            ? RemoveFullCacheAsync(commentRepo.ParentId)
+            : RemoveCacheForEntityAsync(commentRepo.EntityType, commentRepo.Id);
 
         await Task.WhenAll(removeCacheTask, removeParentCacheTask);
     }

@@ -180,7 +180,7 @@ public class Program
         builder.Services.AddScoped<CommentCachingService>();
         builder.Services.AddScoped<CommentCreationService>();
         builder.Services.AddScoped<CommentLikesService>();
-        builder.Services.AddScoped<MoviesCommentService>();
+        builder.Services.AddScoped<EntitiesCommentService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -196,7 +196,7 @@ public class Program
         // cache
         builder.Services.AddScoped<CommentsCaching>();
         builder.Services.AddScoped<UserCaching>();
-        builder.Services.AddScoped<MoviesCommentCaching>();
+        builder.Services.AddScoped<EntitiesCommentCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
