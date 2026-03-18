@@ -47,6 +47,21 @@ public class CollectionService
             $"You has no access to collection with id={collection.Id}");
     }
 
+    private void CheckAccess(CollectionRepo collection, User gettingBy)
+    {
+        // если запрос делает админ - далее ноль вопросов
+        if (gettingBy.IsAdmin) return;
+        
+        // если коллекция была удалена - ливаем
+        if (collection.IsDeleted) throw new NotFoundHttpException("CollectionHasBeenDeleted");
+        
+        // ну и базовая проверка - если публик или чел является владельцем - то все ок
+        if (collection.IsPublic || collection.UserId == gettingBy.Id) return;
+
+        throw new ForbiddenHttpException("NoAccessToCollection",
+            $"You has no access to collection with id={collection.Id}");
+    }
+
     private void CheckResponseAccess(CollectionResponseDto collection, User gettingBy)
     {
         // если запрос делает админ - далее ноль вопросов
@@ -116,7 +131,10 @@ public class CollectionService
         exitingCollection.IsCopiable = data.IsCopiable;
         
         await _collectionRepository.UpdateAsync(collectionId, exitingCollection);
-        await _collectionsCaching.RemoveCachingByUserRootAsync(editBy.Id);
+        
+        // удаляем кеш
+        await _collectionsCaching.RemoveCachingAsync(collectionId);
+        await _collectionsCaching.RemoveCachingByUserRootAsync(exitingCollection.UserId);
     }
 
     public async Task DeleteAsync(string collectionId, User deleteBy)
@@ -129,25 +147,94 @@ public class CollectionService
         CheckPersonalAccess(exitingCollection, deleteBy);
         
         await _collectionRepository.SoftDeleteAsync(collectionId);
+        
+        // удаляем кеш
+        await _collectionsCaching.RemoveCachingAsync(collectionId);
+        await _collectionsCaching.RemoveCachingByUserRootAsync(exitingCollection.UserId);
     }
 
-    public async Task CopyAsync(string collectionId, CopyCollectionRequestDto copyData, User copyBy)
+    public async Task<CollectionResponseDto> CopyAsync(string collectionId, CreateCollectionRequestDto copyData, User copyBy)
     {
         // получаем колеекцию и проверяем её существование
         var exitingCollection = await _collectionRepository.GetByIdAsync(collectionId);
         if (exitingCollection == null) throw new NotFoundHttpException("CollectionNotFound");
         
         // проверяем доступ
-        CheckPersonalAccess(exitingCollection, copyBy);
+        CheckAccess(exitingCollection, copyBy);
         
-        var newCollection = _mapper.Map<CollectionRepo>(copyData);
-        
+        // проверяем, можно ли копировать коллекцию
         if (!exitingCollection.IsCopiable) 
             throw new ForbiddenHttpException("CollectionIsNotCopiable");
+
+        // копируем данные
+        var newCollection = _mapper.Map<CollectionRepo>(copyData);
+        newCollection.Id = MongoDbUtil.GenerateNewId();
+        newCollection.Movies = exitingCollection.Movies;
+        newCollection.SourceCollectionId = exitingCollection.Id;
+        newCollection.UserId = copyBy.Id;
+        
+        // добавляем коллекцию
+        var newCollectionId = await _collectionRepository.CreateAsync(newCollection);
+        if (string.IsNullOrEmpty(newCollectionId)) throw new InternalServerErrorHttpException(
+            "CreateNewCollectionError");
+        
+        // удаляем кеш пользователя
+        await _collectionsCaching.RemoveCachingByUserRootAsync(exitingCollection.UserId);
+        
+        // сохраняем id новой коллекции в списке прод-копий исходной коллекции
+        exitingCollection.ProdCollections ??= new string[] { };
+        exitingCollection.ProdCollections = exitingCollection.ProdCollections.Append(newCollectionId).ToArray();
+        await _collectionRepository.UpdateAsync(collectionId, exitingCollection);
+        
+        // возвращаем response новой коллекции
+        return _mapper.Map<CollectionResponseDto>(newCollection);
     }
 
     public async Task AddMovieToCollectionAsync(string collectionId, string movieId, User addBy)
     {
+        // получаем колеекцию и проверяем её существование
+        var collection = await _collectionRepository.GetByIdAsync(collectionId);
+        if (collection == null) throw new NotFoundHttpException("CollectionNotFound");
         
+        // проверяем доступ
+        CheckPersonalAccess(collection, addBy);
+        
+        // проверяем, не содержит ли коллекция уже этот фильм
+        var containsMovie = collection.Movies.Any(i => i == movieId);
+        if (containsMovie) throw new BadRequestHttpException("CollectionAlreadyContainsMovie");
+
+        // добавляем фильм
+        collection.Movies = collection.Movies.Append(movieId).ToArray();
+        
+        // сохраняем
+        await _collectionRepository.UpdateAsync(collectionId, collection);
+        
+        // удаляем кеш
+        await _collectionsCaching.RemoveCachingAsync(collectionId);
+        await _collectionsCaching.RemoveCachingByUserRootAsync(collection.UserId);
+    }
+
+    public async Task RemoveMovieFromCollectionAsync(string collectionId, string movieId, User addBy)
+    {
+        // получаем колеекцию и проверяем её существование
+        var collection = await _collectionRepository.GetByIdAsync(collectionId);
+        if (collection == null) throw new NotFoundHttpException("CollectionNotFound");
+        
+        // проверяем доступ
+        CheckPersonalAccess(collection, addBy);
+        
+        // проверяем, не содержит ли коллекция уже этот фильм
+        var containsMovie = collection.Movies.Any(i => i == movieId);
+        if (!containsMovie) throw new BadRequestHttpException("CollectionNotContainsMovie");
+
+        // удаляем фильм
+        collection.Movies = collection.Movies.DeleteItem(movieId).ToArray();
+        
+        // сохраняем
+        await _collectionRepository.UpdateAsync(collectionId, collection);
+        
+        // удаляем кеш
+        await _collectionsCaching.RemoveCachingAsync(collectionId);
+        await _collectionsCaching.RemoveCachingByUserRootAsync(collection.UserId);
     }
 }

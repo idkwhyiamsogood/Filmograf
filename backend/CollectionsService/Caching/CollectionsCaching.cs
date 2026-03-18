@@ -50,7 +50,7 @@ public class CollectionsCaching
     private string MakeUserKey(Guid userId, PaginationQueryDto pagination)
     {
         var paginationHash = pagination.ToString();
-        return _cachingAtomic.MakeIdKey($"{userId.ToString()}:{paginationHash}");
+        return _cachingByUserAtomic.MakeIdKey($"{userId.ToString()}:{paginationHash}");
     }
 
     public virtual async Task<IEnumerable<CollectionResponseDto>> CachingByUserAsync(Guid userId, PaginationQueryDto pagination,

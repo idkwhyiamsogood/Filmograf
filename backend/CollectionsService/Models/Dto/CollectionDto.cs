@@ -16,7 +16,7 @@ public class CollectionResponseDto
     
     public Guid UserId { get; set; }
     
-    public Guid[] Movies { get; set; }
+    public string[] Movies { get; set; }
     public Guid[] Tags { get; set; }
     
     public bool IsPublic { get; set; } = false;
@@ -27,16 +27,6 @@ public class CollectionResponseDto
 }
 
 public class CreateCollectionRequestDto
-{
-    public string Name { get; set; }
-    public Guid[] Tags { get; set; }
-    
-    public bool IsPublic { get; set; } = false;
-    public bool IsCommentable { get; set; } = false;
-    public bool IsCopiable { get; set; } = false;
-}
-
-public class CopyCollectionRequestDto
 {
     public string Name { get; set; }
     public Guid[] Tags { get; set; }

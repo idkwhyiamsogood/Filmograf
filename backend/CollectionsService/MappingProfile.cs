@@ -13,6 +13,5 @@ public class MappingProfile : Profile
         CreateMap<CollectionPinRepo, CollectionPinsResponseDto>();
         CreateMap<CollectionRepo, CollectionResponseDto>();
         CreateMap<CreateCollectionRequestDto, CollectionRepo>();
-        CreateMap<CopyCollectionRequestDto, CollectionRepo>();
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Models.Dto;
-using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.CollectionsService.Attributes;
 using Filmograf.CollectionsService.Models.Dto;
 using Filmograf.CollectionsService.Services;
@@ -79,24 +78,28 @@ public class CollectionsController : CustomControllerBase
     
     [HttpPost("{collectionId}/copy")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> CopyCollectionAsync(string collectionId, [FromBody] CopyCollectionRequestDto data,
+    public async Task<ActionResult<CollectionResponseDto>> CopyCollectionAsync(string collectionId, [FromBody] CreateCollectionRequestDto data,
         [FromServices] AuthContext authContext)
     {
-        await _collectionService.CopyAsync(collectionId, data, authContext.CurrentUser!);
-        return NoContent();
+        var result = await _collectionService.CopyAsync(collectionId, data, authContext.CurrentUser!);
+        return Ok(result);
     }
     
     [HttpPut("{collectionId}/movie/{movieId}")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> AddMovieToCollectionAsync()
+    public async Task<ActionResult> AddMovieToCollectionAsync(string collectionId, string movieId, 
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        await _collectionService.AddMovieToCollectionAsync(collectionId, movieId, authContext.CurrentUser!);
+        return NoContent();
     }
     
     [HttpDelete("{collectionId}/movie/{movieId}")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> DeleteMovieFromCollectionAsync()
+    public async Task<ActionResult> DeleteMovieFromCollectionAsync(string collectionId, string movieId, 
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        await _collectionService.RemoveMovieFromCollectionAsync(collectionId, movieId, authContext.CurrentUser!);
+        return NoContent();
     }
 }

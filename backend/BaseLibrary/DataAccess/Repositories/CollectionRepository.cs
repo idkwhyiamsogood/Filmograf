@@ -39,9 +39,11 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     public Task<List<CollectionRepo>> GetByUserAsync(Guid userId, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
     {
         var baseFilter = BuildBaseFilter(showDeleted);
-        var userFilter = Builders<CollectionRepo>.Filter.Eq(x => x.UserId, userId);
+        var userFilter = Builders<CollectionRepo>.Filter
+            .Eq(x => x.UserId, userId);
         
-        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, userFilter);
+        var combinedFilter = Builders<CollectionRepo>.Filter
+            .And(baseFilter, userFilter);
     
         return _collection.Find(combinedFilter)
             .SortByDescending(i => i.CreateDate)
@@ -53,9 +55,11 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     public Task<List<CollectionRepo>> GetByTagAsync(Guid tagId, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
     {
         var baseFilter = BuildBaseFilter(showDeleted);
-        var tagFilter = Builders<CollectionRepo>.Filter.AnyEq(x => x.Tags, tagId);
+        var tagFilter = Builders<CollectionRepo>.Filter
+            .AnyEq(x => x.Tags, tagId);
         
-        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, tagFilter);
+        var combinedFilter = Builders<CollectionRepo>.Filter
+            .And(baseFilter, tagFilter);
 
         return _collection.Find(combinedFilter)
             .SortByDescending(i => i.CreateDate)
