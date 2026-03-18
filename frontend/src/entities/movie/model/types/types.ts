@@ -6,11 +6,6 @@ export enum Review {
   Film,
 }
 
-// movie genres
-export interface IGenres extends BaseModel {
-  name: string;
-}
-
 export interface IMovie extends BaseModel {
   name: string;
   description?: string | undefined;

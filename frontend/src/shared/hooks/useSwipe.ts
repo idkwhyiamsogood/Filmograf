@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef, useCallback, useEffect } from "react";
 
 interface UseSwipeableProps {
@@ -5,7 +7,7 @@ interface UseSwipeableProps {
   maxDrag?: number;
   onClose?: () => void;
   isOpen?: boolean;
-}
+};
 
 export const useSwipe = ({
   threshold = 150,

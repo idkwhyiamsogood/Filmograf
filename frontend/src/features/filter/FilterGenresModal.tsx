@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useModals } from "@/shared/hooks";
 import { useGenresFilter } from "./model/hooks/useGenresFilter";
+import { useGenres } from "@/entities/genres";
 
 import {
   Sheet,
@@ -20,6 +21,12 @@ import { FilterCommonFooter } from "./ui/common/modal/FIlterCommonFooter";
 export const FilterGenresModal: React.FC = () => {
   const { isOpen, closeModal } = useModals();
   const { handleGenresReset, toggleGenre, getGenreState } = useGenresFilter();
+
+  const { data } = useGenres();
+
+  useEffect(() => {
+    console.log(data);
+  }, [data])
 
   return (
     <div className="bg-background border-accent">
@@ -46,8 +53,9 @@ export const FilterGenresModal: React.FC = () => {
           `}
         >
           <FilterCommonHeader title="Жанры" handleReset={handleGenresReset} />
+          
           <FilterCommonBody
-            items={[]}
+            items={data?.data || []}
             handleToggleItem={toggleGenre}
             getStatus={getGenreState}
           />

@@ -1,22 +1,29 @@
 "use client";
 
-import { useEffect, type FC } from "react";
-
-import { useTopMovies } from "@/entities/movie";
-
-import { movieApi } from "@/entities/movie/model/api/film.api";
-
+import { useState, type FC, useEffect } from "react";
+import { useMovie, movieApi, IMovie } from "@/entities/movie";
 import { MovieWrapper } from "@/entities/movie";
 
-import type { IMovie } from "@/entities/movie";
-
 const Page: FC = () => {
-  const { data, isLoading } = useTopMovies();
+  const [moviesData, setMoviesData] = useState<string[]>([]);
 
-  if (data) {
-    console.log(data.data);
-    return <MovieWrapper movies={data.data} isLoading={isLoading} />;
-  }
+  useEffect(() => {
+    const getTop = async () => {
+      try {
+        const { data } = await movieApi.getTop();
+        console.log(data.ids)
+        setMoviesData(data.ids);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    
+    getTop();
+  }, []);
+
+  const { data: movies, isLoading } = useMovie(moviesData);
+
+  return <MovieWrapper movies={movies || []} isLoading={isLoading} />;
 };
 
 export default Page;

@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import type { Genre } from "@/entities/genres";
+
 interface FilterOptions {
   targetType: TargetType;
   tags?: BaseQuery;
@@ -25,13 +27,8 @@ export type FilterAction = {
   };
   body: {
     handleToggeStrict: () => void;
-    items: FilterItem[];
+    items: Genre[];
     handleToggleItem: (id: string) => void;
   };
   footer: ReactNode;
 };
-
-export interface FilterItem {
-  id: string;
-  label: string;
-}

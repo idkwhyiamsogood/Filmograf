@@ -1,55 +1,49 @@
 "use client";
 
-import React from "react";
 import type { PropsWithChildren } from "react";
+import React from "react";
 
 import { CollectionProvider } from "@/entities/collection";
 import { UserProvider } from "@/entities/user";
 import { CommonWrapper } from "@/shared/components";
 import { AuthProvider, ModalProvider } from "@/shared/context";
 import { ModalRenderer } from "@/shared/lib";
-import { Header } from "@/widgets/Header/ui/Header";
 import { Navigation } from "@/widgets/Navigation/";
 import { ThemeProvider } from "next-themes";
 
+import { FilterProvider } from "@/features/filter/model/context/filter.context";
+import { TooltipProvider } from "@/shared/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { TooltipProvider } from "@/shared/ui/tooltip";
-import { FilterProvider } from "@/features/filter/model/context/filter.context";
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   const queryClient = new QueryClient();
 
   return (
-    <>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <AuthProvider>
-          <ModalProvider>
-            <QueryClientProvider client={queryClient}>
-              <CollectionProvider>
-                <UserProvider>
-                  <FilterProvider>
-                    <TooltipProvider>
-                      <CommonWrapper>
-                        {/* <Header /> */}
-                        {children}
-                        <ReactQueryDevtools initialIsOpen={false} />
-                        <ModalRenderer />
-                      </CommonWrapper>
-                    </TooltipProvider>
-                  </FilterProvider>
-                </UserProvider>
-              </CollectionProvider>
-            </QueryClientProvider>
-            <Navigation />
-          </ModalProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <AuthProvider>
+        <ModalProvider>
+          <QueryClientProvider client={queryClient}>
+            <CollectionProvider>
+              <UserProvider>
+                <FilterProvider>
+                  <TooltipProvider>
+                    {children}
+                    <ReactQueryDevtools initialIsOpen={false} />
+                    <ModalRenderer />
+                  </TooltipProvider>
+                </FilterProvider>
+              </UserProvider>
+            </CollectionProvider>
+          </QueryClientProvider>
+          <Navigation />
+        </ModalProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };

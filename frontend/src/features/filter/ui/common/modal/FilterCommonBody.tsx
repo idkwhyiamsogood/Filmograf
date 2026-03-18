@@ -2,11 +2,12 @@ import React from "react";
 
 import { CommonCheckboxField } from "@/shared/components";
 import { WrapperSheetContent } from "@/shared/components/";
+import { ScrollArea } from "@/shared/ui/scroll-area";
 
-import type { FilterItem } from "@/features/filter/model/types/types";
+import type { Genre } from "@/entities/genres";
 
 interface Props {
-  items: FilterItem[];
+  items: Genre[];
   handleToggleItem: (id: string) => void;
   getStatus: (id: string) => {
     checked: boolean;
@@ -20,21 +21,23 @@ export const FilterCommonBody: React.FC<Props> = ({
   getStatus,
 }) => {
   return (
-    <div className="flex flex-col gap-2.5 my-16">
-      {items.map((item) => {
-        const status = getStatus(item.id);
+    <ScrollArea className="h-[calc(100vh-140px)] mt-12.5 mb-25 mx-0"> 
+      <div className="flex flex-col gap-2.5"> 
+        {items.map((item) => {
+          const status = getStatus(item.id);
 
-        return (
-          <WrapperSheetContent key={item.id}>
-            <CommonCheckboxField
-              label={item.label}
-              handleToggle={() => handleToggleItem(item.id)}
-              checked={status.checked}
-              indeterminate={status.indeterminate}
-            />
-          </WrapperSheetContent>
-        );
-      })}
-    </div>
+          return (
+            <WrapperSheetContent key={item.id}>
+              <CommonCheckboxField
+                label={item.name}
+                handleToggle={() => handleToggleItem(item.id)}
+                checked={status.checked}
+                indeterminate={status.indeterminate}
+              />
+            </WrapperSheetContent>
+          );
+        })}
+      </div>
+    </ScrollArea>
   );
 };

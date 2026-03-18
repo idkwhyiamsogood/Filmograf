@@ -1,15 +1,18 @@
-export interface CommentBase {}
+import type { BaseModel } from "@/shared/types";
 
-export interface IComment {
-  id: number;
+export interface Comment extends BaseModel {
+  userId: string;
   text: string;
-  user: object // like type user in type collection
-
-  parentComment: string | undefined;
-  childs: IComment[];
-
-  createdAt: Date;
-  updatedAt: Date;
+  isDeleted: boolean;
+  liked: string[];
+  dislikes: string[];
+  childs: Comment[] | null;
 }
 
-export type CommentCreate = Omit<IComment, "id">
+// export interface CommentFull extends Comment {
+//   childs: 
+// }
+
+export type CreateComment = {
+  text: string;
+};

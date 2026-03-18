@@ -19,7 +19,7 @@ import { getAverageGrade } from "@/shared/lib";
 // function on view get movie from central storage if none send request
 
 interface Props {
-  movie: IMovie;
+  movie: IMovie | undefined;
   isLoading: boolean;
 }
 

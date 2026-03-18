@@ -5,6 +5,7 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-1: var(--background-1);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -80,6 +81,8 @@
   --sidebar-ring: oklch(0.709 0.01 56.259);
 
   --blue: #3c83f6;
+  --background-1: rgba(116, 116, 128, .05);
+  --background-elevated-2: rgb(37, 37, 39);
 }
 
 .dark {
@@ -115,6 +118,9 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
+
+  --background-1: rgba(116, 116, 128, .1);
+  --background-elevated-2: rgb(37, 37, 39);
 }
 
 @layer base {

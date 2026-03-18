@@ -1,6 +1,6 @@
 import type { IComment } from "entities/comment";
 
-export interface ICollection {
+export interface Collection {
   id: number;
   label: string;
   // creator: (IUSER || number ? getUser() -> IUSER) || string  (NAME)
