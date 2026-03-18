@@ -88,8 +88,7 @@ const Page: FC = () => {
               className="static w-full h-80+"
             />
           </div>
-          <h3 className="text-lg font-semibold text-center">{movie.name}</h3>
-
+          <h3 className="text-lg font-semibold text-center">{movie.name}   {movie.ageLimit}</h3>
           <div className="pb-16 border-1 rounded-xl">
             <div className="w-full">
               <ScrollArea className="w-full">
@@ -109,12 +108,12 @@ const Page: FC = () => {
                 </Tabs>
               </ScrollArea>
 
-              <Tabs defaultValue="default">
+              <Tabs defaultValue="default border-radius: 20px">
                 <TabsContent value="default">
                   <ScrollArea className="bg-muted flex">
-                    <div className="px-2.5 py-2.5 flex">
+                    <div className="px-2.5 py-2.5 flex text-center border-radius: 10px">
                       <TagsItem label="Выпуск" item={movie.year} />
-                      <TagsItem label="Выпуск" item={movie.year} />
+                      <TagsItem label="Возрастное ограничение" item={movie.ageLimit} />
                       <TagsItem label="Выпуск" item={movie.year} />
                       <TagsItem label="Выпуск" item={movie.year} />
                       <TagsItem label="Выпуск" item={movie.year} />
