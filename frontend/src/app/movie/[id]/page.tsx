@@ -11,6 +11,9 @@ import { ArrowLeft, BookmarkMinus } from "lucide-react";
 import { ScrollBar, ScrollArea } from "@/shared/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
+import { getAverageGrade } from "@/shared/lib/";
+import { Badge } from "@/shared/ui/badge";
+
 interface Props {
   label: string;
   item: string;
@@ -79,7 +82,7 @@ const Page: FC = () => {
         </div>
 
         <div className="flex flex-col gap-2.5">
-          <div className="mt-15 mx-auto mb-0 max-w-50 z-10">
+          <div className="mt-15 mx-auto mb-0 max-w-50 z-10 relative">
             <Image
               src={movie.imageUrl}
               alt={"обложка"}
@@ -87,6 +90,12 @@ const Page: FC = () => {
               height={1000}
               className="static w-full h-80+"
             />
+            <Badge
+              variant={"ghost"}
+              className="absolute right-2.5 bottom-2.5 bg-muted border-1"
+            >
+              {getAverageGrade(movie.rates)}
+            </Badge>
           </div>
           <h3 className="text-lg font-semibold text-center">{movie.name}</h3>
 
