@@ -30,6 +30,7 @@
         "@/features/*": ["features/*"],
         "@/core/*": ["core/*"],
         "@/public/*" : ["../public/*"],
+        "@/providers/*" : ["providers/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

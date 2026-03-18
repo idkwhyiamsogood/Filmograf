@@ -1,7 +1,7 @@
 "use client";
 
 import { useModals } from "@/shared/hooks/useModals";
-import { MODALS } from "@/shared/constants";
+import { MODALS } from "@/shared/configs";
 
 import { Suspense } from "react";
 import { LoadingSplashScreen } from "@/shared/components";

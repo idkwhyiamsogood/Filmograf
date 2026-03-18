@@ -5,7 +5,6 @@ import React from "react";
 
 import { CollectionProvider } from "@/entities/collection";
 import { UserProvider } from "@/entities/user";
-import { CommonWrapper } from "@/shared/components";
 import { AuthProvider, ModalProvider } from "@/shared/context";
 import { ModalRenderer } from "@/shared/lib";
 import { Navigation } from "@/widgets/Navigation/";

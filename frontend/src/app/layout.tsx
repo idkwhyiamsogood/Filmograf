@@ -1,8 +1,6 @@
+import { Providers } from "app/providers";
 import type { Metadata } from "next";
-import { Providers } from "./providers";
 import "./globals.css";
-
-// components
 
 export const metadata: Metadata = {
   title: "Filmograf",

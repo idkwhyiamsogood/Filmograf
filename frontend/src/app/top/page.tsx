@@ -9,15 +9,11 @@ const Page: FC = () => {
 
   useEffect(() => {
     const getTop = async () => {
-      try {
-        const { data } = await movieApi.getTop();
-        console.log(data.ids)
-        setMoviesData(data.ids);
-      } catch (e) {
-        console.log(e);
-      }
+      const { data } = await movieApi.getTop();
+      console.log(data.ids);
+      setMoviesData(data.ids);
     };
-    
+
     getTop();
   }, []);
 

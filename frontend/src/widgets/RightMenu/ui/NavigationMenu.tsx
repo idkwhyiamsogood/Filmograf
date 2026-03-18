@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 
-import { fullNavigation } from "@/shared/constants";
+import { fullNavigation } from "@/shared/configs";
 import { useModals } from "@/shared/hooks";
 import { useRouter } from "next/navigation";
 

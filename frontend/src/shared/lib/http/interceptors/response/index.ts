@@ -1,5 +1,5 @@
-import { getToken } from "./getToken"
+import { responseInterceptor } from "./responseInterceptor";
 
 export const RESPONSE_INTERCEPTORS = [
-  getToken
-]
+  responseInterceptor
+];

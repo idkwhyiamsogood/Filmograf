@@ -3,16 +3,66 @@
 import { useMovie } from "@/entities/movie";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { ReactNode, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
-import { CommonWrapper } from "@/shared/components";
 import { Button } from "@/shared/ui/button";
-import { ArrowLeft, BookmarkMinus } from "lucide-react";
-import { ScrollBar, ScrollArea } from "@/shared/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { ArrowLeft, BookmarkMinus } from "lucide-react";
 
 import { getAverageGrade } from "@/shared/lib/";
 import { Badge } from "@/shared/ui/badge";
+
+import { Genre, useGenres } from "@/entities/genres";
+
+interface GenresProps {
+  genreIds: string[];
+}
+
+const GenresWrapper: FC<GenresProps> = ({ genreIds }) => {
+  const [genres, setGenres] = useState<Genre[]>([]);
+
+  useEffect(() => {
+    try {
+      const { data: genresResponse } = useGenres();
+      const genres = genresResponse?.data.filter(
+        (genre) => genre.id in genreIds,
+      );
+
+      if (genres) setGenres(genres);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("Жанры:", genres);
+  }, [genres]);
+
+  return (
+    <div className="flex flex-wrap gap-2.5 px-4">
+      {genres.map((genre) => (
+        <Badge variant={"secondary"} onClick={() => {}}>
+          {genre.name}
+        </Badge>
+      ))}
+    </div>
+  );
+};
+
+interface DetailsProps {
+  label: string;
+  text: string;
+}
+
+const DetailsItem: FC<DetailsProps> = ({ label, text }) => {
+  return (
+    <div className="px-4 flex flex-col gap-2.5">
+      <h3 className="text-lg font-semibold">{label}</h3>
+      <p className="text-sm font-medium text-justify">{text}</p>
+    </div>
+  );
+};
 
 interface Props {
   label: string;
@@ -42,22 +92,7 @@ const Page: FC = () => {
 
   const movie = data?.[0];
 
-  if (!movie) {
-    return (
-      <ScrollArea className="relative h-full w-full">
-        <CommonWrapper>
-          <Button
-            className="absolute top-0 left-0 text-muted-foreground"
-            variant={"ghost"}
-            onClick={handleBack}
-          >
-            <ArrowLeft size={16} />
-          </Button>
-          <div>Загрузка...</div>
-        </CommonWrapper>
-      </ScrollArea>
-    );
-  }
+  if (!movie) return;
 
   return (
     <div className="relative w-full h-[calc(100vh-100px)]">
@@ -98,9 +133,9 @@ const Page: FC = () => {
             </Badge>
           </div>
           <h3 className="text-lg font-semibold text-center">{movie.name}</h3>
-
+          
           <div className="pb-16 border-1 rounded-xl">
-            <div className="w-full">
+            <div className="w-full bg-muted h-full">
               <ScrollArea className="w-full">
                 <Tabs defaultValue="default">
                   <TabsList className="rounded-b-none border-b-1 w-full">
@@ -109,18 +144,17 @@ const Page: FC = () => {
                     <TabsTrigger value="collections">
                       В каких колекциях
                     </TabsTrigger>
-                    {/* Добавьте еще триггеры для демонстрации скролла */}
                     <TabsTrigger value="extra1">Дополнительно 1</TabsTrigger>
                     <TabsTrigger value="extra2">Дополнительно 2</TabsTrigger>
                     <TabsTrigger value="extra3">Дополнительно 3</TabsTrigger>
                   </TabsList>
-                  <ScrollBar orientation="horizontal" />
+                  <ScrollBar orientation="horizontal" hidden />
                 </Tabs>
               </ScrollArea>
 
               <Tabs defaultValue="default">
                 <TabsContent value="default">
-                  <ScrollArea className="bg-muted flex">
+                  <ScrollArea className="flex">
                     <div className="px-2.5 py-2.5 flex">
                       <TagsItem label="Выпуск" item={movie.year} />
                       <TagsItem label="Выпуск" item={movie.year} />
@@ -129,13 +163,13 @@ const Page: FC = () => {
                       <TagsItem label="Выпуск" item={movie.year} />
                       <TagsItem label="Выпуск" item={movie.year} />
                     </div>
-                    <ScrollBar orientation="horizontal" />
+                    <ScrollBar orientation="horizontal" hidden />
                   </ScrollArea>
-                  <div className="px-4">
-                    <p className="text-sm font-medium text-justify">
-                      {movie.description}
-                    </p>
-                  </div>
+                  <DetailsItem
+                    label="Подробнее"
+                    text={(movie.description as string) || "..."}
+                  />
+                  <GenresWrapper genreIds={movie.genresIds} />
                 </TabsContent>
                 <TabsContent value="comments">{/* контент */}</TabsContent>
                 <TabsContent value="collections">{/* контент */}</TabsContent>

@@ -8,7 +8,7 @@ import { NavigationItem } from "./ui/NavigationItem";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { navigationMenu } from "@/shared/constants";
+import { navigationMenu } from "@/shared/configs";
 import { useModals } from "@/shared/hooks";
 
 export const Navigation: FC = () => {

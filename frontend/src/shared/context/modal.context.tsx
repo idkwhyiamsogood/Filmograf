@@ -1,87 +1,52 @@
 "use client";
 
-import React, { createContext, useState, useCallback, ReactNode, useEffect } from "react";
-import { ModalType } from "../types";
-
-interface ModalState {
-  isOpen: boolean;
-  modalType: ModalType | null;
-  modalProps: any;
-}
-
-interface ModalHistoryItem {
-  modalType: ModalType;
-  modalProps: any;
-}
-
-interface ModalContextType {
-  isOpen: boolean;
-  modalType: ModalType | null;
-  modalProps: any;
-  openModal: (modalType: ModalType, modalProps?: any) => void;
-  closeModal: () => void;
-  prevModal: () => void;
-}
+import { modalService } from "@/shared/services/ModalService";
+import { ModalContextType, ModalState, ModalType } from "@/shared/types/modals";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 export const ModalContext = createContext<ModalContextType | undefined>(
   undefined,
 );
 
 export function ModalProvider({ children }: { children: ReactNode }) {
-  const [modalState, setModalState] = useState<ModalState>({
+  const [state, setState] = useState<ModalState>({
     isOpen: false,
     modalType: null,
     modalProps: null,
   });
 
-  const [historyModal, setHistoryModal] = useState<ModalHistoryItem[]>([]);
-
-  const openModal = useCallback((modalType: ModalType, modalProps?: any) => {
-    setHistoryModal((prev) => [...prev, { modalType, modalProps: modalProps || null }]);
-
-    setModalState({
-      isOpen: true,
-      modalType,
-      modalProps: modalProps || null,
+  useEffect(() => {
+    const unsubscribe = modalService.subscribe((newState) => {
+      if (newState) {
+        setState(newState);
+      } else {
+        setState({
+          isOpen: false,
+          modalType: null,
+          modalProps: null,
+        });
+      }
     });
+
+    return unsubscribe;
   }, []);
 
-  const closeModal = useCallback(() => {
-    setHistoryModal([]);
+  const openModal = (modalType: ModalType, modalProps?: any) => {
+    modalService.open(modalType, modalProps);
+  };
 
-    setModalState({
-      isOpen: false,
-      modalType: null,
-      modalProps: null,
-    });
-  }, []);
+  const closeModal = () => {
+    modalService.close();
+  };
 
-  const prevModal = useCallback(() => {
-    if (historyModal.length <= 1) {
-      closeModal();
-      return;
-    }
-    
-    setHistoryModal((prev) => {
-      const newHistory = prev.slice(0, -1);
-      const previousModal = newHistory[newHistory.length - 1];
-      
-      setModalState({
-        isOpen: true,
-        modalType: previousModal.modalType,
-        modalProps: previousModal.modalProps,
-      });
-      
-      return newHistory;
-    });
-  }, [historyModal, closeModal]);
+  const prevModal = () => {
+    modalService.back();
+  };
 
   return (
     <ModalContext.Provider
       value={{
-        isOpen: modalState.isOpen,
-        modalType: modalState.modalType,
-        modalProps: modalState.modalProps,
+        ...state,
         openModal,
         closeModal,
         prevModal,
