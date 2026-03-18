@@ -188,6 +188,7 @@ public class Program
         builder.Services.AddScoped<Services.MoviesService>();
         builder.Services.AddScoped<MovieTopPicksService>();
         builder.Services.AddScoped<MovieRateService>();
+        builder.Services.AddScoped<ClickEntityService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

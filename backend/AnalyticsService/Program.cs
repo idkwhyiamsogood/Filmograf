@@ -12,6 +12,7 @@ using Filmograf.AnalyticsService.Services;
 using Filmograf.AnalyticsService.Services.Integrations;
 using Filmograf.AnalyticsService.Services.Middlewares;
 using Filmograf.AnalyticsService.Util;
+using Filmograf.BaseLibrary.DataAccess.Serializers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -77,8 +78,8 @@ public class Program
         MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(guidSerializer);
         
         // с date only этот еблан тоже не дружит
-        var dateOnlySerializer = new DateOnlySerializer()
-        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer();
+        var dateOnlySerializer = new DateOnlySerializer();
+        MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(dateOnlySerializer);
 
         builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
         {
@@ -100,7 +101,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
-        builder.Services.AddScoped<ClickMovieIntegrationContext>();
+        builder.Services.AddScoped<ClickEntityIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -110,7 +111,10 @@ public class Program
         
         // services
         builder.Services.AddScoped<RedisService>();
+        builder.Services.AddScoped<ClicksService>();
         builder.Services.AddScoped<MovieClicksService>();
+        builder.Services.AddScoped<CollectionClicksService>();
+        builder.Services.AddScoped<ClickIntervalValidator>();
         
         // providers
         // ...
@@ -118,8 +122,11 @@ public class Program
         // repositories
         builder.Services.AddScoped<MoviesClicksAnalyticRepository>();
         builder.Services.AddScoped<UserMoviesActivityDailyRepository>();
+        builder.Services.AddScoped<MovieRepository>(); // да, тут немного теряем SRP (Single Responsibility Principle)
+        builder.Services.AddScoped<CollectionRepository>(); // и тут немного теряем SRP)
         
         // cache
-        builder.Services.AddScoped<PickMoviesCaching>();
+        builder.Services.AddScoped<ClickEntityCaching>();
+        builder.Services.AddScoped<MoviesCaching>();
     }
 }

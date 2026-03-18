@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Filmograf.CommentsService.Controllers;
 
 [ApiController]
-[Route("api/comments/movies")]
+[Route("api/comments/entities")]
 public class EntitiesCommentController : CustomControllerBase
 {
     private readonly EntitiesCommentService _entitiesCommentService;
@@ -19,24 +19,29 @@ public class EntitiesCommentController : CustomControllerBase
         _entitiesCommentService = entitiesCommentService;
     }
     
-    [HttpGet("{movieId}")]
+    [HttpGet("{entityId}")]
     [UserTypePolicy]
-    public async Task<ActionResult<IEquatable<CommentResponseDto>>> GetMovieCommentsAsync(string movieId, 
+    public async Task<ActionResult<IEquatable<CommentResponseDto>>> GetMovieCommentsAsync(string entityId, 
         [FromQuery] PaginationQueryDto pagination, [FromQuery] CommentEntityTypeQueryDto entityTypeData)
     {
         var entityType = entityTypeData.GetEntityType();
-        var result = await _entitiesCommentService.GetByEntityAsync(movieId, pagination, entityType);
+        if (entityType == null) return BadRequest("InvalidEntityType");
+        
+        var result = await _entitiesCommentService.GetByEntityAsync(entityId, pagination, 
+            (CommentEntityType) entityType!);
         return Ok(result);
     }
     
-    [HttpPost("{movieId}/comment")]
+    [HttpPost("{entityId}/comment")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<CommentResponseDto>> AddMovieCommentAsync(string movieId, [FromBody] CreateCommentRequestDto data, 
+    public async Task<ActionResult<CommentResponseDto>> AddMovieCommentAsync(string entityId, [FromBody] CreateCommentRequestDto data, 
         [FromServices] AuthContext authContext, [FromQuery] CommentEntityTypeQueryDto entityTypeData)
     {
         var entityType = entityTypeData.GetEntityType();
-        var result = await _entitiesCommentService.AddCommentForEntityAsync(movieId, data.Text, 
-            authContext.CurrentUser!, entityType);
+        if (entityType == null) return BadRequest("InvalidEntityType");
+        
+        var result = await _entitiesCommentService.AddCommentForEntityAsync(entityId, data.Text, 
+            authContext.CurrentUser!, (CommentEntityType) entityType!);
         return Ok(result);
     }
 }

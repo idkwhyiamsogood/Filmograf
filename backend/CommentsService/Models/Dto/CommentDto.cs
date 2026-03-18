@@ -38,13 +38,13 @@ public class CommentEntityTypeQueryDto
     [RegularExpression("^(Movie|Collection)$")]
     public string EntityType { get; set; }
 
-    public CommentEntityType GetEntityType()
+    public CommentEntityType? GetEntityType()
     {
         return EntityType switch
         {
             "Movie" => CommentEntityType.Movie,
             "Collection" => CommentEntityType.Collection,
-            _ => CommentEntityType.Movie
+            _ => null
         };
     }
 }
