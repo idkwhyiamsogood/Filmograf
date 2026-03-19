@@ -31,7 +31,7 @@ public class ClicksService
         if (!isValid) throw new BadRequestHttpException("LastClickIntervalIsNotExpired");
         
         var clickHandler = _clickHandlers[entityType];
-        if (clickHandler == null) throw new NoContentHttpException("InvalidClickHandler");
+        if (clickHandler == null) throw new BadRequestHttpException("InvalidClickHandler");
 
         await clickHandler(entityId, userId);
     }

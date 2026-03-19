@@ -31,6 +31,10 @@ public class MongoIndexService : IHostedService
                 ),
                 new CreateIndexModel<MoviesClicksAnalyticRepo>(
                     Builders<MoviesClicksAnalyticRepo>.IndexKeys
+                        .Ascending(x => x.TargetDate)
+                ),
+                new CreateIndexModel<MoviesClicksAnalyticRepo>(
+                    Builders<MoviesClicksAnalyticRepo>.IndexKeys
                         .Ascending(x => x.MovieId)
                         .Ascending(x => x.TargetDate)
                 )
@@ -41,6 +45,10 @@ public class MongoIndexService : IHostedService
                 new CreateIndexModel<UserMoviesActivityDailyRepo>(
                     Builders<UserMoviesActivityDailyRepo>.IndexKeys
                         .Ascending(x => x.UserId)
+                ),
+                new CreateIndexModel<UserMoviesActivityDailyRepo>(
+                    Builders<UserMoviesActivityDailyRepo>.IndexKeys
+                        .Ascending(x => x.Date)
                 ),
                 new CreateIndexModel<UserMoviesActivityDailyRepo>(
                     Builders<UserMoviesActivityDailyRepo>.IndexKeys
@@ -58,6 +66,10 @@ public class MongoIndexService : IHostedService
                 ),
                 new CreateIndexModel<CollectionClicksAnalyticRepo>(
                     Builders<CollectionClicksAnalyticRepo>.IndexKeys
+                        .Ascending(x => x.TargetDate)
+                ),
+                new CreateIndexModel<CollectionClicksAnalyticRepo>(
+                    Builders<CollectionClicksAnalyticRepo>.IndexKeys
                         .Ascending(x => x.CollectionId)
                         .Ascending(x => x.TargetDate)
                 )
@@ -68,6 +80,10 @@ public class MongoIndexService : IHostedService
                 new CreateIndexModel<UserCollectionsActivityDailyRepo>(
                     Builders<UserCollectionsActivityDailyRepo>.IndexKeys
                         .Ascending(x => x.UserId)
+                ),
+                new CreateIndexModel<UserCollectionsActivityDailyRepo>(
+                    Builders<UserCollectionsActivityDailyRepo>.IndexKeys
+                        .Ascending(x => x.Date)
                 ),
                 new CreateIndexModel<UserCollectionsActivityDailyRepo>(
                     Builders<UserCollectionsActivityDailyRepo>.IndexKeys

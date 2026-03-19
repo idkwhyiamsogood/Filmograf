@@ -24,7 +24,15 @@ public class MoviesController : CustomControllerBase
     [UserTypePolicy]
     public async Task<ActionResult<MoviesListResponseDto>> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
     {
-        var result = await _movieTopPicksService.GetFromChartAsync(pagination);
+        var result = await _movieTopPicksService.GetFromChartAsync(pagination, "FilmTopMovies");
+        return Ok(result);
+    }
+
+    [HttpGet("popular")]
+    [UserTypePolicy]
+    public async Task<ActionResult<MoviesListResponseDto>> GetPopularMoviesAsync([FromQuery] PaginationQueryDto pagination)
+    {
+        var result = await _movieTopPicksService.GetFromChartAsync(pagination, "FilmPopularMovies");
         return Ok(result);
     }
 

@@ -9,6 +9,7 @@ using Filmograf.AnalyticsService.Integration.Hosted;
 using StackExchange.Redis;
 
 using Filmograf.AnalyticsService.Services;
+using Filmograf.AnalyticsService.Services.Charts;
 using Filmograf.AnalyticsService.Services.Integrations;
 using Filmograf.AnalyticsService.Services.Middlewares;
 using Filmograf.AnalyticsService.Util;
@@ -102,6 +103,7 @@ public class Program
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
         builder.Services.AddScoped<ClickEntityIntegrationContext>();
+        builder.Services.AddScoped<CompileChartIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -115,6 +117,8 @@ public class Program
         builder.Services.AddScoped<MovieClicksService>();
         builder.Services.AddScoped<CollectionClicksService>();
         builder.Services.AddScoped<ClickIntervalValidator>();
+        builder.Services.AddScoped<MoviesChartService>();
+        builder.Services.AddScoped<ChartService>();
         
         // providers
         // ...
