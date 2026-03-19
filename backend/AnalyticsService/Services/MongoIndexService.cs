@@ -8,11 +8,15 @@ public class MongoIndexService : IHostedService
 {
     private readonly IMongoCollection<MoviesClicksAnalyticRepo> _movieClicks;
     private readonly IMongoCollection<UserMoviesActivityDailyRepo> _userMovieClicks;
+    private readonly IMongoCollection<CollectionClicksAnalyticRepo> _collectionClicks;
+    private readonly IMongoCollection<UserCollectionsActivityDailyRepo> _userCollectionClicks;
 
     public MongoIndexService(IMongoDatabase database)
     {
         _movieClicks = database.GetCollection<MoviesClicksAnalyticRepo>(MoviesClicksAnalyticRepository.CollectionName);
         _userMovieClicks = database.GetCollection<UserMoviesActivityDailyRepo>(UserMoviesActivityDailyRepository.CollectionName);
+        _collectionClicks = database.GetCollection<CollectionClicksAnalyticRepo>(CollectionsClicksAnalyticRepository.CollectionName);
+        _userCollectionClicks = database.GetCollection<UserCollectionsActivityDailyRepo>(UserCollectionsActivityDailyRepository.CollectionName);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -40,6 +44,33 @@ public class MongoIndexService : IHostedService
                 ),
                 new CreateIndexModel<UserMoviesActivityDailyRepo>(
                     Builders<UserMoviesActivityDailyRepo>.IndexKeys
+                        .Ascending(x => x.UserId)
+                        .Descending(x => x.Date)
+                )
+            }, cancellationToken);
+            
+            
+            await _collectionClicks.Indexes.CreateManyAsync(new[]
+            {
+                new CreateIndexModel<CollectionClicksAnalyticRepo>(
+                    Builders<CollectionClicksAnalyticRepo>.IndexKeys
+                        .Ascending(x => x.CollectionId)
+                ),
+                new CreateIndexModel<CollectionClicksAnalyticRepo>(
+                    Builders<CollectionClicksAnalyticRepo>.IndexKeys
+                        .Ascending(x => x.CollectionId)
+                        .Ascending(x => x.TargetDate)
+                )
+            }, cancellationToken);
+            
+            await _userCollectionClicks.Indexes.CreateManyAsync(new[]
+            {
+                new CreateIndexModel<UserCollectionsActivityDailyRepo>(
+                    Builders<UserCollectionsActivityDailyRepo>.IndexKeys
+                        .Ascending(x => x.UserId)
+                ),
+                new CreateIndexModel<UserCollectionsActivityDailyRepo>(
+                    Builders<UserCollectionsActivityDailyRepo>.IndexKeys
                         .Ascending(x => x.UserId)
                         .Descending(x => x.Date)
                 )

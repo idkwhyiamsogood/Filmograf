@@ -9,7 +9,7 @@ public class CollectionsCaching
 {
     protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(0, 45, 0);
     protected readonly CachingProviderAtomic<CollectionResponseDto> _cachingAtomic;
-    protected readonly CachingProviderAtomic<IEnumerable<CollectionResponseDto>> _cachingByUserAtomic;
+    protected readonly CachingProviderAtomic<CollectionsBatchDto> _cachingByUserAtomic;
     protected readonly IConnectionMultiplexer _redis;
     protected readonly string _baseKey = "collections";
 
@@ -17,7 +17,7 @@ public class CollectionsCaching
     {
         _redis = redis;
         _cachingAtomic = new CachingProviderAtomic<CollectionResponseDto>(redis, $"{_baseKey}");
-        _cachingByUserAtomic = new CachingProviderAtomic<IEnumerable<CollectionResponseDto>>(redis, $"{_baseKey}:byUser");
+        _cachingByUserAtomic = new CachingProviderAtomic<CollectionsBatchDto>(redis, $"{_baseKey}:byUser");
     }
 
     private string MakeKey(string id)
@@ -53,15 +53,15 @@ public class CollectionsCaching
         return _cachingByUserAtomic.MakeIdKey($"{userId.ToString()}:{paginationHash}");
     }
 
-    public virtual async Task<IEnumerable<CollectionResponseDto>> CachingByUserAsync(Guid userId, PaginationQueryDto pagination,
-        Func<Task<IEnumerable<CollectionResponseDto>>> createItem)
+    public virtual async Task<CollectionsBatchDto> CachingByUserAsync(Guid userId, PaginationQueryDto pagination,
+        Func<Task<CollectionsBatchDto>> createItem)
     {
         var key = MakeUserKey(userId, pagination);
         return await _cachingByUserAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
     }
 
     public async Task ResetCachingByUserAsync(Guid userId, PaginationQueryDto pagination,
-        Func<Task<IEnumerable<CollectionResponseDto>>> createItem)
+        Func<Task<CollectionsBatchDto>> createItem)
     {
         var key = MakeUserKey(userId, pagination);
         var payloadData = await createItem();
@@ -76,7 +76,7 @@ public class CollectionsCaching
 
     public async Task<long> RemoveCachingByUserRootAsync(Guid userId)
     {
-        var tempSpecificAtomic = new CachingProviderAtomic<IEnumerable<CollectionResponseDto>>(
+        var tempSpecificAtomic = new CachingProviderAtomic<CollectionsBatchDto>(
             _redis, 
             $"{_baseKey}:byUser:{userId.ToString()}"
         );

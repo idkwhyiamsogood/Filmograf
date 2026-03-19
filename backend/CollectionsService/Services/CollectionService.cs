@@ -15,13 +15,15 @@ public class CollectionService
     private readonly CollectionRepository _collectionRepository;
     private readonly CollectionsCaching _collectionsCaching;
     private readonly IMapper _mapper;
+    private readonly ClickEntityService _clickEntityService;
 
     public CollectionService(CollectionRepository collectionRepository, CollectionsCaching collectionsCaching,
-        IMapper mapper)
+        IMapper mapper, ClickEntityService clickEntityService)
     {
         _collectionRepository = collectionRepository;
         _collectionsCaching = collectionsCaching;
         _mapper = mapper;
+        _clickEntityService = clickEntityService;
     }
 
     private async Task<CollectionResponseDto> CreateCacheForCollectionAsync(string id)
@@ -68,7 +70,8 @@ public class CollectionService
         if (gettingBy.IsAdmin) return;
         
         // если коллекция была удалена - ливаем
-        if (collection.IsDeleted) throw new NotFoundHttpException("CollectionHasBeenDeleted");
+        if (collection.IsDeleted) throw new NotFoundHttpException("CollectionHasBeenDeleted", 
+            $"Collection with id={collection.Id} has been deleted");
         
         // ну и базовая проверка - если публик или чел является владельцем - то все ок
         if (collection.IsPublic || collection.UserId == gettingBy.Id) return;
@@ -77,25 +80,50 @@ public class CollectionService
             $"You has no access to collection with id={collection.Id}");
     }
 
-    public async Task<CollectionResponseDto> GetCollectionAsync(string id, User gettingBy)
+    public async Task<CollectionResponseDto> GetCollectionByUserAsync(string id, User gettingBy)
     {
+        var sendClickRequestTask = _clickEntityService.CheckEntityClickAsync("Collection", id, gettingBy.Id);
         var method = async () => await CreateCacheForCollectionAsync(id);
         var collection = await _collectionsCaching.CachingAsync(id, method);
 
         CheckResponseAccess(collection, gettingBy);
+        await sendClickRequestTask;
         return collection;
     }
 
-    private async Task<IEnumerable<CollectionResponseDto>> CreateCacheForUserAsync(Guid userId,
+    public async Task<CollectionResponseDto> GetCollectionAsync(string id)
+    {
+        var method = async () => await CreateCacheForCollectionAsync(id);
+        var collection = await _collectionsCaching.CachingAsync(id, method);
+
+        if (collection.IsDeleted) throw new NotFoundHttpException("CollectionHasBeenDeleted", 
+            $"Collection with id={collection.Id} has been deleted");
+        
+        return collection;
+    }
+
+    public async Task<IEnumerable<CollectionResponseDto>> ListManyAsync(string[] ids)
+    {
+        return await Task.WhenAll(
+            ids.Select(async id => await GetCollectionAsync(id))
+        );
+    }
+
+    private async Task<CollectionsBatchDto> CreateCacheForUserAsync(Guid userId,
         PaginationQueryDto pagination)
     {
         var data = await _collectionRepository.GetByUserAsync(userId,
             pagination.Page * pagination.Count, pagination.Count);
 
-        return _mapper.Map<CollectionResponseDto[]>(data);
+        var ids = data.Select(i => i.Id!);
+        
+        var response = new CollectionsBatchDto 
+        { Ids = ids.ToArray() };
+
+        return response;
     }
 
-    public async Task<IEnumerable<CollectionResponseDto>> GetByUserAsync(User gettingBy, PaginationQueryDto pagination)
+    public async Task<CollectionsBatchDto> GetByUserAsync(User gettingBy, PaginationQueryDto pagination)
     {
         var method = async () => await CreateCacheForUserAsync(gettingBy.Id, pagination);
         return await _collectionsCaching.CachingByUserAsync(gettingBy.Id, pagination, method);

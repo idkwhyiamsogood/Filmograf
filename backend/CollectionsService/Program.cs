@@ -182,6 +182,7 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<CollectionTagService>();
         builder.Services.AddScoped<CollectionService>();
+        builder.Services.AddScoped<ClickEntityService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

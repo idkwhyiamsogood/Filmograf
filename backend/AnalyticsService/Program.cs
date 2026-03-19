@@ -122,11 +122,14 @@ public class Program
         // repositories
         builder.Services.AddScoped<MoviesClicksAnalyticRepository>();
         builder.Services.AddScoped<UserMoviesActivityDailyRepository>();
+        builder.Services.AddScoped<CollectionsClicksAnalyticRepository>();
+        builder.Services.AddScoped<UserCollectionsActivityDailyRepository>();
         builder.Services.AddScoped<MovieRepository>(); // да, тут немного теряем SRP (Single Responsibility Principle)
         builder.Services.AddScoped<CollectionRepository>(); // и тут немного теряем SRP)
         
         // cache
         builder.Services.AddScoped<ClickEntityCaching>();
         builder.Services.AddScoped<MoviesCaching>();
+        builder.Services.AddScoped<CollectionsCaching>();
     }
 }

@@ -84,7 +84,7 @@ public class MovieClicksService
         if (!CheckNewClickAvailable(todayActivityDaily, movieId, now)) return;
         
         // запись персонального события
-        var item = new UserClickEvent 
+        var item = new UserMovieClickEvent 
         { MovieId = movieId, Timestamp = now, MovieCache = movieCache };
     
         await _userMoviesActivityRepository.AddClickAsync(userId, item);

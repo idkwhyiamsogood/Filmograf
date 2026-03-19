@@ -1,32 +1,32 @@
-using Filmograf.AnalyticsService.Models.Repo;
+﻿using Filmograf.AnalyticsService.Models.Repo;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using MongoDB.Driver;
 
 namespace Filmograf.AnalyticsService.DataAccess.Repositories;
 
-public class UserMoviesActivityDailyRepository : RepositoryBase<UserMoviesActivityDailyRepo>
+public class UserCollectionsActivityDailyRepository : RepositoryBase<UserCollectionsActivityDailyRepo>
 {
-    public static readonly string CollectionName = "user_movie_clicks";
+    public static readonly string CollectionName = "user_collection_clicks";
     
-    public UserMoviesActivityDailyRepository(IMongoDatabase database) : base(database, CollectionName)
+    public UserCollectionsActivityDailyRepository(IMongoDatabase database) : base(database, CollectionName)
     {
     }
     
     // Добавляем клик пользователя в массив за день
-    public async Task AddClickAsync(Guid userId, UserMovieClickEvent item, CancellationToken ct = default)
+    public async Task AddClickAsync(Guid userId, UserCollectionClickEvent item, CancellationToken ct = default)
     {
         var date = DateOnly.FromDateTime(item.Timestamp);
         
-        var filter = Builders<UserMoviesActivityDailyRepo>.Filter.And(
-            Builders<UserMoviesActivityDailyRepo>.Filter
+        var filter = Builders<UserCollectionsActivityDailyRepo>.Filter.And(
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Eq(x => x.UserId, userId),
             
-            Builders<UserMoviesActivityDailyRepo>.Filter
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Eq(x => x.Date, date)
         );
 
         // $push добавляет элемент в массив
-        var update = Builders<UserMoviesActivityDailyRepo>.Update
+        var update = Builders<UserCollectionsActivityDailyRepo>.Update
             .Push(x => x.Clicks, item)
             .SetOnInsert(x => x.UserId, userId)
             .SetOnInsert(x => x.Date, date);
@@ -35,13 +35,13 @@ public class UserMoviesActivityDailyRepository : RepositoryBase<UserMoviesActivi
     }
     
     // Получить историю конкретного пользователя в определенный день
-    public async Task<UserMoviesActivityDailyRepo?> GetByUserAndDateAsync(Guid userId, DateOnly date, CancellationToken ct = default)
+    public async Task<UserCollectionsActivityDailyRepo?> GetByUserAndDateAsync(Guid userId, DateOnly date, CancellationToken ct = default)
     {
-        var filter = Builders<UserMoviesActivityDailyRepo>.Filter.And(
-            Builders<UserMoviesActivityDailyRepo>.Filter
+        var filter = Builders<UserCollectionsActivityDailyRepo>.Filter.And(
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Eq(x => x.UserId, userId),
             
-            Builders<UserMoviesActivityDailyRepo>.Filter
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Eq(x => x.Date, date)
         );
 
@@ -51,16 +51,16 @@ public class UserMoviesActivityDailyRepository : RepositoryBase<UserMoviesActivi
     }
 
     // Получить историю конкретного пользователя за период
-    public async Task<List<UserMoviesActivityDailyRepo>> GetUserHistoryAsync(Guid userId, DateOnly from, DateOnly to, CancellationToken ct = default)
+    public async Task<List<UserCollectionsActivityDailyRepo>> GetUserHistoryAsync(Guid userId, DateOnly from, DateOnly to, CancellationToken ct = default)
     {
-        var filter = Builders<UserMoviesActivityDailyRepo>.Filter.And(
-            Builders<UserMoviesActivityDailyRepo>.Filter
+        var filter = Builders<UserCollectionsActivityDailyRepo>.Filter.And(
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Eq(x => x.UserId, userId),
             
-            Builders<UserMoviesActivityDailyRepo>.Filter
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Gte(x => x.Date, from),
             
-            Builders<UserMoviesActivityDailyRepo>.Filter
+            Builders<UserCollectionsActivityDailyRepo>.Filter
                 .Lte(x => x.Date, to)
         );
 

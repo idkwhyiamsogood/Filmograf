@@ -23,13 +23,21 @@ public class CollectionsController : CustomControllerBase
     public async Task<ActionResult<CollectionResponseDto>> GetCollectionAsync(string collectionId, 
         [FromServices] AuthContext authContext)
     {
-        var result = await _collectionService.GetCollectionAsync(collectionId, authContext.CurrentUser!);
+        var result = await _collectionService.GetCollectionByUserAsync(collectionId, authContext.CurrentUser!);
+        return Ok(result);
+    }
+
+    [HttpPost("batch-many")]
+    [UserTypePolicy]
+    public async Task<ActionResult<List<CollectionResponseDto>>> BatchCollectionsAsync([FromBody] CollectionsBatchDto data)
+    {
+        var result = await _collectionService.ListManyAsync(data.Ids);
         return Ok(result);
     }
 
     [HttpGet("my")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<CollectionListResponseDto>> GetMyCollectionsAsync(
+    public async Task<ActionResult<CollectionsBatchDto>> GetMyCollectionsAsync(
         [FromQuery] PaginationQueryDto pagination, [FromServices] AuthContext authContext)
     {
         var result = await _collectionService.GetByUserAsync(authContext.CurrentUser!, pagination);
@@ -38,14 +46,14 @@ public class CollectionsController : CustomControllerBase
 
     [HttpGet("top")]
     [UserTypePolicy]
-    public async Task<ActionResult<CollectionListResponseDto>> GetTopCollectionsAsync()
+    public async Task<ActionResult<CollectionsBatchDto>> GetTopCollectionsAsync()
     {
         return Ok("Don't implemented yet.");
     }
     
     [HttpGet("recommended")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<CollectionListResponseDto>> GetRecommendedCollectionsAsync()
+    public async Task<ActionResult<CollectionsBatchDto>> GetRecommendedCollectionsAsync()
     {
         return Ok("Don't implemented yet.");
     }

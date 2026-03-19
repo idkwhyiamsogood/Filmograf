@@ -1,0 +1,48 @@
+﻿using Filmograf.AnalyticsService.Models.Repo;
+using Filmograf.BaseLibrary.DataAccess.Repositories;
+using MongoDB.Driver;
+
+namespace Filmograf.AnalyticsService.DataAccess.Repositories;
+
+public class CollectionsClicksAnalyticRepository : RepositoryBase<CollectionClicksAnalyticRepo>
+{
+    public static readonly string CollectionName = "collection_clicks";
+    
+    public CollectionsClicksAnalyticRepository(IMongoDatabase database) : base(database, CollectionName)
+    {
+    }
+
+    public async Task<IEnumerable<CollectionClicksAnalyticRepo>> ListByCollectionAsync(string collectionId, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionClicksAnalyticRepo>.Filter
+            .Eq(x => x.CollectionId, collectionId);
+    
+        return await _collection.Find(filter)
+            .ToListAsync(ct);
+    }
+    
+    public async Task<CollectionClicksAnalyticRepo?> GetByCollectionAndDateAsync(string collectionId, DateOnly date, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionClicksAnalyticRepo>.Filter.And(
+            Builders<CollectionClicksAnalyticRepo>.Filter.Eq(x => x.CollectionId, collectionId),
+            Builders<CollectionClicksAnalyticRepo>.Filter.Eq(x => x.TargetDate, date)
+        );
+
+        return await _collection.Find(filter).FirstOrDefaultAsync(ct);
+    }
+    
+    public async Task IncrementClickAsync(string collectionId, DateOnly date, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionClicksAnalyticRepo>.Filter.And(
+            Builders<CollectionClicksAnalyticRepo>.Filter.Eq(x => x.CollectionId, collectionId),
+            Builders<CollectionClicksAnalyticRepo>.Filter.Eq(x => x.TargetDate, date)
+        );
+
+        var update = Builders<CollectionClicksAnalyticRepo>.Update
+            .Inc(x => x.Count, 1)
+            .SetOnInsert(x => x.CollectionId, collectionId)
+            .SetOnInsert(x => x.TargetDate, date);
+    
+        await _collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, ct);
+    }
+}

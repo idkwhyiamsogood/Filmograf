@@ -20,7 +20,8 @@ public class ClicksService
 
         _clickHandlers = new Dictionary<string, HandleClickEntity>
         {
-            { "Movie", _movieClicksService.HandleClickMovieAsync }
+            { "Movie", _movieClicksService.HandleClickMovieAsync },
+            { "Collection", _collectionClicksService.HandleClickCollectionAsync }
         };
     }
 

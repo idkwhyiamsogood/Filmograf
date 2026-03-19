@@ -2,7 +2,7 @@
 
 namespace Filmograf.CollectionsService.Models.Dto;
 
-public class CollectionListResponseDto
+public class CollectionsBatchDto
 {
     public string[] Ids { get; set; }
 }
