@@ -45,4 +45,26 @@ public abstract class RepositoryBase<TBase> where TBase : RepoBase
         var result = await _collection.DeleteOneAsync(filter);
         return result.DeletedCount > 0;
     }
+    
+    /// <summary>
+    /// Возвращает один случайный документ из коллекции.
+    /// </summary>
+    public async Task<TBase?> GetRandomAsync(CancellationToken ct = default)
+    {
+        return await _collection.Aggregate()
+            .Sample(1)
+            .FirstOrDefaultAsync(ct);
+    }
+
+    /// <summary>
+    /// Возвращает список из N случайных документов.
+    /// </summary>
+    public async Task<IReadOnlyList<TBase>> GetRandomManyAsync(int count, CancellationToken ct = default)
+    {
+        if (count <= 0) return new List<TBase>();
+
+        return await _collection.Aggregate()
+            .Sample(count)
+            .ToListAsync(ct);
+    }
 }

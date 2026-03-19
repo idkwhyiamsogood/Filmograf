@@ -15,14 +15,16 @@ public class MoviesService
     private readonly MoviesCaching _moviesCaching;
     private readonly IMapper _mapper;
     private readonly MovieRateService _movieRateService;
+    private readonly ClickEntityService _clickEntityService;
     
     public MoviesService(MovieRepository movieRepository, MoviesCaching moviesCaching, MovieRateService movieRateService, 
-        IMapper mapper)
+        IMapper mapper, ClickEntityService clickEntityService)
     {
         _movieRepository = movieRepository;
         _moviesCaching = moviesCaching;
         _movieRateService = movieRateService;
         _mapper = mapper;
+        _clickEntityService = clickEntityService;
     }
 
     public async Task<MovieResponseDto> MapMovieAsync(MovieRepo movieRepo)
@@ -76,6 +78,7 @@ public class MoviesService
 
     public async Task<MovieResponseDto> GetByUserAsync(string movieId, User user)
     {
+        var sendClickRequestTask = _clickEntityService.CheckEntityClickAsync("Movie", movieId, user.Id);
         var movieRateTask = _movieRateService.GetByUserAsync(user.Id, movieId);
         var movieResponseTask = GetMovieResponseAsync(movieId);
 
@@ -84,6 +87,7 @@ public class MoviesService
         var movieResponse = movieResponseTask.Result;
 
         movieResponse.Rates["ByUser"] = movieRate?.Rate ?? -1;
+        await sendClickRequestTask;
         return movieResponse;
     }
 }

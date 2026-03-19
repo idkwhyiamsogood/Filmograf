@@ -182,6 +182,7 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<CollectionTagService>();
         builder.Services.AddScoped<CollectionService>();
+        builder.Services.AddScoped<ClickEntityService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -197,6 +198,7 @@ public class Program
         builder.Services.AddScoped<UserCaching>();
         builder.Services.AddScoped<CollectionTagsCaching>();
         builder.Services.AddScoped<CollectionPinsCaching>();
+        builder.Services.AddScoped<CollectionsCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

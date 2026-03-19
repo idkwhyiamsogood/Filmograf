@@ -1,8 +1,10 @@
-﻿namespace Filmograf.CollectionsService.Models.Dto;
+﻿using System.ComponentModel;
 
-public class CollectionListResponseDto
+namespace Filmograf.CollectionsService.Models.Dto;
+
+public class CollectionsBatchDto
 {
-    public Guid[] Ids { get; set; }
+    public string[] Ids { get; set; }
 }
 
 public class CollectionResponseDto
@@ -14,20 +16,20 @@ public class CollectionResponseDto
     
     public Guid UserId { get; set; }
     
-    public Guid[] Movies { get; set; }
+    public string[] Movies { get; set; }
     public Guid[] Tags { get; set; }
     
     public bool IsPublic { get; set; } = false;
     public bool IsCommentable { get; set; } = false;
     public bool IsCopiable { get; set; } = false;
     public bool IsByFilmograf { get; set; } = false;
+    public bool IsDeleted { get; set; } = false;
 }
 
 public class CreateCollectionRequestDto
 {
     public string Name { get; set; }
     public Guid[] Tags { get; set; }
-    
     public bool IsPublic { get; set; } = false;
     public bool IsCommentable { get; set; } = false;
     public bool IsCopiable { get; set; } = false;

@@ -1,7 +1,9 @@
-﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+﻿using Filmograf.BaseLibrary.Caching;
+using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.BaseLibrary.Models.Types;
+using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Caching;
 using Filmograf.MoviesService.Models.Dto;
@@ -11,48 +13,21 @@ namespace Filmograf.MoviesService.Services.Movies;
 public class MovieTopPicksService
 {
     private readonly MoviesParserService _moviesParserService;
-    private readonly TopPicksRepository _topPicksRepository;
     private readonly MovieRepository _movieRepository;
-    private readonly MoviesCaching _moviesCaching;
-    private readonly MoviesService _moviesService;
+    private readonly TopPicksService _topPicksService;
     
-    public MovieTopPicksService(MoviesParserService moviesParserService, TopPicksRepository topPicksRepository, 
-        MovieRepository movieRepository, MoviesCaching moviesCaching, MoviesService moviesService)
+    public MovieTopPicksService(MoviesParserService moviesParserService, MovieRepository movieRepository, 
+        TopPicksService topPicksService)
     {
         _moviesParserService = moviesParserService;
-        _topPicksRepository = topPicksRepository;
         _movieRepository = movieRepository;
-        _moviesCaching = moviesCaching;
-        _moviesService = moviesService;
+        _topPicksService = topPicksService;
     }
     
-    private async Task<MoviesListResponseDto> CreateCacheForChartAsync(PaginationQueryDto pagination, string chartType)
-    {
-        var chartRepo = await _topPicksRepository.GetByChartTypeAsync(chartType);
-        if (chartRepo == null) return new MoviesListResponseDto();
-        
-        var sortedChartIds = chartRepo.Chart
-            .OrderBy(pair => pair.Key)
-            .Select(pair => pair.Value)
-            .ToList();
-        
-        var pagedIds = sortedChartIds
-            .Skip(pagination.Page * pagination.Count)
-            .Take(pagination.Count)
-            .ToList();
-        
-        if (!pagedIds.Any()) return new MoviesListResponseDto();
-
-        return new MoviesListResponseDto { Ids = pagedIds.ToArray() };
-    }
-
-    // chartType: 'IMDb', 'Kinopoisk'
-    public async Task<MoviesListResponseDto> GetFromChartAsync(PaginationQueryDto pagination, string chartType = "IMDb")
+    public async Task<EntitiesListResponseDto> GetFromChartAsync(PaginationQueryDto pagination, string chartType = "IMDb")
     {
         await _moviesParserService.CheckLastParsingAsync(chartType);
-
-        var method = async () => await CreateCacheForChartAsync(pagination, chartType);
-        return await _moviesCaching.CachingTopPickAsync(chartType, pagination, method);
+        return await _topPicksService.GetFromChartAsync(pagination, chartType);
     }
     
     public async Task UpdateMoviesChartAsync(string chartType, IEnumerable<RawMovieInfo> movies)
@@ -75,31 +50,6 @@ public class MovieTopPicksService
             currentNewIndex++;
         }
 
-        // получаем существующий топик
-        var exitingTopPick = await _topPicksRepository.GetByChartTypeAsync(chartType);
         
-        // если нету
-        if (exitingTopPick == null)
-        {
-            // создаем новый
-            var newTopPick = new TopPicksRepo
-            {
-                Id = MongoDbUtil.GenerateNewId(),
-                ChartType = chartType, 
-                Chart = chartDictionary
-            };
-
-            // сохраняем
-            await _topPicksRepository.CreateAsync(newTopPick);
-            await _moviesCaching.RemoveCachingTopPickRootAsync(chartType);
-            return;
-        }
-
-        // если уже есть запись для такого топика - обновляем данные
-        exitingTopPick.Chart = chartDictionary;
-        await _topPicksRepository.UpdateAsync(exitingTopPick.Id, exitingTopPick);
-        
-        // удяляем фулл кеш для топика
-        await _moviesCaching.RemoveCachingTopPickRootAsync(chartType);
     }
 }

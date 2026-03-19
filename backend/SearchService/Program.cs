@@ -172,6 +172,7 @@ public class Program
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<Services.SearchService>();
         
         // providers
         builder.Services.AddScoped<AuthProvider>();

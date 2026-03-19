@@ -15,8 +15,9 @@ public class CollectionRepo : RepoBase
     [Required]
     public Guid UserId { get; set; }
     
-    public Guid[] Movies { get; set; }
+    public string[] Movies { get; set; }
     public Guid[] Tags { get; set; }
+    public string[] ProdCollections { get; set; } = Array.Empty<string>();
     
     [DefaultValue(false)]
     public bool IsPublic { get; set; } = false;
@@ -29,4 +30,7 @@ public class CollectionRepo : RepoBase
     
     [DefaultValue(false)]
     public bool IsByFilmograf { get; set; } = false;
+    
+    [DefaultValue(false)]
+    public bool IsDeleted { get; set; } = false;
 }

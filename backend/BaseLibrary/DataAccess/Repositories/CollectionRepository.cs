@@ -13,17 +13,104 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     {
     }
     
-    public Task<List<CollectionRepo>> GetByNameAsync(string name, CancellationToken ct = default)
+    // вспомогательный метод для построения фильтра с учетом IsDeleted
+    private FilterDefinition<CollectionRepo> BuildBaseFilter(bool showDeleted)
+    {
+        var builder = Builders<CollectionRepo>.Filter;
+        if (showDeleted) return builder.Empty; // показываем все
+        
+        return builder.Eq(x => x.IsDeleted, false); // показываем только неудаленные
+    }
+    
+    public Task<List<CollectionRepo>> GetByNameAsync(string name, bool showDeleted = false, CancellationToken ct = default)
     {
         var escapedName = Regex.Escape(name);
         
-        var filter = Builders<CollectionRepo>.Filter.Regex(x => x.Name, 
+        var baseFilter = BuildBaseFilter(showDeleted);
+        var nameFilter = Builders<CollectionRepo>.Filter.Regex(x => x.Name, 
             new BsonRegularExpression(escapedName, "i"));
+        
+        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, nameFilter);
     
-        return _collection.Find(filter)
+        return _collection.Find(combinedFilter)
             .ToListAsync(ct);
     }
     
+    public Task<List<CollectionRepo>> GetByUserAsync(Guid userId, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
+    {
+        var baseFilter = BuildBaseFilter(showDeleted);
+        var userFilter = Builders<CollectionRepo>.Filter
+            .Eq(x => x.UserId, userId);
+        
+        var combinedFilter = Builders<CollectionRepo>.Filter
+            .And(baseFilter, userFilter);
     
+        return _collection.Find(combinedFilter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
     
+    public Task<List<CollectionRepo>> GetByTagAsync(Guid tagId, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
+    {
+        var baseFilter = BuildBaseFilter(showDeleted);
+        var tagFilter = Builders<CollectionRepo>.Filter
+            .AnyEq(x => x.Tags, tagId);
+        
+        var combinedFilter = Builders<CollectionRepo>.Filter
+            .And(baseFilter, tagFilter);
+
+        return _collection.Find(combinedFilter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
+    
+    public Task<List<CollectionRepo>> GetByRequiredTagsAsync(Guid[] tagIds, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
+    {
+        var baseFilter = BuildBaseFilter(showDeleted);
+        var tagsFilter = Builders<CollectionRepo>.Filter.All(x => x.Tags, tagIds);
+        
+        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, tagsFilter);
+
+        return _collection.Find(combinedFilter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
+    
+    public Task<List<CollectionRepo>> GetByAnyTagsAsync(Guid[] tagIds, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
+    {
+        var baseFilter = BuildBaseFilter(showDeleted);
+        var tagsFilter = Builders<CollectionRepo>.Filter.AnyIn(x => x.Tags, tagIds);
+        
+        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, tagsFilter);
+
+        return _collection.Find(combinedFilter)
+            .SortByDescending(i => i.CreateDate)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
+    
+    public async Task<bool> SoftDeleteAsync(string id, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionRepo>.Filter.Eq(x => x.Id, id);
+        var update = Builders<CollectionRepo>.Update.Set(x => x.IsDeleted, true);
+        
+        var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: ct);
+        return result.ModifiedCount > 0;
+    }
+    
+    public async Task<bool> RestoreAsync(string id, CancellationToken ct = default)
+    {
+        var filter = Builders<CollectionRepo>.Filter.Eq(x => x.Id, id);
+        var update = Builders<CollectionRepo>.Update.Set(x => x.IsDeleted, false);
+        
+        var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: ct);
+        return result.ModifiedCount > 0;
+    }
 }

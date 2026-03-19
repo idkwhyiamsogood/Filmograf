@@ -11,5 +11,7 @@ public class MappingProfile : Profile
     {
         CreateMap<CollectionTag, CollectionTagResponseDto>();
         CreateMap<CollectionPinRepo, CollectionPinsResponseDto>();
+        CreateMap<CollectionRepo, CollectionResponseDto>();
+        CreateMap<CreateCollectionRequestDto, CollectionRepo>();
     }
 }

@@ -13,7 +13,7 @@ public class UserMoviesActivityDailyRepository : RepositoryBase<UserMoviesActivi
     }
     
     // Добавляем клик пользователя в массив за день
-    public async Task AddClickAsync(Guid userId, UserClickEvent item, CancellationToken ct = default)
+    public async Task AddClickAsync(Guid userId, UserMovieClickEvent item, CancellationToken ct = default)
     {
         var date = DateOnly.FromDateTime(item.Timestamp);
         

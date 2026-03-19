@@ -7,8 +7,12 @@ namespace Filmograf.MoviesService.Services.Integrations;
 
 public class RabbitMqHostedService : RabbitMqHostedServiceBase
 {
-    internal protected readonly static string[] Queues = new[] { "parser_to_movies", "movies_to_parser" }; // взаимодействуем
-    internal protected readonly static string[] Consumes = new[] { "parser_to_movies" }; // слушаем
+    internal protected readonly static string[] Queues = new[]
+    {
+        "parser_to_movies", "movies_to_parser",
+        "analytics_to_movies", "movies_to_analytics"
+    }; // взаимодействуем
+    internal protected readonly static string[] Consumes = new[] { "parser_to_movies", "analytics_to_movies" }; // слушаем
 
     public RabbitMqHostedService(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory) 
         : base(settings, scopeFactory, Queues, Consumes) { }

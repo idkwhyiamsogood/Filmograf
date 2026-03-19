@@ -188,6 +188,9 @@ public class Program
         builder.Services.AddScoped<Services.MoviesService>();
         builder.Services.AddScoped<MovieTopPicksService>();
         builder.Services.AddScoped<MovieRateService>();
+        builder.Services.AddScoped<ClickEntityService>();
+        builder.Services.AddScoped<MoviesChartService>();
+        builder.Services.AddScoped<TopPicksService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -206,6 +209,7 @@ public class Program
         builder.Services.AddScoped<MoviesCaching>();
         builder.Services.AddScoped<ParsingPlannerCache>();
         builder.Services.AddScoped<MovieRateCaching>();
+        builder.Services.AddScoped<TopPickCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)

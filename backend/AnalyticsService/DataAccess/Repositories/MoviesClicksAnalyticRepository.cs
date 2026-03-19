@@ -31,6 +31,40 @@ public class MoviesClicksAnalyticRepository : RepositoryBase<MoviesClicksAnalyti
         return await _collection.Find(filter).FirstOrDefaultAsync(ct);
     }
     
+    public async Task<List<MoviesClicksAnalyticRepo>> GetByMovieAndPeriodAsync(string movieId, DateOnly from, DateOnly to, 
+        CancellationToken ct = default)
+    {
+        var filter = Builders<MoviesClicksAnalyticRepo>.Filter.And(
+            Builders<MoviesClicksAnalyticRepo>.Filter
+                .Eq(x => x.MovieId, movieId),
+            
+            Builders<MoviesClicksAnalyticRepo>.Filter
+                .Gte(x => x.TargetDate, from),
+            
+            Builders<MoviesClicksAnalyticRepo>.Filter
+                .Lte(x => x.TargetDate, to)
+        );
+
+        return await _collection.Find(filter)
+            .SortBy(x => x.TargetDate)
+            .ToListAsync(ct);
+    }
+    
+    public async Task<List<MoviesClicksAnalyticRepo>> GetByPeriodAsync(DateOnly from, DateOnly to, CancellationToken ct = default)
+    {
+        var filter = Builders<MoviesClicksAnalyticRepo>.Filter.And(
+            Builders<MoviesClicksAnalyticRepo>.Filter
+                .Gte(x => x.TargetDate, from),
+            
+            Builders<MoviesClicksAnalyticRepo>.Filter
+                .Lte(x => x.TargetDate, to)
+        );
+
+        return await _collection.Find(filter)
+            .SortBy(x => x.TargetDate)
+            .ToListAsync(ct);
+    }
+    
     public async Task IncrementClickAsync(string movieId, DateOnly date, CancellationToken ct = default)
     {
         var filter = Builders<MoviesClicksAnalyticRepo>.Filter.And(

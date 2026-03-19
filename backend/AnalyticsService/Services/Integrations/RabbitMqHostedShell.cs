@@ -1,4 +1,5 @@
-﻿using Filmograf.BaseLibrary.Integrations;
+﻿using Filmograf.AnalyticsService.Integration.Hosted;
+using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Hosted;
 using Filmograf.BaseLibrary.Util;
 
@@ -19,6 +20,8 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
     protected override void InitListeners()
     {
         _integrationsBus = new Dictionary<string, IIntegrationHandler>();
+        _integrationsBus["click_entity"] = new ClickEntityIntegration(_channel, "click_entity");
+        _integrationsBus["compile_chart"] = new CompileChartIntegration(_channel, "compile_chart");
     }
 }
 

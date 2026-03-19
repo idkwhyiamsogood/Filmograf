@@ -10,17 +10,27 @@ namespace Filmograf.MoviesService.Controllers;
 public class FeedController : CustomControllerBase
 {
     private readonly MoviesParserService _moviesParserService;
+    private readonly MoviesChartService _moviesChartService;
 
-    public FeedController(MoviesParserService moviesParserService)
+    public FeedController(MoviesParserService moviesParserService, MoviesChartService moviesChartService)
     {
         _moviesParserService = moviesParserService;
+        _moviesChartService = moviesChartService;
     }
     
     [Admin]
-    [HttpPost]
-    public async Task<ActionResult> FeedAsync([FromBody] FeedMoviesDto data)
+    [HttpPost("parse")]
+    public async Task<ActionResult> FeedParseAsync([FromBody] FeedMoviesDto data)
     {
         await _moviesParserService.ParseMoviesAsync(data.Source, data.Url, true, false);
+        return Ok();
+    }
+    
+    [Admin]
+    [HttpPost("compile-chart")]
+    public async Task<ActionResult> CompileChartAsync()
+    {
+        await _moviesChartService.CompileChartAsync();
         return Ok();
     }
 }
