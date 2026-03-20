@@ -23,12 +23,12 @@ export const CollectionSelector: React.FC<Props> = ({
 
   return (
     <div className="flex flex-col gap-5">
-      <Tabs defaultValue={collections[0]?.name}>
+      <Tabs defaultValue={collections[0].id}>
         <ScrollArea>
           <TabsList>
             {collections.map((collection, idx) => (
               <TabsTrigger
-                value={collection.name}
+                value={collection.id}
                 onClick={() => onClick(collection.id)}
                 key={"collection-" + String(idx)}
               >
@@ -44,7 +44,7 @@ export const CollectionSelector: React.FC<Props> = ({
 
           return (
             <TabsContent
-              value={collection.name}
+              value={collection.id}
               key={"collection-content-" + String(idx)}
             >
               <MovieWrapper movies={movies || []} isLoading={isLoading} />

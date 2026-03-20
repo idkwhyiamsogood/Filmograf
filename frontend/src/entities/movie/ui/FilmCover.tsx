@@ -41,7 +41,7 @@ export const MovieCover: React.FC<Props> = memo(({ movie, isLoading }) => {
               <Image
                 src={movie.imageUrl}
                 alt={movie.name}
-                className="rounded-2xl h-37.5 sm:h-60"
+                className="rounded-2xl h-50 sm:h-75"
                 height={100}
                 width={1000}
                 objectFit="cover"

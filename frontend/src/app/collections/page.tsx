@@ -15,6 +15,7 @@ interface Props {
 
 const Page: React.FC<Props> = ({ className }) => {
   const [collectionsIds, setCollectionsIds] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string>("");
 
   useEffect(() => {
     const getMy = async () => {
@@ -34,15 +35,16 @@ const Page: React.FC<Props> = ({ className }) => {
 
   const { data: collections } = useCollections(collectionsIds);
 
-  console.log(collections);
-
   return (
     <div className={className}>
       <h1 className="text-foreground text-xl font-semibold">Коллекции</h1>
-      <CollectionSelector collections={collections || []} onClick={() => {}} />
-      <div className="flex gap-2.5 max-w-full">
+      <CollectionSelector
+        collections={collections || []}
+        onClick={setSelected}
+      />
+      <div className="flex gap-2.5 w-full">
         <CreateCollectionButton />
-        <EditCollectionButton />
+        <EditCollectionButton collectionId={selected} />
       </div>
     </div>
   );

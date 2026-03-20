@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { collectionApi } from "../api/collection.api";
-import { Collection, CreateCollection } from "../types";
-
-import type { APIResponse } from "@/shared/types";
+import { CreateCollection } from "../types";
 
 export const useCreateCollection = () => {
   const queryClient = useQueryClient();
@@ -12,11 +10,18 @@ export const useCreateCollection = () => {
       collectionApi.createCollection(data),
     mutationKey: ["createCollection"],
     onSuccess: (response) => {
-      const collection = response.data;
+      try {
+        const collection = response.data;
 
-      queryClient.setQueryData(["collection", collection.id], collection);
+        queryClient.setQueryData(["collection", collection.id], collection);
 
-      queryClient.invalidateQueries({ queryKey: ["collections"] });
+        queryClient.invalidateQueries({
+          queryKey: ["collections"],
+          exact: false,
+        });
+      } finally {
+        window.location.reload();
+      }
     },
     onError: () => {
       console.log("collection creation failed");

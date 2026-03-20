@@ -17,7 +17,7 @@ import {
 } from "@/shared/ui/dialog";
 
 interface IConfirmationModalProps {
-  title: string;
+  title?: string;
   deskription?: string;
   confirmText?: string;
   function: Function;
@@ -48,7 +48,7 @@ export const ConfirmationModal: React.FC = () => {
       <DialogContent showCloseButton={false}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader className="text-left">
-            <DialogTitle>{receivedData.title}</DialogTitle>
+            <DialogTitle>{receivedData.title ? receivedData.title : "Вы уверены?"}</DialogTitle>
             <DialogDescription>
               {receivedData.deskription
                 ? receivedData.deskription
