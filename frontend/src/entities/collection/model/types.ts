@@ -1,23 +1,27 @@
-import type { IComment } from "entities/comment";
+import type { BaseModel } from "@/shared/types";
 
-export interface Collection {
-  id: number;
-  label: string;
-  // creator: (IUSER || number ? getUser() -> IUSER) || string  (NAME)
-  // create: {id: string (uuid); name: string; icon: string (path to img)}
-  totalGradeOut?: number; // user rate
-  totalGradeIn?: number; // KP + IMDB return avg
-  films?: number[]; // IFILM.id[]
-
+export interface Collection extends BaseModel {
+  name: string;
+  sourceCollectionId: string;
+  userId: string;
+  movies: string[];
+  tags: string[];
   isPublic: boolean;
   isCommentable: boolean;
-
-  comments?: IComment[]; // isCommentable false -> undefined;
+  isCopiable: boolean;
+  isByFilmograf: boolean;
+  isDeleted: boolean;
 };
 
-export interface ICollectionRedact {
-  id?: number; // optional type bsc can be deafaulted setted
-  label: string;
+export interface CreateCollection {
+  name: string;
+  tags: string[];
   isPublic: boolean;
   isCommentable: boolean;
+  isCopiable: boolean;
+};
+
+export type UpdateCollection = {
+  id: string;
+  data: CreateCollection
 };

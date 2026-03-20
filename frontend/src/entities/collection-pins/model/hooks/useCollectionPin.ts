@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { collecionPinsApi } from "../api/collectionPins.api";
 import { toast } from "sonner";
 
-export const useCollectionpin = () => {
+export const usePinCollection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

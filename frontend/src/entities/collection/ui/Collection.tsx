@@ -5,7 +5,7 @@ interface Props {
   films: number[]
 }
 
-export const Collection: React.FC<Props> = ({ films }) => {
+export const CollectionCard: React.FC<Props> = ({ films }) => {
   return (
     <div className=''>
       

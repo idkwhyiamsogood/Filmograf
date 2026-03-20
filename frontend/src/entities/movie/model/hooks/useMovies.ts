@@ -12,7 +12,6 @@ export const useMovie = (ids: string[] | string) => {
 
       for (const id of ids) {
         const item = queryClient.getQueryData<IMovie>(["movie", id]);
-        console.log(item);
 
         if (item) answer.push(item);
         else missing.push(id);

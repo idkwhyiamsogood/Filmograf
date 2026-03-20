@@ -10,7 +10,7 @@ export interface IMovie extends BaseModel {
   name: string;
   description?: string | undefined;
   year: string;
-  ageLimit: number;
+  ageLimit: number; // not-correct
   time: string;
   imageUrl: string;
   previewImageLink: string;
@@ -19,3 +19,4 @@ export interface IMovie extends BaseModel {
 
   rates: Record<Review, number>
 };
+2

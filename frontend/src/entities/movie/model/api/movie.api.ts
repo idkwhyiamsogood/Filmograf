@@ -1,25 +1,17 @@
 import { BaseHttpClient } from "@/shared/lib";
-import { ApiResponse } from "@/shared/types/api";
+import { APIResponse } from "@/shared/types/api";
 
+import type { IdsEntity, QueryParams } from "@/shared/types";
 import type { IMovie } from "../types/types";
 
-interface QueryParams {
-  page?: number;
-  count?: number;
-}
-
-interface MovieIds {
-  ids: string[]
-}
-
 class MovieApi extends BaseHttpClient {
-  public getMovie = async (id: string): ApiResponse<IMovie> => {
+  public getMovie = async (id: string): APIResponse<IMovie> => {
     return this.get(`/api/movies/${id}`);
   };
 
   public getTop = async (
     params: QueryParams = { page: 0, count: 21 },
-  ): ApiResponse<MovieIds> => {
+  ): APIResponse<IdsEntity> => {
     return this.get(
       `/api/movies/top?Page=${params.page}&Count=${params.count}`,
     );
@@ -27,12 +19,12 @@ class MovieApi extends BaseHttpClient {
 
   public getRecommended = async (
     params: QueryParams = { page: 0, count: 21 },
-  ): ApiResponse<MovieIds> => {
+  ): APIResponse<IdsEntity> => {
     return this.get(`
       /api/movies/recommended?Page=${params.page}&Count=${params.count}`);
   };
 
-  public batchMany = async (data: MovieIds): ApiResponse<IMovie[]> => {
+  public batchMany = async (data: IdsEntity): APIResponse<IMovie[]> => {
     return this.post("/api/movies/batch-many", data);
   };
 }

@@ -12,8 +12,7 @@ export const ERROR_HANDLERS: Record<
   401: {
     type: "authorization-menu",
     getProps: (error) => ({
-      message: "Сессия истекла. Пожалуйста, войдите снова.",
-      redirectUrl: window.location.pathname,
+      deskription: "Сессия истекла. Пожалуйста, войдите снова.",
     }),
   },
 
@@ -21,7 +20,7 @@ export const ERROR_HANDLERS: Record<
     type: "confirmation-menu",
     getProps: (error) => ({
       title: "Доступ запрещен",
-      message: "У вас нет прав для выполнения этого действия",
+      deskription: "У вас нет прав для выполнения этого действия",
       confirmText: "Понятно",
     }),
   },
@@ -30,7 +29,7 @@ export const ERROR_HANDLERS: Record<
     type: "confirmation-menu",
     getProps: (error) => ({
       title: "Ресурс не найден",
-      message: `Запрашиваемый ресурс не существует`,
+      deskription: `Запрашиваемый ресурс не существует`,
       confirmText: "Ок",
     }),
   },
@@ -39,9 +38,9 @@ export const ERROR_HANDLERS: Record<
     type: "confirmation-menu",
     getProps: (error) => ({
       title: "Ошибка сервера",
-      message: "Произошла внутренняя ошибка. Попробуйте позже.",
+      deskription: "Произошла внутренняя ошибка. Попробуйте позже.",
       confirmText: "Обновить",
-      onConfirm: () => window.location.reload(),
+      function: () => window.location.reload(),
     }),
   },
 

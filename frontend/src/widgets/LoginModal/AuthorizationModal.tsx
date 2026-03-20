@@ -49,7 +49,7 @@ export const AuthorizationModal: React.FC = () => {
             <DialogTitle>Авторизация</DialogTitle>
             <DialogDescription>
               Для использования всех возможностей приложения необходимо
-              авторизоваться, используя учетную запись gmail
+              авторизоваться, используя учетную запись google
             </DialogDescription>
           </DialogHeader>
 

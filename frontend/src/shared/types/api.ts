@@ -8,3 +8,12 @@ export interface APIError {
   code: string;
   data: any;
 }
+
+export interface IdsEntity {
+  ids: string[];
+}
+
+export interface QueryParams {
+  page?: number;
+  count?: number;
+}

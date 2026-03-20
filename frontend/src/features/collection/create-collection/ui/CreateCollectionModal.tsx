@@ -24,17 +24,17 @@ import {
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 
-import { useCollections } from "entities/collection";
+import { useCreateCollection } from "entities/collection";
 import { useCollectionRedactForm } from "entities/collection";
-import type { CollectionRedactSchema } from "entities/collection";
+import type { CreateCollection } from "entities/collection";
 
 export const CreateCollectionModal: React.FC = () => {
-  const { createCollection } = useCollections();
+  const createCollection = useCreateCollection();
   const { collectionRedactForm, isPublic } = useCollectionRedactForm();
   const { isOpen, closeModal } = useModals();
 
-  const handleSubmit = (data: CollectionRedactSchema) => {
-    createCollection(data);
+  const handleSubmit = (data: CreateCollection) => {
+    createCollection.mutate(data);
     closeModal();
   };
 
@@ -56,7 +56,7 @@ export const CreateCollectionModal: React.FC = () => {
             <div className="space-y-2.5">
               <FormField
                 control={collectionRedactForm.control}
-                name="label"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -109,6 +109,30 @@ export const CreateCollectionModal: React.FC = () => {
                         <p className="text-sm text-muted-foreground">
                           Разрешение даст возможность дргуим пользователям
                           делиться впечатлениями о вашей колекции
+                        </p>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {isPublic && (
+                <FormField
+                  control={collectionRedactForm.control}
+                  name="isCopiable"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Разрешить копирование</FormLabel>
+                        <p className="text-sm text-muted-foreground">
+                          Разрешение даст возможность дргуим пользователям
+                          копировать вашу подборку к себе в коллекцию
                         </p>
                       </div>
                     </FormItem>

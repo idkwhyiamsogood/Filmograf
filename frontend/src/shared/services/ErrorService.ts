@@ -33,11 +33,7 @@ class ErrorService {
 
       modalService.open(handler.type, props);
     } else {
-      modalService.open("confirmation-menu", {
-        title: "Ошибка",
-        message: error.message || "Произошла неизвестная ошибка",
-        confirmText: "Ок",
-      });
+      modalService.open("confirmation-menu");
     }
   }
 

@@ -10,7 +10,6 @@ const Page: FC = () => {
   useEffect(() => {
     const getTop = async () => {
       const { data } = await movieApi.getTop();
-      console.log(data.ids);
       setMoviesData(data.ids);
     };
 

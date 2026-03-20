@@ -3,7 +3,6 @@
 import type { PropsWithChildren } from "react";
 import React from "react";
 
-import { CollectionProvider } from "@/entities/collection";
 import { UserProvider } from "@/entities/user";
 import { AuthProvider, ModalProvider } from "@/shared/context";
 import { ModalRenderer } from "@/shared/lib";
@@ -28,17 +27,15 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
       <AuthProvider>
         <ModalProvider>
           <QueryClientProvider client={queryClient}>
-            <CollectionProvider>
-              <UserProvider>
-                <FilterProvider>
-                  <TooltipProvider>
-                    {children}
-                    <ReactQueryDevtools initialIsOpen={false} />
-                    <ModalRenderer />
-                  </TooltipProvider>
-                </FilterProvider>
-              </UserProvider>
-            </CollectionProvider>
+            <UserProvider>
+              <FilterProvider>
+                <TooltipProvider>
+                  {children}
+                  <ReactQueryDevtools initialIsOpen={false} />
+                  <ModalRenderer />
+                </TooltipProvider>
+              </FilterProvider>
+            </UserProvider>
           </QueryClientProvider>
           <Navigation />
         </ModalProvider>

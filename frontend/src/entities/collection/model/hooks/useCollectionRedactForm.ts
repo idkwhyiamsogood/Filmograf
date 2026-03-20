@@ -12,9 +12,11 @@ import { useEffect } from "react";
 export const useCollectionRedactForm = () => {
   const collectionRedactForm = useForm<CollectionRedactSchema>({
     defaultValues: {
-      label: "",
+      name: "",
       isPublic: false,
       isCommentable: false,
+      isCopiable: false,
+      tags: [],
     },
     resolver: zodResolver(collectionRedactSchema),
   });
@@ -28,6 +30,7 @@ export const useCollectionRedactForm = () => {
   useEffect(() => {
     if (!isPublic) {
       collectionRedactForm.setValue("isCommentable", false);
+      collectionRedactForm.setValue("isCopiable", false);
     }
   }, [isPublic, collectionRedactForm]);
 

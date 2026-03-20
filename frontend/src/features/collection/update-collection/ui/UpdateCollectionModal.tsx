@@ -23,25 +23,30 @@ import {
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 
-
 import { useModals } from "@/shared/hooks";
-import { useCollections } from "entities/collection";
-import { useCollectionRedactForm, type CollectionRedactSchema } from "entities/collection";
+import { useUpdateCollection } from "entities/collection";
+import {
+  useCollectionRedactForm,
+  type CollectionRedactSchema,
+} from "entities/collection";
+
+interface Props {
+  data: {
+    id: string;
+  };
+}
 
 export const UpdateCollectionModal: React.FC = () => {
-  const { updateCollection } = useCollections();
   const { collectionRedactForm, isPublic } = useCollectionRedactForm();
   const { isOpen, closeModal, modalProps } = useModals();
+  const updateCollection = useUpdateCollection();
+
+  const { data: recieveData } = modalProps as Props;
 
   const handleSubmit = (data: CollectionRedactSchema) => {
-    updateCollection(modalProps.data.id, {
-      ...data,
-      label: data.label.length > 0 ? data.label : modalProps.data.label,
-    });
+    updateCollection.mutate({ id: recieveData.id, data: data });
     closeModal();
   };
-
-  if (!modalProps.data) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
@@ -61,7 +66,7 @@ export const UpdateCollectionModal: React.FC = () => {
             <div className="space-y-2.5">
               <FormField
                 control={collectionRedactForm.control}
-                name="label"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -114,6 +119,30 @@ export const UpdateCollectionModal: React.FC = () => {
                         <p className="text-sm text-muted-foreground">
                           Разрешение даст возможность дргуим пользователям
                           делиться впечатлениями о вашей колекции
+                        </p>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {isPublic && (
+                <FormField
+                  control={collectionRedactForm.control}
+                  name="isCopiable"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Разрешить копирование</FormLabel>
+                        <p className="text-sm text-muted-foreground">
+                          Разрешение даст возможность дргуим пользователям
+                          копировать вашу подборку к себе в коллекцию
                         </p>
                       </div>
                     </FormItem>
