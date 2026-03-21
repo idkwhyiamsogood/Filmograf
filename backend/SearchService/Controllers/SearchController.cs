@@ -15,18 +15,29 @@ public class SearchController : CustomControllerBase
         _searchService = searchService;
     }
 
-    [HttpPost]
+    [HttpPost("movies")]
     [Authorize]
-    public async Task<ActionResult<SearchResponseDto>> SearchAsync([FromQuery] string query)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query)
     {
-        var response = _searchService.SearchAsync(query);
+        var response = await _searchService.SearchFilmAsync(query);
         return Ok(response);
     }
-
     
-    //todo поиск тегов
+    [HttpPost("collections")]
+    [Authorize]
+    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query)
+    {
+        var response = await _searchService.SearchCollectionAsync(query);
+        return Ok(response);
+    }
     
-    
+    [HttpPost("tags")]
+    [Authorize]
+    public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query)
+    {
+        var response = await _searchService.SearchTagAsync(query);
+        return Ok(response);
+    }
     
     //todo поиск в кеше
     

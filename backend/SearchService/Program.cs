@@ -177,6 +177,7 @@ public class Program
         // providers
         builder.Services.AddScoped<AuthProvider>();
         builder.Services.AddScoped<UserProvider>();
+        builder.Services.AddScoped<CollectionTagProvider>();
         
         // repositories
         builder.Services.AddScoped<MovieRepository>();

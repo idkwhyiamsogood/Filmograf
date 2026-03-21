@@ -31,4 +31,16 @@ public class CollectionTagProvider : ProviderBase<CollectionTag>
             .FirstOrDefaultAsync(i => 
                 EF.Functions.Like(i.Name, $"%{name}%"));
     }
+    
+    public async Task<List<CollectionTag>> SearchAllByNameAsync(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return new List<CollectionTag>();
+            
+        return await _contextBase.CollectionTags
+            .Where(i => EF.Functions.Like(i.Name, $"%{name}%"))
+            .OrderBy(i => i.Name)
+            .ToListAsync();
+    }
+    
 }
