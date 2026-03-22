@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 
 import type { Genre } from "@/entities/genres";
+import type { EntityType } from "@/shared/types";
 
 interface FilterOptions {
-  targetType: TargetType;
+  targetType: EntityType;
   tags?: BaseQuery;
   genres?: BaseQuery;
 }
@@ -17,8 +18,6 @@ export interface FilterState {
   strictMatch: boolean;
   filterOptions: FilterOptions;
 }
-
-export type TargetType = "movie" | "collection";
 
 export type FilterAction = {
   header: {

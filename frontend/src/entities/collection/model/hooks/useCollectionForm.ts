@@ -9,7 +9,7 @@ import {
 
 import { useEffect } from "react";
 
-export const useCollectionRedactForm = () => {
+export const useCollectionForm = () => {
   const collectionRedactForm = useForm<CollectionRedactSchema>({
     defaultValues: {
       name: "",

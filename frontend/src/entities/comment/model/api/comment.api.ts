@@ -1,35 +1,53 @@
 import { BaseHttpClient } from "@/shared/lib";
-import { ApiResponse } from "@/shared/types/api";
+import { APIResponse } from "@/shared/types/api";
 
-import type { Comment, CreateComment } from "../types";
-
-// todo
+import type { Comment, CreateComment, CommentQueryParams } from "../types";
 
 class CommentApi extends BaseHttpClient {
-  public getCommentWithoutChilds = async (id: string): ApiResponse<Comment> => {
-    return this.get(`api/comments/${id}`);
-  };
-
   public editCommentText = async (
-    text: string,
-    id: string,
-  ): ApiResponse<null> => {
-    return this.patch(`api/comments/${id}`, text);
+    commentId: string,
+    data: CreateComment,
+  ): APIResponse<null> => {
+    return this.patch(`api/comments/${commentId}`, data);
   };
 
-  public deleteComment = async (id: string): ApiResponse<null> => {
-    return this.delete(`api/comments/${id}`);
-  };
-
-  public getCommentsWithChilds = async (id: string): ApiResponse<Comment[]> => {
+  public getCommentsWithChilds = async (id: string): APIResponse<Comment[]> => {
     return this.get(`api/comments/${id}/full`);
   };
 
+  public createComment = async (
+    entityId: string,
+    data: CreateComment,
+  ): APIResponse<Comment> => {
+    return this.post(`api/comments/${entityId}/comment`, data);
+  };
+
   public createChildComment = async (
-    parentId: string,
-    comment: CreateComment,
-  ): ApiResponse<Comment> => {
-    return this.post(`api/comments/${parentId}/comment`, comment);
+    commentId: string,
+    data: CreateComment,
+  ): APIResponse<Comment> => {
+    return this.post(`api/comments/${commentId}/comment`, data);
+  };
+
+  public deleteComment = async (commentId: string): APIResponse<null> => {
+    return this.delete(`api/comments/${commentId}`);
+  };
+
+  public getComments = async (
+    entityId: string,
+    params: CommentQueryParams,
+  ): APIResponse<Comment[]> => {
+    return this.get(
+      `api/comments/entities/${entityId}?Page=${params.page}&Count=${params.count}&EntityType=${params.entityType}`,
+    );
+  };
+
+  public likeComment = async (commentId: string): APIResponse<null> => {
+    return this.put(`api/comments/${commentId}/reaction`, { reaction: 1 });
+  };
+
+  public dislikeComment = async (commentId: string): APIResponse<null> => {
+    return this.put(`api/comments/${commentId}/reaction`, { reaction: 0 });
   };
 }
 

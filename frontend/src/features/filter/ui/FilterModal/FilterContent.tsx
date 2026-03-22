@@ -1,7 +1,7 @@
 "use client";
 
-import type { TargetType } from "@/widgets/CatalogTabs";
 import type { FC } from "react";
+import type { EntityType } from "@/shared/types";
 
 import { CommonCheckboxField } from "@/shared/components";
 import { Button } from "@/shared/ui/button";
@@ -15,7 +15,7 @@ import { useModals } from "@/shared/hooks";
 import { useFilter } from "../../model/hooks/useFilter";
 
 interface Props {
-  targetType: TargetType;
+  targetType: EntityType;
 }
 
 export const FilterContent: FC<Props> = ({ targetType }) => {

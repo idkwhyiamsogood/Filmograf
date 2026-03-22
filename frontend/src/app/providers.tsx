@@ -31,7 +31,7 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
               <FilterProvider>
                 <TooltipProvider>
                   {children}
-                  <ReactQueryDevtools initialIsOpen={false} />
+                  {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                   <ModalRenderer />
                 </TooltipProvider>
               </FilterProvider>

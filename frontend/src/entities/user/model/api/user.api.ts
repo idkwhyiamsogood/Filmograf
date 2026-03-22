@@ -1,9 +1,9 @@
 import { BaseHttpClient } from "@/shared/lib";
-import { ApiResponse } from "@/shared/types/api";
+import { APIResponse } from "@/shared/types/api";
 import type { IUser } from "../types";
 
 class UserApi extends BaseHttpClient {
-  public getMe = async (): ApiResponse<IUser> => {
+  public getMe = async (): APIResponse<IUser> => {
     return this.get("/api/auth/fetch");
   };
 }

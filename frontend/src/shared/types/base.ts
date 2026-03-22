@@ -5,3 +5,5 @@ export type BaseModel = {
 };
 
 export type BaseID = Pick<BaseModel, "id">;
+
+export type EntityType = "movie" | "collection";

@@ -21,7 +21,6 @@ interface IConfirmationModalProps {
   deskription?: string;
   confirmText?: string;
   function: Function;
-  data: number;
 }
 
 export const ConfirmationModal: React.FC = () => {
@@ -33,7 +32,7 @@ export const ConfirmationModal: React.FC = () => {
     e.preventDefault();
 
     try {
-      await receivedData.function(receivedData.data);
+      await receivedData.function();
     } catch (error) {
       toast.error(
         "Произошла непредвиденная ошибка, пожалуйста повторите позже",

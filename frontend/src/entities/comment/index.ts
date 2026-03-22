@@ -1,3 +1,6 @@
-export type { IComment } from "./model/types";
-export { Comment } from "./ui/Comment";
-export { CommentSkeleton } from "./ui/CommentSkeleton";
+export type { Comment } from "./model/types";
+
+export { CommentWrapper } from "./ui/CommentWrapper";
+
+// mock
+export { mockCommentsWithReplies } from "./model/mock/comments";

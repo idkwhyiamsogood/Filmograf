@@ -1,4 +1,4 @@
-import type { BaseModel } from "@/shared/types";
+import type { QueryParams, EntityType, BaseModel } from "@/shared/types";
 
 export interface Comment extends BaseModel {
   userId: string;
@@ -9,10 +9,10 @@ export interface Comment extends BaseModel {
   childs: Comment[] | null;
 }
 
-// export interface CommentFull extends Comment {
-//   childs: 
-// }
-
 export type CreateComment = {
   text: string;
 };
+
+export interface CommentQueryParams extends QueryParams {
+  entityType: EntityType;
+}

@@ -26,7 +26,7 @@ import { Input } from "@/shared/ui/input";
 import { useModals } from "@/shared/hooks";
 import { useUpdateCollection } from "entities/collection";
 import {
-  useCollectionRedactForm,
+  useCollectionForm,
   type CollectionRedactSchema,
 } from "entities/collection";
 
@@ -37,7 +37,7 @@ interface Props {
 }
 
 export const UpdateCollectionModal: React.FC = () => {
-  const { collectionRedactForm, isPublic } = useCollectionRedactForm();
+  const { collectionRedactForm, isPublic } = useCollectionForm();
   const { isOpen, closeModal, modalProps } = useModals();
   const updateCollection = useUpdateCollection();
 

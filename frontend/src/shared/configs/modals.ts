@@ -46,4 +46,9 @@ export const MODALS = {
       default: module.SortingModal,
     })),
   ),
+  "create-tag": lazy(() =>
+    import("@/features/tags/create-tag").then((module) => ({
+      default: module.CreateTagModal,
+    })),
+  ),
 } as const;

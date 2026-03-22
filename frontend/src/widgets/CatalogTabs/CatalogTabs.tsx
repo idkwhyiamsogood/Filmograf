@@ -1,18 +1,17 @@
 import React, { type ReactNode } from "react";
+import type { EntityType } from "@/shared/types";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shared/ui/tabs";
 
 interface Props {
-  defaultValue: TargetType;
+  defaultValue: EntityType;
   childrens: ChildrenProps[];
 }
 
 interface ChildrenProps {
-  value: TargetType;
+  value: EntityType;
   content: ReactNode;
 }
-
-export type TargetType = "movie" | "collection";
 
 export const CatalogTabs: React.FC<Props> = ({ defaultValue, childrens }) => {
   return (

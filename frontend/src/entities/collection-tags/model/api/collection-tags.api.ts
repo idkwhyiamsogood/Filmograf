@@ -1,26 +1,26 @@
 import { BaseHttpClient } from "@/shared/lib";
-import { ApiResponse } from "@/shared/types/api";
+import { APIResponse } from "@/shared/types/api";
 
 import type { Tag } from "../types";
 
-// поиск по имени тегов 
+// поиск по имени тегов
 
 class CollecionTagsApi extends BaseHttpClient {
-  public getTags = async (): ApiResponse<Tag[]> => {
+  public getTags = async (): APIResponse<Tag[]> => {
     return this.get("api/collections/tags");
-  }
+  };
 
-  public getTagsByName = async (value: string): ApiResponse<Tag[]> => {
+  public getTagsByName = async (value: string): APIResponse<Tag[]> => {
     return this.get(`api/collection/tags/${value}`);
-  }
+  };
 
-  public createTag = async (name: string): ApiResponse<null> => {
-    return this.post("api/collections/tags/", name)
-  }
+  public createTag = async (data: { name: string }): APIResponse<null> => {
+    return this.post("api/collections/tags/", data);
+  };
 
-  public deleteTags = async (id: string): ApiResponse<null> => {
-    return this.delete(`api/collections/tags/${id}`)
-  }
-};
+  public deleteTag = async (id: string): APIResponse<null> => {
+    return this.delete(`api/collections/tags/${id}`);
+  };
+}
 
 export const collecionTagsApi = new CollecionTagsApi();
