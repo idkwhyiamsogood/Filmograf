@@ -60,7 +60,7 @@ public class CollectionsController : CustomControllerBase
     
     [HttpPost]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> CreateCollectionAsync([FromBody] CreateCollectionRequestDto data, 
+    public async Task<ActionResult<CollectionResponseDto>> CreateCollectionAsync([FromBody] CreateCollectionRequestDto data, 
         [FromServices] AuthContext authContext)
     {
         var result = await _collectionService.CreateAsync(data, authContext.CurrentUser!);

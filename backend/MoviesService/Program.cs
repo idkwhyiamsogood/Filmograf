@@ -64,7 +64,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseCors("AllowAll"); // todo: в проде поменять
+        app.UseCors("AllowFrontend"); // todo: в проде поменять
         app.UseAuthentication();
         app.UseAuthorization();
         
@@ -120,7 +120,7 @@ public class Program
                 {
                     policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod().AllowCredentials();
                 });
         });
     }
