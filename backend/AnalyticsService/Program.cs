@@ -13,6 +13,7 @@ using Filmograf.AnalyticsService.Services.Charts;
 using Filmograf.AnalyticsService.Services.Integrations;
 using Filmograf.AnalyticsService.Services.Middlewares;
 using Filmograf.AnalyticsService.Util;
+using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.Serializers;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -119,6 +120,7 @@ public class Program
         builder.Services.AddScoped<ClickIntervalValidator>();
         builder.Services.AddScoped<MoviesChartService>();
         builder.Services.AddScoped<ChartService>();
+        builder.Services.AddScoped<TopPicksService>();
         
         // providers
         // ...
@@ -128,6 +130,7 @@ public class Program
         builder.Services.AddScoped<UserMoviesActivityDailyRepository>();
         builder.Services.AddScoped<CollectionsClicksAnalyticRepository>();
         builder.Services.AddScoped<UserCollectionsActivityDailyRepository>();
+        builder.Services.AddScoped<TopPicksRepository>();
         builder.Services.AddScoped<MovieRepository>(); // да, тут немного теряем SRP (Single Responsibility Principle)
         builder.Services.AddScoped<CollectionRepository>(); // и тут немного теряем SRP)
         
@@ -135,5 +138,6 @@ public class Program
         builder.Services.AddScoped<ClickEntityCaching>();
         builder.Services.AddScoped<MoviesCaching>();
         builder.Services.AddScoped<CollectionsCaching>();
+        builder.Services.AddScoped<TopPickCaching>();
     }
 }
