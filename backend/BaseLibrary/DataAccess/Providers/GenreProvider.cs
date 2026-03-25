@@ -16,4 +16,15 @@ public class GenreProvider : ProviderBase<Genre>
         return await _contextBase.Genres
             .FirstOrDefaultAsync(i => i.Name == name);
     }
+    
+    public async Task<List<Genre>> SearchAllByNameAsync(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return new List<Genre>();
+            
+        return await _contextBase.Genres
+            .Where(i => EF.Functions.Like(i.Name, $"%{name}%"))
+            .OrderBy(i => i.Name)
+            .ToListAsync();
+    }
 }

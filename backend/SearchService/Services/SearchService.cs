@@ -11,13 +11,15 @@ public class SearchService
     private readonly MovieRepository _movieRepository;
     private readonly CollectionRepository _collectionRepository;
     private readonly CollectionTagProvider _tagProvider; 
+    private readonly GenreProvider _genreProvider; 
     
     
-    public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, CollectionTagProvider tagProvider)
+    public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, CollectionTagProvider tagProvider, GenreProvider genreProvider)
     {
         _movieRepository = movieRepository;
         _collectionRepository = collectionRepository;
         _tagProvider = tagProvider;
+        _genreProvider = genreProvider;
     }
     
     public async Task<SearchPartResponseDto> SearchFilmAsync(string query)
@@ -84,6 +86,40 @@ public class SearchService
             EntityIds = sortedCollections.Select(c => c.Id).ToArray()
         };
 
+        
+        return response;
+    }
+    
+    public async Task<SearchPartResponseDto> SearchGenreAsync(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return new SearchPartResponseDto
+            {
+                Type = SearchPartType.Genre,
+                EntityIds = Array.Empty<string>()
+            };
+        }
+        
+        var genres = await _genreProvider.SearchAllByNameAsync(query);
+        
+        var sortedGenres = genres
+            .Select(t => new
+            {
+                Tag = t,
+                Index = t.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
+            })
+            .Where(x => x.Index >= 0)
+            .OrderBy(x => x.Index)
+            .ThenBy(x => x.Tag.Name.Length)
+            .Select(x => x.Tag)
+            .ToList();
+        
+        var response = new SearchPartResponseDto
+        {
+            Type = SearchPartType.Genre,
+            EntityIds = sortedGenres.Select(g => g.Id.ToString()).ToArray()
+        };
         
         return response;
     }
