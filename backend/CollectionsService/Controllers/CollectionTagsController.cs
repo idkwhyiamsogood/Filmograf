@@ -29,7 +29,16 @@ public class CollectionTagsController : CustomControllerBase
 
     [HttpPost]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult> CreateTagAsync([FromBody] CreateCollectionTagRequestDto data, 
+    public async Task<ActionResult<CollectionTagResponseDto>> CreateTagAsync([FromBody] CreateCollectionTagRequestDto data, 
+        [FromServices] AuthContext authContext)
+    {
+        var result = await _collectionTagService.CreateAsync(data, authContext.CurrentUser!);
+        return Ok(result);
+    }
+
+    [HttpPatch("{tagId}")]
+    [Admin]
+    public async Task<ActionResult> EditTagAsync(Guid tagId, [FromBody] CreateCollectionTagRequestDto data, 
         [FromServices] AuthContext authContext)
     {
         await _collectionTagService.CreateAsync(data, authContext.CurrentUser!);

@@ -19,7 +19,15 @@ public class FeedController : CustomControllerBase
     }
     
     [Admin]
-    [HttpPost("parse")]
+    [HttpPost("parse-source-movie")]
+    public async Task<ActionResult> FeedParseMovieAsync([FromBody] FeedMoviesDto data)
+    {
+        await _moviesParserService.ParseMoviesAsync(data.Source, data.Url, true, false);
+        return Ok();
+    }
+    
+    [Admin]
+    [HttpPost("parse-source-collection")]
     public async Task<ActionResult> FeedParseAsync([FromBody] FeedMoviesDto data)
     {
         await _moviesParserService.ParseMoviesAsync(data.Source, data.Url, true, false);

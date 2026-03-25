@@ -24,7 +24,7 @@ public class MoviesController : CustomControllerBase
     [UserTypePolicy]
     public async Task<ActionResult<MoviesListResponseDto>> GetTopMoviesAsync([FromQuery] PaginationQueryDto pagination)
     {
-        var result = await _movieTopPicksService.GetFromChartAsync(pagination, "FilmTopMovies");
+        var result = await _movieTopPicksService.GetFromChartAsync(pagination, "IMDb");
         return Ok(result);
     }
 
@@ -32,13 +32,14 @@ public class MoviesController : CustomControllerBase
     [UserTypePolicy]
     public async Task<ActionResult<MoviesListResponseDto>> GetPopularMoviesAsync([FromQuery] PaginationQueryDto pagination)
     {
-        var result = await _movieTopPicksService.GetFromChartAsync(pagination, "FilmPopularMovies");
+        var result = await _movieTopPicksService.GetPopularAsync(pagination);
         return Ok(result);
     }
 
     [HttpGet("recommended")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<MoviesListResponseDto>> GetRecommendedMoviesAsync([FromQuery] PaginationQueryDto pagination)
+    public async Task<ActionResult<MoviesListResponseDto>> GetRecommendedMoviesAsync([FromQuery] PaginationQueryDto pagination, 
+        [FromServices] AuthContext authContext)
     {
         // todo
         var result = await _movieTopPicksService.GetFromChartAsync(pagination);

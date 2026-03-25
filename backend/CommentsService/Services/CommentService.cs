@@ -71,7 +71,10 @@ public class CommentService
         if (comment == null) throw new NotFoundHttpException(
             "CommentNotFound", $"Comment with id={commentId} not found.");
 
-        return await FillResponseCacheForCommentAsync(comment);
+        var response = await FillResponseCacheForCommentAsync(comment);
+        response.ChildsCount = await _commentRepository.CountChildrenAsync(commentId);
+        
+        return response;
     }
 
     public async Task<CommentResponseDto> GetResponseCommentAsync(string commentId)

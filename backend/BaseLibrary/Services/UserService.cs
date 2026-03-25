@@ -1,5 +1,7 @@
+using AutoMapper;
 using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.Providers;
+using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Types;
@@ -10,11 +12,19 @@ public class UserService
 {
     private readonly UserProvider _userProvider;
     private readonly UserCaching _userCaching;
+    private readonly IMapper _mapper;
     
-    public UserService(UserProvider userProvider, UserCaching userCaching)
+    public UserService(UserProvider userProvider, UserCaching userCaching, IMapper mapper)
     {
         _userProvider = userProvider;
         _userCaching = userCaching;
+        _mapper = mapper;
+    }
+
+    public async Task<UserResponseDto> GetUserInfoAsync(Guid userId)
+    {
+        var user = await GetByIdAsync(userId);
+        return _mapper.Map<UserResponseDto>(user);
     }
 
     public async Task<User?> GetByGoogleIdAsync(string googleId)

@@ -25,4 +25,8 @@ public class MovieRepo : RepoBase
     public float RateKinopoisk { get; set; }
     
     public Guid[]? GenreIds { get; set; }
+
+    [DefaultValue(0)] 
+    public long ViewsCount { get; set; } = 0;
+    public DateTime LastViewsCheck { get; set; } = DateTime.UtcNow;
 }
