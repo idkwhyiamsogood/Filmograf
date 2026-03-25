@@ -124,4 +124,38 @@ public class SearchService
         return response;
     }
     
+    public async Task<SearchPartResponseDto> SearchGenreAsync(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return new SearchPartResponseDto
+            {
+                Type = SearchPartType.Genre,
+                EntityIds = Array.Empty<string>()
+            };
+        }
+    
+        var genres = await _genreProvider.SearchAllByNameAsync(query);
+    
+        var sortedGenres = genres
+            .Select(g => new
+            {
+                Genre = g,
+                Index = g.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
+            })
+            .Where(x => x.Index >= 0)
+            .OrderBy(x => x.Index)
+            .ThenBy(x => x.Genre.Name.Length)
+            .Select(x => x.Genre)
+            .ToList();
+    
+        var response = new SearchPartResponseDto
+        {
+            Type = SearchPartType.Genre,
+            EntityIds = sortedGenres.Select(g => g.Id.ToString()).ToArray()
+        };
+    
+        return response;
+    }
+    
 }
