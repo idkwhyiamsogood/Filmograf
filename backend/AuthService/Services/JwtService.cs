@@ -30,7 +30,7 @@ public class JwtService
         var descriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddDays(10),
+            Expires = DateTime.UtcNow.AddDays(15),
             SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256),
