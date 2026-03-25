@@ -24,6 +24,9 @@ public class CollectionResponseDto
     public bool IsCopiable { get; set; } = false;
     public bool IsByFilmograf { get; set; } = false;
     public bool IsDeleted { get; set; } = false;
+    
+    public DateTime CreateDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }
 
 public class CreateCollectionRequestDto
