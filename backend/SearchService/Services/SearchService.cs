@@ -90,40 +90,6 @@ public class SearchService
         return response;
     }
     
-    public async Task<SearchPartResponseDto> SearchGenreAsync(string query)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return new SearchPartResponseDto
-            {
-                Type = SearchPartType.Genre,
-                EntityIds = Array.Empty<string>()
-            };
-        }
-        
-        var genres = await _genreProvider.SearchAllByNameAsync(query);
-        
-        var sortedGenres = genres
-            .Select(t => new
-            {
-                Tag = t,
-                Index = t.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
-            })
-            .Where(x => x.Index >= 0)
-            .OrderBy(x => x.Index)
-            .ThenBy(x => x.Tag.Name.Length)
-            .Select(x => x.Tag)
-            .ToList();
-        
-        var response = new SearchPartResponseDto
-        {
-            Type = SearchPartType.Genre,
-            EntityIds = sortedGenres.Select(g => g.Id.ToString()).ToArray()
-        };
-        
-        return response;
-    }
-    
     public async Task<SearchPartResponseDto> SearchTagAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query))

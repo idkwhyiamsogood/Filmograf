@@ -36,6 +36,15 @@ public class CommentRepository : RepositoryBase<CommentRepo>
             .ToListAsync(ct);
     }
 
+    // Получить кол-во детей по ParentId
+    public Task<long> CountChildrenAsync(string parentId, CancellationToken ct = default)
+    {
+        return _collection.Find(x =>
+                x.ParentId == parentId &&
+                !x.IsDeleted)
+            .CountAsync(ct);
+    }
+
     // Получить всю ветку по Path
     public Task<List<CommentRepo>> GetBranchAsync(string entityId, string path, CancellationToken ct = default)
     {

@@ -42,5 +42,14 @@ public class CollectionTagProvider : ProviderBase<CollectionTag>
             .OrderBy(i => i.Name)
             .ToListAsync();
     }
+
+    // todo refactor
+    public async Task<bool> UpdateAsync(Guid id, string name)
+    {
+        return await _contextBase.CollectionTags
+            .Where(i => i.Id == id)
+            .ExecuteUpdateAsync((query) => 
+                query.SetProperty(i => i.Name, name)) > 0;
+    }
     
 }

@@ -34,6 +34,9 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
+        // Add AutoMapper
+        builder.Services.AddAutoMapper(_ => { }, typeof(Program).Assembly);
+        
         // builder.Services.Configure<ForwardedHeadersOptions>(options =>
         // {
         //     options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
@@ -169,6 +172,7 @@ public class Program
         builder.Services.AddScoped<GoogleO2IdempotenceService>();
         builder.Services.AddScoped<BotProtectionService>();
         builder.Services.AddScoped<TemporaryAuthService>();
+        builder.Services.AddScoped<CommonAuthService>();
         
         // providers
         builder.Services.AddScoped<AuthProvider>();
