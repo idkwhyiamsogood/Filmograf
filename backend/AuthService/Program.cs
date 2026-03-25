@@ -34,6 +34,9 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
+        // Add AutoMapper
+        builder.Services.AddAutoMapper(_ => { }, typeof(Program).Assembly);
+        
         // builder.Services.Configure<ForwardedHeadersOptions>(options =>
         // {
         //     options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;

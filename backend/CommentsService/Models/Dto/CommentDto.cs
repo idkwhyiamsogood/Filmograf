@@ -12,10 +12,11 @@ public class CommentResponseDto
     public Guid UserId { get; set; }
     public string Text { get; set; }
     public bool IsDeleted { get; set; }
-    
+
     public Guid[] Likes { get; set; }
     public Guid[] Dislikes { get; set; }
     
+    public long ChildsCount { get; set; }
     public CommentResponseDto[] Childs { get; set; }
 }
 
