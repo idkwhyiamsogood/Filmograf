@@ -39,6 +39,15 @@ public class SearchController : CustomControllerBase
         return Ok(response);
     }
     
+    [HttpPost("genres")]
+    [Authorize]
+    public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query)
+    {
+        var response = await _searchService.SearchGenreAsync(query);
+        return Ok(response);
+    }
+
+    
     //todo поиск в кеше
     
     

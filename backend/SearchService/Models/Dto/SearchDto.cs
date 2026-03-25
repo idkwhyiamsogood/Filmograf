@@ -2,7 +2,7 @@ namespace Filmograf.SearchService.Models.Dto;
 
 public enum SearchPartType
 {
-    Movie, Collection, Tag
+    Movie, Collection, Tag, Genre
 }
 
 public class SearchPartResponseDto // вот это будут контроллеры возвращать
