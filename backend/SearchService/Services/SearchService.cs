@@ -13,7 +13,8 @@ public class SearchService
     private readonly CollectionTagProvider _tagProvider; 
     
     
-    public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, CollectionTagProvider tagProvider)
+    public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, 
+        CollectionTagProvider tagProvider)
     {
         _movieRepository = movieRepository;
         _collectionRepository = collectionRepository;

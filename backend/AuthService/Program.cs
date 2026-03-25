@@ -169,6 +169,7 @@ public class Program
         builder.Services.AddScoped<GoogleO2IdempotenceService>();
         builder.Services.AddScoped<BotProtectionService>();
         builder.Services.AddScoped<TemporaryAuthService>();
+        builder.Services.AddScoped<CommonAuthService>();
         
         // providers
         builder.Services.AddScoped<AuthProvider>();

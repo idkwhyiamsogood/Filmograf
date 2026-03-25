@@ -1,5 +1,6 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Models.Entities;
+using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Models.Dto;
@@ -20,11 +21,14 @@ public class AuthController : CustomControllerBase
 {
     private readonly GoogleO2AuthService _googleO2AuthService;
     private readonly TemporaryAuthService _temporaryAuthService;
+    private readonly CommonAuthService _commonAuthService;
 
-    public AuthController(GoogleO2AuthService googleO2AuthService, TemporaryAuthService temporaryAuthService)
+    public AuthController(GoogleO2AuthService googleO2AuthService, TemporaryAuthService temporaryAuthService,
+        CommonAuthService commonAuthService)
     {
         _googleO2AuthService = googleO2AuthService;
         _temporaryAuthService = temporaryAuthService;
+        _commonAuthService = commonAuthService;
     }
     
     [HttpGet("google")]
@@ -90,6 +94,17 @@ public class AuthController : CustomControllerBase
     public async Task<ActionResult<User>> Fetch([FromServices] AuthContext authContext)
     {
         return Ok(authContext.CurrentUser!);
+    }
+
+    
+    [HttpPatch("refresh-token")]
+    public async Task<ActionResult<AuthResponseDto>> RefreshTokenAsync()
+    {
+        var jwt = GetJwt();
+        if (jwt == null) return Unauthorized();
+        
+        var result = await _commonAuthService.RefreshJwtAsync(jwt);
+        return Ok(result);
     }
 
     /// <summary>
