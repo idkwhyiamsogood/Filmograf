@@ -4,8 +4,9 @@ export interface Comment extends BaseModel {
   userId: string;
   text: string;
   isDeleted: boolean;
-  liked: string[];
+  likes: string[];
   dislikes: string[];
+  childsCount: number; // 0 if null
   childs: Comment[] | null;
 }
 
@@ -15,4 +16,4 @@ export type CreateComment = {
 
 export interface CommentQueryParams extends QueryParams {
   entityType: EntityType;
-}
+};

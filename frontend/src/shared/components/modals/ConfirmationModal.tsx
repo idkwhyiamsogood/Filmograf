@@ -26,10 +26,16 @@ interface IConfirmationModalProps {
 export const ConfirmationModal: React.FC = () => {
   const { isOpen, closeModal, modalProps } = useModals();
 
-  const receivedData = modalProps as IConfirmationModalProps;
+  const receivedData = modalProps as IConfirmationModalProps | null;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!receivedData?.function) {
+      toast.error("Не удалось выполнить действие");
+      closeModal();
+      return;
+    }
 
     try {
       await receivedData.function();
@@ -42,12 +48,18 @@ export const ConfirmationModal: React.FC = () => {
     closeModal();
   };
 
+  if (!isOpen || !receivedData) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent showCloseButton={false}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader className="text-left">
-            <DialogTitle>{receivedData.title ? receivedData.title : "Вы уверены?"}</DialogTitle>
+            <DialogTitle>
+              {receivedData.title ? receivedData.title : "Вы уверены?"}
+            </DialogTitle>
             <DialogDescription>
               {receivedData.deskription
                 ? receivedData.deskription

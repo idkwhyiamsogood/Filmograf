@@ -35,7 +35,7 @@ export const MovieCover: React.FC<Props> = memo(({ movie, isLoading }) => {
       {isLoading || !movie ? (
         <FilmSkeleton />
       ) : (
-        <Link href={`/movie/${movie.id}`}>
+        <Link href={`/movies/${movie.id}`}>
           <article className="flex flex-col w-full rounded-2xl overflow-hidden select-none gap-2">
             <div className="relative h-full w-full">
               <Image

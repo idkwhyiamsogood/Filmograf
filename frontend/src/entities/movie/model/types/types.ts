@@ -9,7 +9,7 @@ export enum Review {
 export interface IMovie extends BaseModel {
   name: string;
   description?: string | undefined;
-  year: string;
+  year: string; 
   ageLimit: number; // not-correct
   time: string;
   imageUrl: string;
@@ -19,4 +19,3 @@ export interface IMovie extends BaseModel {
 
   rates: Record<Review, number>
 };
-2

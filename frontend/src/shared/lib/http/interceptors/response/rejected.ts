@@ -10,7 +10,6 @@ export const onRejected = (error: AxiosError<APIError>) => {
 
   if (error.response?.data) {
     errorService.showError(error.response.data);
-    console.log('qwe')
   } else {
     errorService.showError({
       statusCode: error.response?.status || 500,

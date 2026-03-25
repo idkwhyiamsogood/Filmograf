@@ -1,13 +1,17 @@
-import React from 'react';
+import React from 'react'
+
+import { CommentWrapper } from '@/widgets/comments/CommentWrapper';
 
 interface Props {
   className?: string;
 }
 
-export const Page: React.FC<Props> = ({ className }) => {
+const Page: React.FC<Props> = ({ className }) => {
   return (
     <div className={className}>
-      
+      <CommentWrapper />
     </div>
   );
 };
+
+export default Page;

@@ -2,6 +2,7 @@ import { BaseHttpClient } from "@/shared/lib";
 import { APIResponse } from "@/shared/types/api";
 
 import type { Comment, CreateComment, CommentQueryParams } from "../types";
+import type { EntityType } from "@/shared/types";
 
 class CommentApi extends BaseHttpClient {
   public editCommentText = async (
@@ -11,15 +12,23 @@ class CommentApi extends BaseHttpClient {
     return this.patch(`api/comments/${commentId}`, data);
   };
 
+  /**
+   * @param {string} id - Идентификатор корневого комментария
+   * @returns {APIResponse<Comment[]>} отец и дети
+   */
   public getCommentsWithChilds = async (id: string): APIResponse<Comment[]> => {
     return this.get(`api/comments/${id}/full`);
   };
 
   public createComment = async (
     entityId: string,
+    entityType: EntityType,
     data: CreateComment,
   ): APIResponse<Comment> => {
-    return this.post(`api/comments/${entityId}/comment`, data);
+    return this.post(
+      `api/comments/entities/${entityId}/comment?EntityType=${entityType}`,
+      data,
+    );
   };
 
   public createChildComment = async (
@@ -33,9 +42,9 @@ class CommentApi extends BaseHttpClient {
     return this.delete(`api/comments/${commentId}`);
   };
 
-  public getComments = async (
+  public getParentComments = async (
     entityId: string,
-    params: CommentQueryParams,
+    params: CommentQueryParams = { page: 0, count: 5, entityType: "Movie" },
   ): APIResponse<Comment[]> => {
     return this.get(
       `api/comments/entities/${entityId}?Page=${params.page}&Count=${params.count}&EntityType=${params.entityType}`,
@@ -47,6 +56,10 @@ class CommentApi extends BaseHttpClient {
   };
 
   public dislikeComment = async (commentId: string): APIResponse<null> => {
+    return this.put(`api/comments/${commentId}/reaction`, { reaction: -1 });
+  };
+
+  public clearReaction = async (commentId: string): APIResponse<null> => {
     return this.put(`api/comments/${commentId}/reaction`, { reaction: 0 });
   };
 }

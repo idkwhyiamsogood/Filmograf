@@ -3,12 +3,12 @@
 import { collectionApi, useCollections } from "@/entities/collection/";
 import React, { useEffect, useState } from "react";
 
-import { CollectionSelector } from "@/widgets/collection-selector";
 import {
   CreateCollectionButton,
   EditCollectionButton,
 } from "@/widgets/collection-editor";
-import { CommentWrapper, mockCommentsWithReplies } from "@/entities/comment";
+import { CollectionSelector } from "@/widgets/collection-selector";
+
 
 interface Props {
   className?: string;
@@ -47,15 +47,6 @@ const Page: React.FC<Props> = ({ className }) => {
         <CreateCollectionButton />
         <EditCollectionButton collectionId={selected} />
       </div>
-      <CommentWrapper
-        comments={mockCommentsWithReplies}
-        getUserAvatar={(userId: string) => {
-          return "";
-        }}
-        getUserName={(userId: string) => {
-          return "";
-        }}
-      />
     </div>
   );
 };

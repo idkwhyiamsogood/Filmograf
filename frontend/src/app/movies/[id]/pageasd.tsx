@@ -156,7 +156,7 @@ const Page: FC = () => {
                   <ScrollArea className="bg-muted flex">
                     <div className="px-2.5 py-2.5 flex text-center border-radius: 10px">
                       <TagsItem label="Выпуск" item={movie.year} />
-                      <TagsItem label="Возрастное ограничение" item={movie.ageLimit} />
+                      <TagsItem label="Возрастное ограничение" item={String(movie.ageLimit)} />
                       <TagsItem label="Выпуск" item={movie.year} />
                       <TagsItem label="Выпуск" item={movie.year} />
                       <TagsItem label="Выпуск" item={movie.year} />

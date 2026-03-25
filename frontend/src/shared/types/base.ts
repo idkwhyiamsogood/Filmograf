@@ -6,4 +6,9 @@ export type BaseModel = {
 
 export type BaseID = Pick<BaseModel, "id">;
 
-export type EntityType = "movie" | "collection";
+export type EntityType = "Movie" | "Collection";
+
+export type Entity = {
+  entityId: string
+  type: EntityType;
+}

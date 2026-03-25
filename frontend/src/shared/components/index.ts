@@ -1,14 +1,22 @@
 // common
-export { CommonDropdownMenu } from "./common/CommonDropdownMenu";
-export { CommonWrapper } from "./common/CommonWrapper";
-export { CommonSwiper } from "./common/CommonSwiper";
 export { CommonCheckboxField } from "./common/CommonCheckboxField";
+export { CommonDropdownMenu } from "./common/CommonDropdownMenu";
+export {
+  CommonSearchSelector,
+  type SearchItem,
+} from "./common/CommonSearchSelector";
+export { CommonSwiper } from "./common/CommonSwiper";
+export { CommonWrapper } from "./common/CommonWrapper";
 export { WrapperSheetContent } from "./common/WrapperSheetContent";
-export { CommonSearchSelector, type SearchItem } from "./common/CommonSearchSelector";
 
 // modals
 export { ConfirmationModal } from "./modals/ConfirmationModal";
 
 // fallback
 export { LoadingSplashScreen } from "./fallback/LoadingSplashScreen";
-export { LoadingSplashScreenModal } from "./fallback/LoadingSplashScreenModal"
+export { LoadingSplashScreenModal } from "./fallback/LoadingSplashScreenModal";
+
+// lexical
+export { Editor } from "./lexical/blocks/editor-00/editor";
+export { editorTheme } from "./lexical/editor/themes/editor-theme";
+export { nodes } from "./lexical/blocks/editor-00/nodes";
