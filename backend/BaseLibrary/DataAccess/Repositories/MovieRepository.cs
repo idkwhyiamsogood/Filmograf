@@ -46,4 +46,21 @@ public class MovieRepository : RepositoryBase<MovieRepo>
             .ToListAsync(ct);
     }
     
+    public async Task<List<MovieRepo>> GetByGenresAsync(IEnumerable<Guid> genreIds, int limit, CancellationToken ct = default)
+    {
+        // Используем AnyIn для проверки наличия элементов в массиве GenreIds
+        var filter = Builders<MovieRepo>.Filter.AnyIn(x => x.GenreIds, genreIds);
+        
+        return await _collection.Find(filter)
+            .Limit(limit)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<MovieRepo>> GetByAllGenresAsync(IEnumerable<Guid> genreIds, CancellationToken ct = default)
+    {
+        var filter = Builders<MovieRepo>.Filter.All(x => x.GenreIds, genreIds);
+        
+        return await _collection.Find(filter)
+            .ToListAsync(ct);
+    }
 }

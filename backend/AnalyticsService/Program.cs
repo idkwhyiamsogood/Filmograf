@@ -12,6 +12,7 @@ using Filmograf.AnalyticsService.Services;
 using Filmograf.AnalyticsService.Services.Charts;
 using Filmograf.AnalyticsService.Services.Integrations;
 using Filmograf.AnalyticsService.Services.Middlewares;
+using Filmograf.AnalyticsService.Services.Personalized;
 using Filmograf.AnalyticsService.Util;
 using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.Serializers;
@@ -121,6 +122,7 @@ public class Program
         builder.Services.AddScoped<MoviesChartService>();
         builder.Services.AddScoped<ChartService>();
         builder.Services.AddScoped<TopPicksService>();
+        builder.Services.AddScoped<MoviePersonalizedService>();
         
         // providers
         // ...

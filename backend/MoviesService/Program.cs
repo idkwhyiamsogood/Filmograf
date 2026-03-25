@@ -191,6 +191,7 @@ public class Program
         builder.Services.AddScoped<ClickEntityService>();
         builder.Services.AddScoped<MoviesChartService>();
         builder.Services.AddScoped<TopPicksService>();
+        builder.Services.AddScoped<MissionPlannerService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -207,7 +208,7 @@ public class Program
         builder.Services.AddScoped<GenreCaching>();
         builder.Services.AddScoped<UserCaching>();
         builder.Services.AddScoped<MoviesCaching>();
-        builder.Services.AddScoped<ParsingPlannerCache>();
+        builder.Services.AddScoped<MissionPlannerCache>();
         builder.Services.AddScoped<MovieRateCaching>();
         builder.Services.AddScoped<TopPickCaching>();
     }

@@ -37,10 +37,22 @@ public class TopPicksService
         return new EntitiesListResponseDto { Ids = pagedIds.ToArray() };
     }
 
+    public async Task<EntitiesListResponseDto> GetFromUserChartAsync(PaginationQueryDto pagination, Guid userId, string chartType)
+    {
+        var chartKey = $"{chartType}:user:{userId.ToString()}";
+        return await GetFromChartAsync(pagination, chartKey);
+    }
+    
     public async Task<EntitiesListResponseDto> GetFromChartAsync(PaginationQueryDto pagination, string chartType)
     {
         var method = async () => await CreateCacheForChartAsync(pagination, chartType);
         return await _topPickCaching.CachingTopPickAsync(chartType, pagination, method);
+    }
+
+    public async Task SetUserTopPickAsync(string chartType, Guid userId, Dictionary<int, string> chartDictionary)
+    {
+        var chartKey = $"{chartType}:user:{userId.ToString()}";
+        await SetTopPickAsync(chartKey, chartDictionary);
     }
 
     public async Task SetTopPickAsync(string chartType, Dictionary<int, string> chartDictionary)

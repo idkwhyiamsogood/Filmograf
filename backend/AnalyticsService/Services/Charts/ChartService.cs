@@ -1,5 +1,4 @@
-﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
-using Filmograf.BaseLibrary.Models.HttpExceptions;
+﻿using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Services;
 
 namespace Filmograf.AnalyticsService.Services.Charts;
