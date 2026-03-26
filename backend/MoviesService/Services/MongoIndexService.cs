@@ -31,6 +31,10 @@ public class MongoIndexService : IHostedService
                     Builders<MovieRepo>.IndexKeys
                         .Ascending(x => x.Name)
                         .Ascending(x => x.Year)
+                ),
+                new CreateIndexModel<MovieRepo>(
+                    Builders<MovieRepo>.IndexKeys
+                        .Ascending(x => x.GenreIds)
                 )
             });
             

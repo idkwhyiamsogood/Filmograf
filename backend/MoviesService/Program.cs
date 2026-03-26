@@ -64,7 +64,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseCors("AllowAll"); // todo: в проде поменять
+        app.UseCors("AllowFrontend"); // todo: в проде поменять
         app.UseAuthentication();
         app.UseAuthorization();
         
@@ -120,7 +120,7 @@ public class Program
                 {
                     policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod().AllowCredentials();
                 });
         });
     }
@@ -191,6 +191,7 @@ public class Program
         builder.Services.AddScoped<ClickEntityService>();
         builder.Services.AddScoped<MoviesChartService>();
         builder.Services.AddScoped<TopPicksService>();
+        builder.Services.AddScoped<MissionPlannerService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
@@ -207,7 +208,7 @@ public class Program
         builder.Services.AddScoped<GenreCaching>();
         builder.Services.AddScoped<UserCaching>();
         builder.Services.AddScoped<MoviesCaching>();
-        builder.Services.AddScoped<ParsingPlannerCache>();
+        builder.Services.AddScoped<MissionPlannerCache>();
         builder.Services.AddScoped<MovieRateCaching>();
         builder.Services.AddScoped<TopPickCaching>();
     }

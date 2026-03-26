@@ -1,12 +1,7 @@
-﻿using Filmograf.BaseLibrary.Caching;
-using Filmograf.BaseLibrary.DataAccess.Repositories;
+﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
-using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Services;
-using Filmograf.BaseLibrary.Util;
-using Filmograf.MoviesService.Caching;
-using Filmograf.MoviesService.Models.Dto;
 
 namespace Filmograf.MoviesService.Services.Movies;
 
@@ -15,19 +10,34 @@ public class MovieTopPicksService
     private readonly MoviesParserService _moviesParserService;
     private readonly MovieRepository _movieRepository;
     private readonly TopPicksService _topPicksService;
+    private readonly MoviesChartService _moviesChartService;
+    private readonly MissionPlannerService _missionPlannerService;
     
     public MovieTopPicksService(MoviesParserService moviesParserService, MovieRepository movieRepository, 
-        TopPicksService topPicksService)
+        TopPicksService topPicksService, MoviesChartService moviesChartService, MissionPlannerService missionPlannerService)
     {
         _moviesParserService = moviesParserService;
         _movieRepository = movieRepository;
         _topPicksService = topPicksService;
+        _moviesChartService = moviesChartService;
+        _missionPlannerService = missionPlannerService;
     }
     
     public async Task<EntitiesListResponseDto> GetFromChartAsync(PaginationQueryDto pagination, string chartType = "IMDb")
     {
         await _moviesParserService.CheckLastParsingAsync(chartType);
         return await _topPicksService.GetFromChartAsync(pagination, chartType);
+    }
+
+    public async Task<EntitiesListResponseDto> GetPopularAsync(PaginationQueryDto pagination)
+    {
+        var chart = await GetFromChartAsync(pagination, "FilmPopularMovies");
+
+        var hasMission = await _missionPlannerService.CheckLastMissionAsync("FilmPopularMovies");
+        if (!hasMission) return chart;
+
+        await _moviesChartService.CompileChartAsync();
+        return chart;
     }
     
     public async Task UpdateMoviesChartAsync(string chartType, IEnumerable<RawMovieInfo> movies)
@@ -50,6 +60,6 @@ public class MovieTopPicksService
             currentNewIndex++;
         }
 
-        
+        await _topPicksService.SetTopPickAsync(chartType, chartDictionary);
     }
 }

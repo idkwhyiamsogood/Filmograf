@@ -5,19 +5,19 @@ using StackExchange.Redis;
 
 namespace Filmograf.MoviesService.Caching;
 
-public class ParsingPlannerCache
+public class MissionPlannerCache
 {
     protected static readonly TimeSpan LastParsingExpirationTime = new TimeSpan(2, 0, 0);
     protected static readonly TimeSpan ParsingTaskExpirationTime = new TimeSpan(0, 10, 0);
     protected readonly IConnectionMultiplexer _redis;
-    protected readonly CachingProviderAtomic<ParsingTaskCache> _cachingLastAtomic;
-    protected readonly CachingProviderAtomic<ParsingTaskCache> _cachingTaskAtomic;
+    protected readonly CachingProviderAtomic<MissionTaskCache> _cachingLastAtomic;
+    protected readonly CachingProviderAtomic<MissionTaskCache> _cachingTaskAtomic;
 
-    public ParsingPlannerCache(IConnectionMultiplexer redis)
+    public MissionPlannerCache(IConnectionMultiplexer redis)
     {
         _redis = redis;
-        _cachingLastAtomic = new CachingProviderAtomic<ParsingTaskCache>(redis, $"parsing-planner:last");
-        _cachingTaskAtomic = new CachingProviderAtomic<ParsingTaskCache>(redis, $"parsing-planner:task");
+        _cachingLastAtomic = new CachingProviderAtomic<MissionTaskCache>(redis, $"mission-planner:last");
+        _cachingTaskAtomic = new CachingProviderAtomic<MissionTaskCache>(redis, $"mission-planner:task");
     }
     
     private string MakeLastIdKey(string taskType)
@@ -26,13 +26,13 @@ public class ParsingPlannerCache
         return _cachingLastAtomic.MakeIdKey(ipHash);
     }
 
-    public virtual async Task SetLastAsync(string taskType, ParsingTaskCache item)
+    public virtual async Task SetLastAsync(string taskType, MissionTaskCache item)
     {
         var key = MakeLastIdKey(taskType);
         await _cachingLastAtomic.CreateAsync(key, item, LastParsingExpirationTime);
     }
     
-    public virtual async Task<ParsingTaskCache?> GetLastAsync(string taskType)
+    public virtual async Task<MissionTaskCache?> GetLastAsync(string taskType)
     {
         var key = MakeLastIdKey(taskType);
         return await _cachingLastAtomic.GetOrDefaultAsync(key);
@@ -51,13 +51,13 @@ public class ParsingPlannerCache
         return _cachingTaskAtomic.MakeIdKey(ipHash);
     }
 
-    public virtual async Task SetTaskAsync(string taskType, ParsingTaskCache item)
+    public virtual async Task SetTaskAsync(string taskType, MissionTaskCache item)
     {
         var key = MakeTaskIdKey(taskType);
         await _cachingTaskAtomic.CreateAsync(key, item, ParsingTaskExpirationTime);
     }
     
-    public virtual async Task<ParsingTaskCache?> GetTaskAsync(string taskType)
+    public virtual async Task<MissionTaskCache?> GetTaskAsync(string taskType)
     {
         var key = MakeTaskIdKey(taskType);
         return await _cachingTaskAtomic.GetOrDefaultAsync(key);

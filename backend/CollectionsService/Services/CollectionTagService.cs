@@ -35,7 +35,7 @@ public class CollectionTagService
         return await _collectionTagsCaching.CachingAllAsync(pagination, method);
     }
 
-    public async Task CreateAsync(CreateCollectionTagRequestDto data, User createdBy)
+    public async Task<CollectionTagResponseDto> CreateAsync(CreateCollectionTagRequestDto data, User createdBy)
     {
         var newCollectionTag = new CollectionTag
         {
@@ -43,7 +43,16 @@ public class CollectionTagService
             AuthorId = createdBy.Id
         };
 
-        await _collectionTagProvider.AddAsync(newCollectionTag);
+        var collectionTag = await _collectionTagProvider.AddAsync(newCollectionTag);
+        await _collectionTagsCaching.RemoveCachingByRootAsync();
+        
+        return _mapper.Map<CollectionTagResponseDto>(collectionTag);
+    }
+
+    public async Task EditAsync(Guid tagId, CreateCollectionTagRequestDto data)
+    {
+        // todo refactor
+        var collectionTag = await _collectionTagProvider.UpdateAsync(tagId, data.Name);
         await _collectionTagsCaching.RemoveCachingByRootAsync();
     }
 
