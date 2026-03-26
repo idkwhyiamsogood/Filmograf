@@ -14,15 +14,15 @@ public class MissionPlannerService
 
     public async Task<bool> CheckLastMissionAsync(string chartType)
     {
-        // проверяем, не настало ли время чекнуть еще раз imdb и кинопоиск
+        // проверяем, не настало ли время чекнуть
         var parsingLast = await _missionPlannerCache.GetLastAsync(chartType);
         
-        // проверяем, не чекаем ли площадки прямо щас
+        // проверяем, не чекаем ли прямо щас
         var parsingTask = await _missionPlannerCache.GetTaskAsync(chartType);
         
         if (parsingLast != null || parsingTask != null) return false;
 
-        // отмечаем, что прямо сейчас чекаем площадки
+        // отмечаем, что прямо сейчас чекаем
         var newParsingTask = new MissionTaskCache();
         await _missionPlannerCache.SetTaskAsync(chartType, newParsingTask);
 

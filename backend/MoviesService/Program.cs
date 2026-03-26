@@ -192,6 +192,7 @@ public class Program
         builder.Services.AddScoped<MoviesChartService>();
         builder.Services.AddScoped<TopPicksService>();
         builder.Services.AddScoped<MissionPlannerService>();
+        builder.Services.AddScoped<PersonalizedService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
