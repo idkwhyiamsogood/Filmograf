@@ -1,7 +1,7 @@
-import { useInfiniteQuery } from "@tanstack/react-query"
+// import { useInfiniteQuery } from "@tanstack/react-query"
 
-export const useTags = () => {
-  return useInfiniteQuery({
-    queryKey: 
-  })
-}
+// export const useTags = () => {
+//   return useInfiniteQuery({
+//     queryKey: 
+//   })
+// }

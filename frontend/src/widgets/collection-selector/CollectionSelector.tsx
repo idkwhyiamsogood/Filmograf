@@ -47,7 +47,7 @@ export const CollectionSelector: React.FC<Props> = ({
               value={collection.id}
               key={"collection-content-" + String(idx)}
             >
-              <MovieWrapper movies={movies || []} isLoading={isLoading} />
+              <MovieWrapper movies={movies || []}/>
             </TabsContent>
           );
         })}

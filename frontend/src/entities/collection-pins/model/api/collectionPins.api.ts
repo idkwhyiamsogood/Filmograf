@@ -1,16 +1,16 @@
 import { BaseHttpClient } from "@/shared/lib";
-import { ApiResponse } from "@/shared/types/api";
+import { APIResponse } from "@/shared/types/api";
 
 class CollecionPinsApi extends BaseHttpClient {
-  public getMyPins = async (): ApiResponse<number[]> => {
+  public getMyPins = async (): APIResponse<number[]> => {
     return this.get("api/collections/pins/my");
   };
 
-  public pinCollection = async (collectionId: string): ApiResponse<null> => {
+  public pinCollection = async (collectionId: string): APIResponse<null> => {
     return this.put(`api/collections/pins/${collectionId}`);
   };
 
-  public unpinCollection = async (collectionId: string): ApiResponse<null> => {
+  public unpinCollection = async (collectionId: string): APIResponse<null> => {
     return this.delete(`api/collections/pins/${collectionId}`);
   };
 }

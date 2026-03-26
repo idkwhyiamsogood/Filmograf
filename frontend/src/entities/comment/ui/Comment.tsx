@@ -39,7 +39,7 @@ export const Comment: FC<Props> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren = comment.childs && comment.childs.length > 0;
-  const childCount = 5;
+  const childCount = comment.childsCount;
 
   const formattedDate = new Date(comment.createDate);
   const likesCount = comment.likes.length;
@@ -128,30 +128,28 @@ export const Comment: FC<Props> = ({
                 </Button>
               </div>
 
-              <div>
-                {childCount && level < MAX_VISIBLE_LEVEL && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1.5 text-xs text-muted-foreground px-2.5"
-                    onClick={() => {
-                      setIsExpanded(!isExpanded);
-                      !isExpanded &&
-                        !comment.childs &&
-                        updateWithChilds(comment.id);
-                    }}
-                  >
-                    {isExpanded ? (
-                      <ChevronDown className="size-3.5" />
-                    ) : (
-                      <ChevronRight className="size-3.5" />
-                    )}
-                    <span>
-                      {isExpanded ? "Спрятать" : "Показать"} ({childCount})
-                    </span>
-                  </Button>
-                )}
-              </div>
+              {childCount > 0 && level < MAX_VISIBLE_LEVEL && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 gap-1.5 text-xs text-muted-foreground px-2.5"
+                  onClick={() => {
+                    setIsExpanded(!isExpanded);
+                    !isExpanded &&
+                      !comment.childs &&
+                      updateWithChilds(comment.id);
+                  }}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="size-3.5" />
+                  ) : (
+                    <ChevronRight className="size-3.5" />
+                  )}
+                  <span>
+                    {isExpanded ? "Спрятать" : "Показать"}({childCount})
+                  </span>
+                </Button>
+              )}
             </div>
           </div>
         </div>

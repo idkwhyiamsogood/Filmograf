@@ -30,14 +30,16 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
             <UserProvider>
               <FilterProvider>
                 <TooltipProvider>
-                  {children}
+                  <div className="flex flex-col h-screen">
+                    <div className="flex-1 overflow-y-auto">{children}</div>
+                    <Navigation />
+                  </div>
                   <ReactQueryDevtools initialIsOpen={false} />
                   <ModalRenderer />
                 </TooltipProvider>
               </FilterProvider>
             </UserProvider>
           </QueryClientProvider>
-          <Navigation />
         </ModalProvider>
       </AuthProvider>
     </ThemeProvider>

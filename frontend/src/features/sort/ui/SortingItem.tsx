@@ -24,7 +24,7 @@ export const SortingItem: FC<Props> = ({ sortingItem }) => {
         htmlFor={uniqueId}
         className="
           flex items-center justify-between 
-          w-full px-4 py-4 
+          w-full px-4 py-3 
           rounded-2xl cursor-pointer
           transition-all duration-200
           text-muted-foreground

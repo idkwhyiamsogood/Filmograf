@@ -5,8 +5,6 @@ import { Button } from '@/shared/ui/button';
 
 import { useModals } from '@/shared/hooks';
 
-import { FilterProvider } from '@/features/filter/model/context/filter.context';
-
 import { SortingButton } from '@/features/sort';
 
 interface Props {

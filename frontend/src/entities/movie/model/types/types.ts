@@ -15,7 +15,7 @@ export interface IMovie extends BaseModel {
   imageUrl: string;
   previewImageLink: string;
   movieLink: string;
-  genresIds: string[];
+  genreIds: string[];
 
   rates: Record<Review, number>
 };

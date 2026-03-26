@@ -5,10 +5,10 @@ import { WrapperSheetContent } from "@/shared/components/";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { CommonSearchDebounced } from "@/shared/components/";
 
-import type { Genre } from "@/entities/genres";
+import type { GenreType } from "@/entities/genres";
 
 interface Props {
-  items: Genre[];
+  items: GenreType[];
   handleToggleItem: (id: string) => void;
   getStatus: (id: string) => {
     checked: boolean;

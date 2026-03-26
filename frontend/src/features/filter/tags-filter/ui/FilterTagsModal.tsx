@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { Genre, useGenres } from "@/entities/genres";
+import { GenreType, useGenres } from "@/entities/genres";
 import { useModals } from "@/shared/hooks";
 import { useTagsFilter } from "../model/hooks/useTagsFilter";
 
@@ -23,7 +23,7 @@ export const FilterTagsModal: React.FC = () => {
   const { handleTagReset, toggleTag, getTagState } = useTagsFilter();
   const { data: genres } = useGenres();
 
-  const [data, setData] = useState<Genre[]>(genres);
+  const [data, setData] = useState<GenreType[]>(genres);
 
   const handleSearch = (value: string) => {
     if (!value.trim()) {
@@ -64,7 +64,7 @@ export const FilterTagsModal: React.FC = () => {
         >
           <FilterCommonHeader
             title="Жанры"
-            handleReset={handleGenresReset}
+            handleReset={handleTagReset}
             inputOptions={{
               placeholder: "Поиск по тегам",
               handleSearch: handleSearch,
@@ -73,8 +73,8 @@ export const FilterTagsModal: React.FC = () => {
 
           <FilterCommonBody
             items={data}
-            handleToggleItem={toggleGenre}
-            getStatus={getGenreState}
+            handleToggleItem={toggleTag}
+            getStatus={getTagState}
           />
 
           <FilterCommonFooter

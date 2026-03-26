@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import type { Genre } from "@/entities/genres";
+import type { GenreType } from "@/entities/genres";
 import type { EntityType } from "@/shared/types";
 
 interface FilterOptions {
@@ -26,7 +26,7 @@ export type FilterAction = {
   };
   body: {
     handleToggeStrict: () => void;
-    items: Genre[];
+    items: GenreType[];
     handleToggleItem: (id: string) => void;
   };
   footer: ReactNode;

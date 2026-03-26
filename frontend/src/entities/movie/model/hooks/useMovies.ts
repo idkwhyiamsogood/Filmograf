@@ -49,7 +49,7 @@ export const useMovie = (ids: string[] | string) => {
         return [movie];
       }
 
-      return null;
+      return [];
     }
   };
 

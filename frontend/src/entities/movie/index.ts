@@ -1,12 +1,23 @@
 // types
 export type { IMovie } from "./model/types/types";
 
+
 // enums
 export { Review } from "./model/types/types";
 
-export { MovieCover } from "./ui/FilmCover";
-export { MovieWrapper } from "./ui/MovieWrapper/MovieWrapper";
 
+// ui
+export { MovieCover } from "./ui/MovieCover";
+export { MovieWrapper } from "./ui/MovieWrapper/MovieWrapper";
+export { MovieSkeleton } from "./ui/MovieSkeleton";
+export { MovieCarousel } from "./ui/MovieCarausel/MovieCarausel";
+export { WrappedSkeleton } from "./ui/WrappedSkeleton"
+
+
+// hooks
+export { useInfiniteMovies } from "./model/hooks/useInfinityMovies";
 export { useMovie } from "./model/hooks/useMovies";
 
+
+// api
 export { movieApi } from "./model/api/movie.api";

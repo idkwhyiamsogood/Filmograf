@@ -33,8 +33,8 @@ export const Navigation: FC = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t">
-      <div className="px-4 py-2 flex justify-around items-center bg-accent">
+    <div className="flex-shrink-0 border-t bg-accent">
+      <div className="px-4 py-2 flex justify-around items-center">
         {navigationMenu.items.map((item: INavigationItem) => (
           <NavigationItem
             item={item}

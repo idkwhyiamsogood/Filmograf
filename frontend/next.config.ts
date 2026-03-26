@@ -6,12 +6,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "image.openmoviedb.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
         hostname: "m.media-amazon.com",
         port: "",
         pathname: "/**",

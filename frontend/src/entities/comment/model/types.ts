@@ -6,7 +6,7 @@ export interface Comment extends BaseModel {
   isDeleted: boolean;
   likes: string[];
   dislikes: string[];
-  childsCount: number; // 0 if null
+  childsCount: number;
   childs: Comment[] | null;
 }
 

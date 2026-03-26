@@ -1,24 +1,44 @@
 "use client";
 
-import { useState, type FC, useEffect } from "react";
-import { useMovie, movieApi, IMovie } from "@/entities/movie";
+import { type FC, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteMovies } from "@/entities/movie";
 import { MovieWrapper } from "@/entities/movie";
+import { WrappedSkeleton } from "@/entities/movie/";
 
 const Page: FC = () => {
-  const [moviesData, setMoviesData] = useState<string[]>([]);
+  const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteMovies({
+      pageSize: 21,
+      type: "top",
+    });
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: "200px",
+  });
 
   useEffect(() => {
-    const getTop = async () => {
-      const { data } = await movieApi.getTop();
-      setMoviesData(data.ids);
-    };
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    getTop();
-  }, []);
+  if (isLoading) {
+    return <WrappedSkeleton count={21} />;
+  }
 
-  const { data: movies, isLoading } = useMovie(moviesData);
+  return (
+    <div>
+      <MovieWrapper movies={movies} />
 
-  return <MovieWrapper movies={movies || []} isLoading={isLoading} />;
+      <div ref={ref} className="py-8">
+        {isFetchingNextPage && <WrappedSkeleton count={6} />}
+      </div>
+
+      {!hasNextPage && <div></div>}
+    </div>
+  );
 };
 
 export default Page;

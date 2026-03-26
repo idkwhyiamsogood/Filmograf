@@ -42,7 +42,7 @@ export const CommentWrapper: React.FC = () => {
   if (!parentComments) return null;
 
   return (
-    <ScrollArea className="max-w-full">
+    <ScrollArea className="max-w-full px-2.5">
       <div className="pb-5">
         <CommentEditor entity={entity} />
       </div>
