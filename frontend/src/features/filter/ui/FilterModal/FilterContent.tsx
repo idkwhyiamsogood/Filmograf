@@ -1,18 +1,18 @@
 "use client";
 
-import type { FC } from "react";
 import type { EntityType } from "@/shared/types";
+import type { FC } from "react";
 
 import { CommonCheckboxField } from "@/shared/components";
+import { WrapperSheetContent } from "@/shared/components/";
 import { Button } from "@/shared/ui/button";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Separator } from "@/shared/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { MessageCircleQuestionMark } from "lucide-react";
-import { WrapperSheetContent } from "@/shared/components/";
 
 import { useModals } from "@/shared/hooks";
-import { useFilter } from "../../model/hooks/useFilter";
+import { useFilter } from "../../common/model/hooks/useFilter";
 
 interface Props {
   targetType: EntityType;

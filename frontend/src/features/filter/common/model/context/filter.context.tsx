@@ -2,11 +2,10 @@
 
 import React, {
   createContext,
-  useContext,
-  useState,
-  useCallback,
   ReactNode,
+  useCallback,
   useEffect,
+  useState,
 } from "react";
 
 import type { FilterState } from "../types/types";
@@ -40,7 +39,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({
   const [filterState, setFilterState] = useState<FilterState>(
     initialState ?? {
       strictMatch: false,
-      filterOptions: { targetType: "movie" },
+      filterOptions: { targetType: "Movie" },
     },
   );
 
@@ -50,9 +49,9 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({
       filterOptions: {
         ...prev.filterOptions,
         targetType:
-          prev.filterOptions.targetType === "collection"
-            ? "movie"
-            : "collection",
+          prev.filterOptions.targetType === "Collection"
+            ? "Movie"
+            : "Collection",
       },
     }));
   }, []);
@@ -60,7 +59,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({
   const globalReset = useCallback(() => {
     setFilterState((prev) => ({
       ...prev,
-      filterOptions: { targetType: "movie" },
+      filterOptions: { targetType: "Movie" },
     }));
   }, []);
 

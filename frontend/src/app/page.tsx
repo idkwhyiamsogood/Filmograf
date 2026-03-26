@@ -4,8 +4,8 @@
 import { FC, useEffect } from "react";
 
 // components
-import { useModals } from "@/shared/hooks";
-import { useAuth } from "@/shared/hooks";
+import { useAuth, useModals } from "@/shared/hooks";
+
 
 const Page: FC = () => {
   const { openModal } = useModals();
@@ -13,7 +13,7 @@ const Page: FC = () => {
 
   useEffect(() => {
     !token && openModal("authorization-menu");
-  }, [])
+  }, []);
 
   return null;
 };

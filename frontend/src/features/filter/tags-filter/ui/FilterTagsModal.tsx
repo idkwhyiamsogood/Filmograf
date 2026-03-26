@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 
+import { Genre, useGenres } from "@/entities/genres";
 import { useModals } from "@/shared/hooks";
-import { useGenresFilter } from "./model/hooks/useGenresFilter";
-import { useGenres } from "@/entities/genres";
+import { useTagsFilter } from "../model/hooks/useTagsFilter";
 
 import {
   Sheet,
@@ -14,19 +14,29 @@ import {
   SheetTitle,
 } from "@/shared/ui/sheet";
 
-import { FilterCommonHeader } from "./ui/common/modal/FilterCommonHeader";
-import { FilterCommonBody } from "./ui/common/modal/FilterCommonBody";
-import { FilterCommonFooter } from "./ui/common/modal/FIlterCommonFooter";
+import { FilterCommonBody } from "../../common/ui/FilterCommonBody";
+import { FilterCommonFooter } from "../../common/ui/FIlterCommonFooter";
+import { FilterCommonHeader } from "../../common/ui/FilterCommonHeader";
 
-export const FilterGenresModal: React.FC = () => {
+export const FilterTagsModal: React.FC = () => {
   const { isOpen, closeModal } = useModals();
-  const { handleGenresReset, toggleGenre, getGenreState } = useGenresFilter();
+  const { handleTagReset, toggleTag, getTagState } = useTagsFilter();
+  const { data: genres } = useGenres();
 
-  const { data } = useGenres();
+  const [data, setData] = useState<Genre[]>(genres);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data])
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      setData(genres);
+      return;
+    }
+
+    const filtered = (genres || []).filter((genre) =>
+      genre.name.toLowerCase().includes(value.toLowerCase()),
+    );
+
+    setData(filtered);
+  };
 
   return (
     <div className="bg-background border-accent">
@@ -52,13 +62,21 @@ export const FilterGenresModal: React.FC = () => {
             duration-100
           `}
         >
-          <FilterCommonHeader title="Жанры" handleReset={handleGenresReset} />
-          
+          <FilterCommonHeader
+            title="Жанры"
+            handleReset={handleGenresReset}
+            inputOptions={{
+              placeholder: "Поиск по тегам",
+              handleSearch: handleSearch,
+            }}
+          />
+
           <FilterCommonBody
-            items={data?.data || []}
+            items={data}
             handleToggleItem={toggleGenre}
             getStatus={getGenreState}
           />
+
           <FilterCommonFooter
             handleSubmit={() => console.log("submitet genres modal")}
           />

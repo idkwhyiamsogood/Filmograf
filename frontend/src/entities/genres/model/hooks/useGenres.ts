@@ -1,11 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-
 import { genreApi } from "../api/genres.api";
 
 export const useGenres = () => {
-  return useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["genres"],
     queryFn: () => genreApi.getGenres(),
-    staleTime: Infinity, 
+    staleTime: Infinity,
   });
+
+  return {
+    data: data?.data || [],
+    isLoading
+  }
 };

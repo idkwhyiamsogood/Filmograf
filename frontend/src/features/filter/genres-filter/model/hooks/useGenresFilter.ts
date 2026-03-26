@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useFilter } from "./useFilter";
+import { useFilter } from "@/features/filter/common";
 
 export const useGenresFilter = () => {
   const { filterState, updateFilterOption } = useFilter();
@@ -46,7 +46,7 @@ export const useGenresFilter = () => {
 
         return {
           ...prev,
-          include: [...(prev.include || []), id],
+          exclude: [...(prev.exclude || []), id],
         };
       });
     },

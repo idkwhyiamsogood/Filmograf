@@ -1,10 +1,10 @@
 import { BaseHttpClient } from "@/shared/lib";
-import { ApiResponse } from "@/shared/types/api";
+import { APIResponse } from "@/shared/types/api";
 
 import type { Genre } from "../types/types";
 
 class GenreApi extends BaseHttpClient {
-  public getGenres = async (): ApiResponse<Genre[]> => {
+  public getGenres = async (): APIResponse<Genre[]> => {
     return this.get(`/api/genres/`);
   };
 }

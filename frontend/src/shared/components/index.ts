@@ -8,6 +8,7 @@ export {
 export { CommonSwiper } from "./common/CommonSwiper";
 export { CommonWrapper } from "./common/CommonWrapper";
 export { WrapperSheetContent } from "./common/WrapperSheetContent";
+export { CommonSearchDebounced } from "./common/CommonSearchDebounced"
 
 // modals
 export { ConfirmationModal } from "./modals/ConfirmationModal";

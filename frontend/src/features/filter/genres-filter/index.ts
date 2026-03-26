@@ -1,0 +1,1 @@
+export { useGenresFilter } from "./model/hooks/useGenresFilter";

@@ -7,13 +7,13 @@ import { SheetClose } from "@/shared/ui/sheet";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
+import { CommonSearchDebounced } from "@/shared/components";
 
 import { useModals } from "@/shared/hooks";
 
 interface InputProps {
-  value: string;
   placeholder: string;
-  handleChange: ChangeEventHandler<HTMLInputElement>;
+  handleSearch: (value: string) => void;
 }
 
 interface Props {
@@ -24,8 +24,8 @@ interface Props {
 
 export const FilterCommonHeader: React.FC<Props> = ({
   title,
-  handleReset,
   inputOptions,
+  handleReset,
 }) => {
   const { prevModal } = useModals();
 
@@ -45,7 +45,11 @@ export const FilterCommonHeader: React.FC<Props> = ({
         </div>
 
         {handleReset && (
-          <Button onClick={handleReset} variant={"ghost"} className="text-sm font-medium">
+          <Button
+            onClick={handleReset}
+            variant={"ghost"}
+            className="text-sm font-medium"
+          >
             Сбросить
           </Button>
         )}
@@ -53,8 +57,12 @@ export const FilterCommonHeader: React.FC<Props> = ({
 
       <Separator />
 
-      {/* input */}
-      {inputOptions && <Input placeholder={inputOptions.placeholder} value={inputOptions.value} onChange={inputOptions.handleChange} className="border-0"/>}
+      {inputOptions && (
+        <CommonSearchDebounced
+          placeholder={inputOptions.placeholder}
+          onSearch={inputOptions.handleSearch}
+        />
+      )}
     </div>
   );
 };

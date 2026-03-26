@@ -5,9 +5,9 @@ import React, { useCallback } from "react";
 import { useModals, useSwipe } from "@/shared/hooks";
 
 
+import { FilterCommonHeader } from "./common/ui/FilterCommonHeader";
 import { FilterContent } from "./ui/FilterModal/FilterContent";
 import { FilterFooter } from "./ui/FilterModal/FilterFooter";
-import { FilterCommonHeader } from "./ui/common/modal/FilterCommonHeader";
 
 import {
   Sheet,
@@ -16,7 +16,7 @@ import {
   SheetHeader,
   SheetTitle
 } from "@/shared/ui/sheet";
-import { useFilter } from "./model/hooks/useFilter";
+import { useFilter } from "./common/model/hooks/useFilter";
 
 export const FilterModal: React.FC = () => {
   const { isOpen, closeModal } = useModals();

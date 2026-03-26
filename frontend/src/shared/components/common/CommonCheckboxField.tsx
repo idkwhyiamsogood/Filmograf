@@ -3,6 +3,8 @@ import { Label } from "@/shared/ui/label";
 import { Check, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
+import { Button } from "@/shared/ui/button";
+
 interface Props {
   label: string;
   handleToggle: () => void;
@@ -32,26 +34,32 @@ export const CommonCheckboxField: React.FC<Props> = ({
 
   const getStateClasses = () => {
     if (disabled) return "bg-muted border-muted-foreground/20";
-    if (indeterminate) return "bg-primary border-primary";
+    if (indeterminate) return "border-primary";
     if (checked) return "bg-green-500 border-primary";
     return "bg-transparent border-input hover:bg-accent/50";
   };
 
+  const getVariant = () => {
+    if (indeterminate) return "destructive";
+    return "ghost";
+  };
+
   return (
     <div className="flex items-center space-x-2">
-      <button
+      <Button
+        variant={getVariant()}
         type="button"
         id={checkboxId}
         onClick={handleToggle}
         disabled={disabled}
         className={cn(
-          "flex h-4 w-4 items-center justify-center rounded border transition-colors",
+          "flex h-4 w-4 items-center justify-center rounded border transition-colors p-0!",
           disabled && "opacity-50 cursor-not-allowed",
           getStateClasses(),
         )}
       >
         {renderIcon()}
-      </button>
+      </Button>
       <Label
         htmlFor={checkboxId}
         className={cn(

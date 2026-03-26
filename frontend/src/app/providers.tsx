@@ -9,7 +9,7 @@ import { ModalRenderer } from "@/shared/lib";
 import { Navigation } from "@/widgets/Navigation/";
 import { ThemeProvider } from "next-themes";
 
-import { FilterProvider } from "@/features/filter/model/context/filter.context";
+import { FilterProvider } from "@/features/filter/common";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
