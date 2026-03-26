@@ -37,9 +37,14 @@ public class TopPicksService
         return new EntitiesListResponseDto { Ids = pagedIds.ToArray() };
     }
 
+    public string GetUserKey(string chartType, Guid userId)
+    {
+        return $"{chartType}:user:{userId.ToString()}";
+    }
+
     public async Task<EntitiesListResponseDto> GetFromUserChartAsync(PaginationQueryDto pagination, Guid userId, string chartType)
     {
-        var chartKey = $"{chartType}:user:{userId.ToString()}";
+        var chartKey = GetUserKey(chartType, userId);
         return await GetFromChartAsync(pagination, chartKey);
     }
     
@@ -51,7 +56,7 @@ public class TopPicksService
 
     public async Task SetUserTopPickAsync(string chartType, Guid userId, Dictionary<int, string> chartDictionary)
     {
-        var chartKey = $"{chartType}:user:{userId.ToString()}";
+        var chartKey = GetUserKey(chartType, userId);
         await SetTopPickAsync(chartKey, chartDictionary);
     }
 

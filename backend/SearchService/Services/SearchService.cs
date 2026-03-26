@@ -25,137 +25,61 @@ public class SearchService
     public async Task<SearchPartResponseDto> SearchFilmAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-        {
-            return new SearchPartResponseDto
-            {
-                Type = SearchPartType.Movie,
-                EntityIds = Array.Empty<string>()
-            };
-        }
-        var movies = await _movieRepository.GetByNameAsync(query);
-        
-        var sortedMovies = movies
-            .Select(m => new
-            {
-                Movie = m,
-                Index = m.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
-            })
-            .Where(x => x.Index >= 0) 
-            .OrderBy(x => x.Index)
-            .ThenBy(x => x.Movie.Name.Length) 
-            .Select(x => x.Movie)
-            .ToList();
+            return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = Array.Empty<string>() };
 
-        var response = new SearchPartResponseDto
-        {
-            Type = SearchPartType.Movie,
-            EntityIds = sortedMovies.Select(m => m.Id).ToArray()
-        };
-        
-        return response;
+        var movies = await _movieRepository.GetByNameAsync(query);
+        var sortedMovies = SortByQuery(movies, query, m => m.Name, m => m.Id);
+
+        return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = sortedMovies };
     }
     
     public async Task<SearchPartResponseDto> SearchCollectionAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-        {
-            return new SearchPartResponseDto
-            {
-                Type = SearchPartType.Collection,
-                EntityIds = Array.Empty<string>()
-            };
-        }
+            return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = Array.Empty<string>() };
         
         var collections = await _collectionRepository.GetByNameAsync(query);
 
-        var sortedCollections = collections
-            .Select(m => new
-            {
-                Movie = m,
-                Index = m.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
-            })
-            .Where(x => x.Index >= 0)
-            .OrderBy(x => x.Index) 
-            .ThenBy(x => x.Movie.Name.Length) 
-            .Select(x => x.Movie)
-            .ToList();
+        var sortedCollections = SortByQuery(collections, query, c => c.Name, c => c.Id);
         
-        var response = new SearchPartResponseDto
-        {
-            Type = SearchPartType.Collection,
-            EntityIds = sortedCollections.Select(c => c.Id).ToArray()
-        };
-
-        
-        return response;
+        return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = sortedCollections };
     }
     
     public async Task<SearchPartResponseDto> SearchTagAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-        {
-            return new SearchPartResponseDto
-            {
-                Type = SearchPartType.Tag,
-                EntityIds = Array.Empty<string>()
-            };
-        }
+            return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = Array.Empty<string>() };
         
         var tags = await _tagProvider.SearchAllByNameAsync(query);
+        var sortedTags = SortByQuery(tags, query, t => t.Name, t => t.Id.ToString());
         
-        var sortedTags = tags
-            .Select(t => new
-            {
-                Tag = t,
-                Index = t.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
-            })
-            .Where(x => x.Index >= 0)
-            .OrderBy(x => x.Index)
-            .ThenBy(x => x.Tag.Name.Length)
-            .Select(x => x.Tag)
-            .ToList();
-        
-        var response = new SearchPartResponseDto
-        {
-            Type = SearchPartType.Tag,
-            EntityIds = sortedTags.Select(t => t.Id.ToString()).ToArray()
-        };
-        
-        return response;
+        return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = sortedTags };
     }
     
     public async Task<SearchPartResponseDto> SearchGenreAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-        {
-            return new SearchPartResponseDto
-            {
-                Type = SearchPartType.Genre,
-                EntityIds = Array.Empty<string>()
-            };
-        }
-    
+            return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = Array.Empty<string>() };
+        
         var genres = await _genreProvider.SearchAllByNameAsync(query);
+        var sortedGenres = SortByQuery(genres, query, t => t.Name, t => t.Id.ToString());
+        
+        return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = sortedGenres };
+    }
     
-        var sortedGenres = genres
-            .Select(g => new
-            {
-                Genre = g,
-                Index = g.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase)
-            })
-            .Where(x => x.Index >= 0)
-            .OrderBy(x => x.Index)
-            .ThenBy(x => x.Genre.Name.Length)
-            .Select(x => x.Genre)
-            .ToList();
     
-        var response = new SearchPartResponseDto
-        {
-            Type = SearchPartType.Genre,
-            EntityIds = sortedGenres.Select(g => g.Id.ToString()).ToArray()
-        };
-    
-        return response;
+    private string[] SortByQuery<T>(
+        IEnumerable<T> items,
+        string query,
+        Func<T, string> nameSelector,
+        Func<T, string> idSelector)
+    {
+        return items
+            .Where(x => nameSelector(x).Contains(query, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(x => nameSelector(x).IndexOf(query, StringComparison.OrdinalIgnoreCase))
+            .ThenBy(x => nameSelector(x).Length)
+            .Select(x => idSelector(x))
+            .ToArray();
     }
     
 }

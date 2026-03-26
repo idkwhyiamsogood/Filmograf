@@ -122,6 +122,7 @@ public class Program
         builder.Services.AddScoped<MoviesChartService>();
         builder.Services.AddScoped<ChartService>();
         builder.Services.AddScoped<TopPicksService>();
+        builder.Services.AddScoped<PersonalizedService>();
         builder.Services.AddScoped<MoviePersonalizedService>();
         
         // providers

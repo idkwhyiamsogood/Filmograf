@@ -22,6 +22,7 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
         _integrationsBus = new Dictionary<string, IIntegrationHandler>();
         _integrationsBus["click_entity"] = new ClickEntityIntegration(_channel, "click_entity");
         _integrationsBus["compile_chart"] = new CompileChartIntegration(_channel, "compile_chart");
+        _integrationsBus["compile_personalized"] = new CompilePersonalizedIntegration(_channel, "compile_personalized");
     }
 }
 

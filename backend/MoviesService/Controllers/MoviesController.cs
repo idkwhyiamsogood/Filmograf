@@ -37,12 +37,12 @@ public class MoviesController : CustomControllerBase
     }
 
     [HttpGet("recommended")]
-    [UserTypePolicy(Guest = false)]
+    [UserTypePolicy]
     public async Task<ActionResult<MoviesListResponseDto>> GetRecommendedMoviesAsync([FromQuery] PaginationQueryDto pagination, 
         [FromServices] AuthContext authContext)
     {
-        // todo
-        var result = await _movieTopPicksService.GetFromChartAsync(pagination);
+        var result = await _movieTopPicksService
+            .GetUserRecommendedChartAsync(pagination, authContext.CurrentUser!.Id);
         return Ok(result);
     }
 

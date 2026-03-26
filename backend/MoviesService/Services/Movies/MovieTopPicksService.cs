@@ -2,6 +2,7 @@
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Services;
+using Filmograf.BaseLibrary.Util;
 
 namespace Filmograf.MoviesService.Services.Movies;
 
@@ -12,15 +13,18 @@ public class MovieTopPicksService
     private readonly TopPicksService _topPicksService;
     private readonly MoviesChartService _moviesChartService;
     private readonly MissionPlannerService _missionPlannerService;
+    private readonly PersonalizedService _personalizedService;
     
     public MovieTopPicksService(MoviesParserService moviesParserService, MovieRepository movieRepository, 
-        TopPicksService topPicksService, MoviesChartService moviesChartService, MissionPlannerService missionPlannerService)
+        TopPicksService topPicksService, MoviesChartService moviesChartService, MissionPlannerService missionPlannerService,
+        PersonalizedService personalizedService)
     {
         _moviesParserService = moviesParserService;
         _movieRepository = movieRepository;
         _topPicksService = topPicksService;
         _moviesChartService = moviesChartService;
         _missionPlannerService = missionPlannerService;
+        _personalizedService = personalizedService;
     }
     
     public async Task<EntitiesListResponseDto> GetFromChartAsync(PaginationQueryDto pagination, string chartType = "IMDb")
@@ -31,12 +35,22 @@ public class MovieTopPicksService
 
     public async Task<EntitiesListResponseDto> GetPopularAsync(PaginationQueryDto pagination)
     {
-        var chart = await GetFromChartAsync(pagination, "FilmPopularMovies");
+        var chart = await _topPicksService.GetFromChartAsync(pagination, "FilmTopMovies");
 
-        var hasMission = await _missionPlannerService.CheckLastMissionAsync("FilmPopularMovies");
-        if (!hasMission) return chart;
+        var hasMission = await _missionPlannerService.CheckLastMissionAsync("FilmTopMovies");
+        if (hasMission) await _moviesChartService.CompileChartAsync();
+        
+        return chart;
+    }
 
-        await _moviesChartService.CompileChartAsync();
+    public async Task<EntitiesListResponseDto> GetUserRecommendedChartAsync(PaginationQueryDto pagination, Guid userId)
+    {
+        var userKey = _topPicksService.GetUserKey("Movie", userId);
+        var chart = await _topPicksService.GetFromChartAsync(pagination, userKey);
+        
+        var hasMission = await _missionPlannerService.CheckLastMissionAsync(userKey);
+        if (hasMission) await _personalizedService.CompilePersonalizedAsync("Movie", userId);
+
         return chart;
     }
     
