@@ -51,9 +51,7 @@ public class IMDbParserService
         try
         {
             await page.WaitForSelectorAsync(".ipc-metadata-list-summary-item", new PageWaitForSelectorOptions
-            {
-                Timeout = 15000
-            });
+            { Timeout = 15000 });
         }
         catch (Exception ex)
         {
@@ -62,9 +60,7 @@ public class IMDbParserService
             try
             {
                 await page.WaitForSelectorAsync("li.ipc-metadata-list-summary-item", new PageWaitForSelectorOptions
-                {
-                    Timeout = 5000
-                });
+                { Timeout = 5000 });
             }
             catch
             {
@@ -118,22 +114,20 @@ public class IMDbParserService
                 
                 if (metadataItems.Count > 1)
                 {
-                    // Если элементов 3, то второй - возраст, третий - время.
-                    // Если 2, то нужно проверять, это возраст или время.
-                    var text1 = await metadataItems[1].InnerTextAsync();
-                    
                     if (metadataItems.Count == 3)
                     {
-                        ageLimit = ParseAgeLimit(text1);
-                        duration = ParseDuration(await metadataItems[2].InnerTextAsync());
+                        duration = ParseDuration(await metadataItems[1].InnerTextAsync());
+                        ageLimit = ParseAgeLimit(await metadataItems[2].InnerTextAsync());
                     }
-                    else // Если всего 2 элемента метаданных
+                    else
                     {
+                        var text = await metadataItems[1].InnerTextAsync();
+                        
                         // Проверяем, содержит ли текст "h" или "m" (признак времени)
-                        if (text1.Contains('h') || text1.Contains('m'))
-                            duration = ParseDuration(text1);
+                        if (text.Contains('h') || text.Contains('m'))
+                            duration = ParseDuration(text);
                         else
-                            ageLimit = ParseAgeLimit(text1);
+                            ageLimit = ParseAgeLimit(text);
                     }
                 }
             }
@@ -266,7 +260,7 @@ public class IMDbParserService
             // сперва парсим основную страницу
             page = await PlaywrightService.ParsePageAsync(browser, context, url);
             if (page == null) throw new BadRequestHttpException("Ошибка при загрузке страницы");
-            
+
             // извлекаем инфу о фильмах с этой страницы
             var moviesData = await ExtractMoviesListAsync(page);
             return moviesData;

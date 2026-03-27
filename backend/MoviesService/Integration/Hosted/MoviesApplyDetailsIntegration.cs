@@ -7,30 +7,30 @@ using RabbitMQ.Client;
 
 namespace Filmograf.MoviesService.Integration.Hosted;
 
-public class FilmsApplyDetailsIntegrationRequestPayload : IntegrationRequestPayloadBase
+public class MoviesApplyDetailsIntegrationRequestPayload : IntegrationRequestPayloadBase
 {
     public MovieDetailsParseResult[] DetailsInfo { get; set; }
 }
 
-public class FilmsApplyDetailsIntegrationContext : IntegrationContextBase
+public class MoviesApplyDetailsIntegrationContext : IntegrationContextBase
 {
     public MoviesDetailsService MoviesDetailsService { get; set; }
 
-    public FilmsApplyDetailsIntegrationContext(MoviesDetailsService moviesDetailsService)
+    public MoviesApplyDetailsIntegrationContext(MoviesDetailsService moviesDetailsService)
     {
         MoviesDetailsService = moviesDetailsService;
     }
 }
 
-public class FilmsApplyDetailsIntegration : NoAskIntegrationBase<FilmsApplyDetailsIntegrationRequestPayload, 
-    FilmsApplyDetailsIntegrationContext>
+public class MoviesApplyDetailsIntegration : NoAskIntegrationBase<MoviesApplyDetailsIntegrationRequestPayload, 
+    MoviesApplyDetailsIntegrationContext>
 {
-    public FilmsApplyDetailsIntegration(IChannel channel, string actionName) : base(channel, actionName)
+    public MoviesApplyDetailsIntegration(IChannel channel, string actionName) : base(channel, actionName)
     {
     }
 
-    protected override async Task ProcessingAsync(IntegrationRequest request, FilmsApplyDetailsIntegrationRequestPayload? payload,
-        FilmsApplyDetailsIntegrationContext context)
+    protected override async Task ProcessingAsync(IntegrationRequest request, MoviesApplyDetailsIntegrationRequestPayload? payload,
+        MoviesApplyDetailsIntegrationContext context)
     {
         if (payload == null) 
             throw new EmptyPayloadIntegrationException(_actionName);

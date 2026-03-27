@@ -23,7 +23,7 @@ public class FeedController : CustomControllerBase
     public async Task<ActionResult> FeedParseMovieAsync([FromBody] FeedMoviesDto data)
     {
         await _moviesParserService.ParseMoviesAsync(data.Source, data.Url, true, false);
-        return Ok();
+        return NoContent();
     }
     
     [Admin]
@@ -31,7 +31,7 @@ public class FeedController : CustomControllerBase
     public async Task<ActionResult> FeedParseAsync([FromBody] FeedMoviesDto data)
     {
         await _moviesParserService.ParseMoviesAsync(data.Source, data.Url, true, false);
-        return Ok();
+        return NoContent();
     }
     
     [Admin]
@@ -39,6 +39,22 @@ public class FeedController : CustomControllerBase
     public async Task<ActionResult> CompileChartAsync()
     {
         await _moviesChartService.CompileChartAsync();
-        return Ok();
+        return NoContent();
+    }
+    
+    [Admin]
+    [HttpPost("{movieId}/re-parse-one-movie")]
+    public async Task<ActionResult> ReParseOneMovieAsync(string movieId)
+    {
+        await _moviesParserService.ParseOneMovieDetailsAsync(movieId);
+        return NoContent();
+    }
+    
+    [Admin]
+    [HttpPost("nahyi-parsing-bugs")]
+    public async Task<ActionResult> FixParsingBugsAsync()
+    {
+        var count = await _moviesParserService.FixParsingBugsAsync();
+        return Ok(count);
     }
 }

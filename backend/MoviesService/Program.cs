@@ -162,8 +162,9 @@ public class Program
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
         builder.Services.AddScoped<FilmsDistinctIntegrationContext>();
-        builder.Services.AddScoped<FilmsApplyDetailsIntegrationContext>();
+        builder.Services.AddScoped<MoviesApplyDetailsIntegrationContext>();
         builder.Services.AddScoped<CompleteParsingIntegrationContext>();
+        builder.Services.AddScoped<OneMovieApplyDetailsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)

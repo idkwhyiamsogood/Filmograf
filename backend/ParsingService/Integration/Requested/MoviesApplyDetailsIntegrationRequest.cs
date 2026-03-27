@@ -3,7 +3,7 @@ using Filmograf.BaseLibrary.Models.Types;
 
 namespace Filmograf.ParsingService.Integration.Requested;
 
-public class FilmsApplyDetailsIntegrationRequest : IntegrationRequestPayloadBase
+public class MoviesApplyDetailsIntegrationRequest : IntegrationRequestPayloadBase
 {
     public MovieDetailsParseResult[] DetailsInfo { get; set; }
 }

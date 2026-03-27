@@ -21,7 +21,8 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
     {
         _integrationsBus = new Dictionary<string, IIntegrationHandler>();
         _integrationsBus["distinct_films"] = new FilmsDistinctIntegration(_channel, "distinct_films");
-        _integrationsBus["apply_films_details"] = new FilmsApplyDetailsIntegration(_channel, "apply_films_details");
+        _integrationsBus["apply_movies_details"] = new MoviesApplyDetailsIntegration(_channel, "apply_movies_details");
+        _integrationsBus["apply_one_movie_details"] = new OneMovieApplyDetailsIntegration(_channel, "apply_one_movie_details");
         _integrationsBus["complete_parsing"] = new CompleteParsingIntegration(_channel, "complete_parsing");
     }
 }

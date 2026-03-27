@@ -1,4 +1,5 @@
-﻿using Filmograf.BaseLibrary.Models.Repo;
+﻿using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.BaseLibrary.Models.Repo;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -22,6 +23,14 @@ public abstract class RepositoryBase<TBase> where TBase : RepoBase
     public async Task<IReadOnlyList<TBase>> GetAllAsync()
     {
         return await _collection.Find(_ => true).ToListAsync();
+    }
+    
+    public async Task<IReadOnlyList<TBase>> GetAllAsync(int skip, int limit)
+    {
+        return await _collection.Find(_ => true)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync();
     }
     
     public async Task<string> CreateAsync(TBase item)

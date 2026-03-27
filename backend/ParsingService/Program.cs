@@ -133,8 +133,9 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
-        builder.Services.AddScoped<ParseFilmsIntegrationContext>();
-        builder.Services.AddScoped<ParseFilmsDetailsIntegrationContext>();
+        builder.Services.AddScoped<ParseMoviesIntegrationContext>();
+        builder.Services.AddScoped<ParseMoviesDetailsIntegrationContext>();
+        builder.Services.AddScoped<ParseOneMovieDetailsIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -154,6 +155,7 @@ public class Program
         builder.Services.AddScoped<IMDbParserService>();
         builder.Services.AddScoped<IMDbDetailsParserService>();
         builder.Services.AddScoped<KinopoiskParserService>();
+        builder.Services.AddScoped<IMDbOneMovieParserService>();
         
         // providers
         // ...
