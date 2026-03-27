@@ -13,6 +13,7 @@ using StackExchange.Redis;
 using Filmograf.ParsingService.Services;
 using Filmograf.ParsingService.Services.IMDb;
 using Filmograf.ParsingService.Services.Integrations;
+using Filmograf.ParsingService.Services.Kinogo;
 using Filmograf.ParsingService.Services.Kinopoisk;
 using Filmograf.ParsingService.Services.Middlewares;
 using Filmograf.ParsingService.Util;
@@ -25,6 +26,10 @@ public class Program
 {
     public async static Task Main(string[] args)
     {
+        var parser = new KinogoSearchService();
+        var query = "терминатор";
+        var data = await parser.SearchMoviesAsync(query);
+        return;
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
