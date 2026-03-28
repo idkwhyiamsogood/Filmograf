@@ -8,6 +8,8 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.SearchService.Integration.Hosted;
+using Filmograf.SearchService.Services;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
@@ -154,6 +156,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
+        builder.Services.AddScoped<ReceiveParsingResultIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -172,6 +175,8 @@ public class Program
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<Services.SearchService>();
+        builder.Services.AddScoped<SearchParsingReceiverService>();
+        builder.Services.AddScoped<SearchParsingService>();
         
         // providers
         builder.Services.AddScoped<AuthProvider>();

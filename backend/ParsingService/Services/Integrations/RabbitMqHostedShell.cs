@@ -7,8 +7,12 @@ namespace Filmograf.ParsingService.Services.Integrations;
 
 public class RabbitMqHostedService : RabbitMqHostedServiceBase
 {
-    internal protected readonly static string[] Queues = new[] { "parser_to_movies", "movies_to_parser" }; // взаимодействуем
-    internal protected readonly static string[] Consumes = new[] { "movies_to_parser" }; // слушаем
+    internal protected readonly static string[] Queues = new[]
+    {
+        "parser_to_movies", "movies_to_parser",
+        "parser_to_search", "search_to_parser"
+    }; // взаимодействуем
+    internal protected readonly static string[] Consumes = new[] { "movies_to_parser", "search_to_parser" }; // слушаем
 
     public RabbitMqHostedService(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory) 
         : base(settings, scopeFactory, Queues, Consumes) { }
@@ -19,6 +23,7 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
         _integrationsBus["parse_top_films"] = new ParseMoviesIntegration(_channel, "parse_top_films");
         _integrationsBus["parse_details"] = new ParseMoviesDetailsIntegration(_channel, "parse_details");
         _integrationsBus["parse_one_details"] = new ParseOneMovieDetailsIntegration(_channel, "parse_one_details");
+        _integrationsBus["parse_search"] = new ParseSearchingIntegration(_channel, "parse_search");
     }
 }
 

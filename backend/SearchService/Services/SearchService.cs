@@ -67,7 +67,7 @@ public class SearchService
         return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = sortedGenres };
     }
     
-    
+    // to separate layer (utils brooo)
     private string[] SortByQuery<T>(
         IEnumerable<T> items,
         string query,

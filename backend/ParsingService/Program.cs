@@ -26,10 +26,6 @@ public class Program
 {
     public async static Task Main(string[] args)
     {
-        var parser = new KinogoSearchService();
-        var query = "терминатор";
-        var data = await parser.SearchMoviesAsync(query);
-        return;
         var builder = WebApplication.CreateBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
@@ -141,6 +137,7 @@ public class Program
         builder.Services.AddScoped<ParseMoviesIntegrationContext>();
         builder.Services.AddScoped<ParseMoviesDetailsIntegrationContext>();
         builder.Services.AddScoped<ParseOneMovieDetailsIntegrationContext>();
+        builder.Services.AddScoped<ParseSearchingIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -161,6 +158,7 @@ public class Program
         builder.Services.AddScoped<IMDbDetailsParserService>();
         builder.Services.AddScoped<KinopoiskParserService>();
         builder.Services.AddScoped<IMDbOneMovieParserService>();
+        builder.Services.AddScoped<SearchService>();
         
         // providers
         // ...
