@@ -17,7 +17,7 @@ public class SearchController : CustomControllerBase
 
     [HttpPost("movies")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromBody] MovieSearchRequestDto data)
     {
         var response = await _searchService.SearchFilmAsync(query);
         return Ok(response);
@@ -25,13 +25,13 @@ public class SearchController : CustomControllerBase
     
     [HttpPost("collections")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, [FromBody] CollectionSearchRequestDto data)
     {
         var response = await _searchService.SearchCollectionAsync(query);
         return Ok(response);
     }
     
-    [HttpPost("tags")]
+    [HttpGet("tags")]
     [Authorize]
     public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query)
     {
@@ -39,7 +39,7 @@ public class SearchController : CustomControllerBase
         return Ok(response);
     }
     
-    [HttpPost("genres")]
+    [HttpGet("genres")]
     [Authorize]
     public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query)
     {
