@@ -17,9 +17,9 @@ public class SearchController : CustomControllerBase
 
     [HttpPost("movies")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromBody] MovieSearchRequestDto data)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query,  [FromBody] MovieSearchRequestDto? data)
     {
-        var response = await _searchService.SearchFilmAsync(query);
+        var response = await _searchService.SearchFilmAsync(query, data);
         return Ok(response);
     }
     

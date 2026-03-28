@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.SearchService.Models.Dto;
 using Filmograf.SearchService.Util;
 
@@ -14,7 +15,6 @@ public class SearchService
     private readonly CollectionTagProvider _tagProvider; 
     private readonly GenreProvider _genreProvider; 
     
-    
     public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, CollectionTagProvider tagProvider, GenreProvider genreProvider)
     {
         _movieRepository = movieRepository;
@@ -23,14 +23,27 @@ public class SearchService
         _genreProvider = genreProvider;
     }
     
-    public async Task<SearchPartResponseDto> SearchFilmAsync(string query)
+    public async Task<SearchPartResponseDto> SearchFilmAsync(string query, MovieSearchRequestDto? filters = null)
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = Array.Empty<string>() };
 
-        var movies = await _movieRepository.GetByNameAsync(query);
-        var sortedMovies = movies.SortByQuery(query, m => m.Name, m => m.Id);
+        List<MovieRepo> movies;
 
+        if (filters?.Genres != null)
+        {
+            movies = await _movieRepository.GetByNameWithFiltersAsync(
+                query,
+                filters.Genres.IncludeIds,
+                filters.Genres.ExcludeIds,
+                filters.StrictMatch);
+        }
+        else
+        {
+            movies = await _movieRepository.GetByNameAsync(query);
+        }
+
+        var sortedMovies = movies.SortByQuery(query, m => m.Name, m => m.Id);
         return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = sortedMovies };
     }
     
