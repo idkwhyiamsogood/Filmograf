@@ -63,4 +63,29 @@ public class MovieRepository : RepositoryBase<MovieRepo>
         return await _collection.Find(filter)
             .ToListAsync(ct);
     }
+    
+    public async Task<List<MovieRepo>> GetByNameWithFiltersAsync(string name, IEnumerable<Guid>? includeGenreIds, IEnumerable<Guid>? excludeGenreIds,
+        bool strictMatch, CancellationToken ct = default)
+    {
+        var escapedName = Regex.Escape(name);
+        var filters = new List<FilterDefinition<MovieRepo>>
+        {
+            Builders<MovieRepo>.Filter.Regex(x => x.Name, new BsonRegularExpression(escapedName, "i"))
+        };
+
+        if (includeGenreIds?.Any() == true)
+        {
+            filters.Add(strictMatch
+                ? Builders<MovieRepo>.Filter.All(x => x.GenreIds, includeGenreIds)
+                : Builders<MovieRepo>.Filter.AnyIn(x => x.GenreIds, includeGenreIds));
+        }
+
+        if (excludeGenreIds?.Any() == true)
+        {
+            filters.Add(Builders<MovieRepo>.Filter.Not(
+                Builders<MovieRepo>.Filter.AnyIn(x => x.GenreIds, excludeGenreIds)));
+        }
+
+        return await _collection.Find(Builders<MovieRepo>.Filter.And(filters)).ToListAsync(ct);
+    }
 }
