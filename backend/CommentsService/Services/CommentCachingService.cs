@@ -42,7 +42,7 @@ public class CommentCachingService
 
     public async Task RemoveCacheForEntityAsync(CommentEntityType entityType, string entityId)
     {
-        await _entitiesCommentCaching.RemoveCachingMovieRootAsync(entityType, entityId);
+        await _entitiesCommentCaching.RemoveCachingEntitiesRootAsync(entityType, entityId);
     }
 
     public async Task RemoveFullCacheAsync(string commentId)
