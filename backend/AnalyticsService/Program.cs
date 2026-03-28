@@ -106,6 +106,7 @@ public class Program
         builder.Services.AddScoped<IntegrationContextBase>();
         builder.Services.AddScoped<ClickEntityIntegrationContext>();
         builder.Services.AddScoped<CompileChartIntegrationContext>();
+        builder.Services.AddScoped<CompilePersonalizedIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)

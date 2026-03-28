@@ -18,6 +18,7 @@ public class SearchParsingService
     {
         var request = new ParseSearchingIntegrationRequestPayload
         {
+            ParsingTaskId = Guid.NewGuid(),
             Query = query,
             ReplyProps = new []
             {

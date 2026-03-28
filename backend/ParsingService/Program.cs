@@ -159,6 +159,7 @@ public class Program
         builder.Services.AddScoped<KinopoiskParserService>();
         builder.Services.AddScoped<IMDbOneMovieParserService>();
         builder.Services.AddScoped<SearchService>();
+        builder.Services.AddScoped<KinogoSearchService>();
         
         // providers
         // ...
