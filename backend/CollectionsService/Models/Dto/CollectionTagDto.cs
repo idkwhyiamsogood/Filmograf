@@ -11,3 +11,8 @@ public class CreateCollectionTagRequestDto
 {
     public string Name { get; set; }
 }
+
+public class BatchCollectionTagsDto
+{
+    public Guid[] Ids { get; set; }
+}

@@ -9,7 +9,15 @@ public class CollectionTagProvider : ProviderBase<CollectionTag>
     public CollectionTagProvider(DbContextBase contextBase) : base(contextBase)
     {
     }
-    
+
+    public virtual async Task<CollectionTag?> GetAsync(Guid id)
+    {
+        await using var db = DbContextBase.MakeInstance();
+        
+        return await db.CollectionTags
+            .FirstOrDefaultAsync(item => item.Id == id);
+    }
+
     public virtual async Task<IEnumerable<CollectionTag>> ListAllAsync(int skip, int limit)
     {
         return await GetDbSet()

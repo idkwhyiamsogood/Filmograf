@@ -27,6 +27,22 @@ public class CollectionTagsController : CustomControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{tagId}")]
+    [UserTypePolicy]
+    public async Task<ActionResult<IEnumerable<CollectionTagResponseDto>>> GetTagAsync(Guid tagId)
+    {
+        var result = await _collectionTagService.GetAsync(tagId);
+        return Ok(result);
+    }
+    
+    [HttpPost("batch-many")]
+    [UserTypePolicy(Guest = false)]
+    public async Task<ActionResult<CollectionTagResponseDto>> BatchManyTagsAsync([FromBody] BatchCollectionTagsDto data)
+    {
+        var result = await _collectionTagService.ListManyAsync(data.Ids);
+        return Ok(result);
+    }
+
     [HttpPost]
     [UserTypePolicy(Guest = false)]
     public async Task<ActionResult<CollectionTagResponseDto>> CreateTagAsync([FromBody] CreateCollectionTagRequestDto data, 

@@ -21,6 +21,26 @@ public class CollectionTagService
         _mapper = mapper;
     }
 
+    private async Task<CollectionTagResponseDto> CreateCacheAsync(Guid tagId)
+    {
+        var data = await _collectionTagProvider.GetAsync(tagId);
+        return _mapper.Map<CollectionTagResponseDto>(data);
+    }
+
+    public async Task<CollectionTagResponseDto> GetAsync(Guid tagId)
+    {
+        var method = async () => await CreateCacheAsync(tagId);
+        return await _collectionTagsCaching.CachingAsync(tagId, method);
+    }
+
+    public async Task<IEnumerable<CollectionTagResponseDto>> ListManyAsync(Guid[] ids)
+    {
+        return await Task.WhenAll(
+            ids.Select(async id => 
+                await GetAsync(id))
+        );
+    }
+
     private async Task<IEnumerable<CollectionTagResponseDto>> CreateCacheForAllAsync(PaginationQueryDto pagination)
     {
         var data = await _collectionTagProvider.ListAllAsync(
