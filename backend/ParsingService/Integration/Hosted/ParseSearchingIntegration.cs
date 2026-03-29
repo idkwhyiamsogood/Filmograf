@@ -9,7 +9,7 @@ namespace Filmograf.ParsingService.Integration.Hosted;
 
 public class ParseSearchingIntegrationRequestPayload : IntegrationRequestPayloadBase
 {
-    public Guid ParsingTaskId { get; set; }
+    public string TargetRoomId { get; set; }
     public string Query { get; set; }
     public IntegrationReplyDto[] ReplyProps { get; set; }
 }
@@ -17,7 +17,7 @@ public class ParseSearchingIntegrationRequestPayload : IntegrationRequestPayload
 // не response, ибо будет использоваться как request для реплай consumer-ов 
 public class ParseSearchingIntegrationResultPayload : IntegrationRequestPayloadBase
 {
-    public Guid ParsingTaskId { get; set; }
+    public string TargetRoomId { get; set; }
     public RawMovieInfo[] MovieInfos { get; set; }
 }
 
@@ -40,6 +40,6 @@ public class ParseSearchingIntegration : NoAskIntegrationBase<ParseSearchingInte
     protected override async Task ProcessingAsync(IntegrationRequest request, ParseSearchingIntegrationRequestPayload? payload,
         ParseSearchingIntegrationContext context)
     {
-        await context.SearchService.HandleSearchAsync(payload.ParsingTaskId, payload.Query, payload.ReplyProps);
+        await context.SearchService.HandleSearchAsync(payload.TargetRoomId, payload.Query, payload.ReplyProps);
     }
 }

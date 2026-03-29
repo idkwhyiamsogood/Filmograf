@@ -8,7 +8,7 @@ namespace Filmograf.SearchService.Integration.Hosted;
 
 public class ReceiveParsingResultIntegrationRequestPayload : IntegrationRequestPayloadBase
 {
-    public Guid ParsingTaskId { get; set; }
+    public string TargetRoomId { get; set; }
     public RawMovieInfo[] MovieInfos { get; set; }
 }
 
@@ -31,6 +31,6 @@ public class ReceiveParsingResultIntegration : NoAskIntegrationBase<ReceiveParsi
     protected override async Task ProcessingAsync(IntegrationRequest request, ReceiveParsingResultIntegrationRequestPayload? payload,
         ReceiveParsingResultIntegrationContext context)
     {
-        await context.SearchParsingReceiverService.HandleParsingResultAsync(payload.ParsingTaskId, payload.MovieInfos);
+        await context.SearchParsingReceiverService.HandleParsingResultAsync(payload.TargetRoomId, payload.MovieInfos);
     }
 }

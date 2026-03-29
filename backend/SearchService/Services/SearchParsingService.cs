@@ -14,11 +14,11 @@ public class SearchParsingService
     }
 
     // todo: вот это вызывай чтобы парсить поиск
-    public async Task ParseSearchAsync(string query)
+    public async Task ParseSearchAsync(string query, string roomId)
     {
         var request = new ParseSearchingIntegrationRequestPayload
         {
-            ParsingTaskId = Guid.NewGuid(),
+            TargetRoomId = roomId,
             Query = query,
             ReplyProps = new []
             {

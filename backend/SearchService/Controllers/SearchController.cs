@@ -17,9 +17,9 @@ public class SearchController : CustomControllerBase
 
     [HttpPost("movies")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query,  [FromBody] MovieSearchRequestDto? data)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromQuery] string? roomId, [FromBody] MovieSearchRequestDto? data)
     {
-        var response = await _searchService.SearchFilmAsync(query, data);
+        var response = await _searchService.SearchFilmAsync(query, roomId, data);
         return Ok(response);
     }
     
@@ -27,7 +27,7 @@ public class SearchController : CustomControllerBase
     [Authorize]
     public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, [FromBody] CollectionSearchRequestDto data)
     {
-        var response = await _searchService.SearchCollectionAsync(query);
+        var response = await _searchService.SearchCollectionAsync(query, data);
         return Ok(response);
     }
     
@@ -46,11 +46,8 @@ public class SearchController : CustomControllerBase
         var response = await _searchService.SearchGenreAsync(query);
         return Ok(response);
     }
-
     
     //todo поиск в кеше
-    
-    
     
     //todo сокеты
 }
