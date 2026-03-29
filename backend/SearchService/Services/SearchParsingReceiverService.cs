@@ -15,9 +15,9 @@ public class SearchParsingReceiverService
 
     // todo
     // тут короче когда парсинг сервайс завершит поиск на сайте - отправиться запрос на SearchService и он перехватиться здесь
-    public async Task HandleParsingResultAsync(string targetRoomId, RawMovieInfo[] infos)
+    public async Task HandleParsingResultAsync(string targetRoomId, string[] ids)
     {
-        var serializedData = SerializationUtil.Serialize(infos);
+        var serializedData = SerializationUtil.Serialize(ids);
         await _searchHubContext.Clients.Group(targetRoomId).SendAsync("ReceiveSearchResult", serializedData);
     }
 }

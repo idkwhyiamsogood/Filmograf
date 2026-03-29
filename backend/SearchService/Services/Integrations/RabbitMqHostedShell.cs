@@ -9,9 +9,10 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
 {
     internal protected readonly static string[] Queues = new[]
     {
-        "parser_to_search", "search_to_parser"
+        "parser_to_search", "search_to_parser",
+        "movies_to_search", "search_to_movies",
     }; // взаимодействуем
-    internal protected readonly static string[] Consumes = new[] { "parser_to_search" }; // слушаем
+    internal protected readonly static string[] Consumes = new[] { "parser_to_search", "movies_to_search" }; // слушаем
 
     public RabbitMqHostedService(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory) 
         : base(settings, scopeFactory, Queues, Consumes) { }

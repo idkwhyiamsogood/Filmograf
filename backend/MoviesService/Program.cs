@@ -165,6 +165,7 @@ public class Program
         builder.Services.AddScoped<MoviesApplyDetailsIntegrationContext>();
         builder.Services.AddScoped<CompleteParsingIntegrationContext>();
         builder.Services.AddScoped<OneMovieApplyDetailsIntegrationContext>();
+        builder.Services.AddScoped<ReceiveParsingResultIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -194,6 +195,7 @@ public class Program
         builder.Services.AddScoped<TopPicksService>();
         builder.Services.AddScoped<MissionPlannerService>();
         builder.Services.AddScoped<PersonalizedService>();
+        builder.Services.AddScoped<SearchParsingReceiverService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

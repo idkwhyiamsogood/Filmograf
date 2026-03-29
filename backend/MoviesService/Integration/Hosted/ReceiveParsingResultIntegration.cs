@@ -1,15 +1,15 @@
-using Filmograf.BaseLibrary.Integrations;
+﻿using Filmograf.BaseLibrary.Integrations;
 using Filmograf.BaseLibrary.Integrations.Payload;
 using Filmograf.BaseLibrary.Models.Types;
-using Filmograf.SearchService.Services;
+using Filmograf.MoviesService.Services;
 using RabbitMQ.Client;
 
-namespace Filmograf.SearchService.Integration.Hosted;
+namespace Filmograf.MoviesService.Integration.Hosted;
 
 public class ReceiveParsingResultIntegrationRequestPayload : IntegrationRequestPayloadBase
 {
     public string TargetRoomId { get; set; }
-    public string[] MovieIds { get; set; }
+    public RawMovieInfo[] MovieInfos { get; set; }
 }
 
 public class ReceiveParsingResultIntegrationContext : IntegrationContextBase
@@ -31,6 +31,6 @@ public class ReceiveParsingResultIntegration : NoAskIntegrationBase<ReceiveParsi
     protected override async Task ProcessingAsync(IntegrationRequest request, ReceiveParsingResultIntegrationRequestPayload? payload,
         ReceiveParsingResultIntegrationContext context)
     {
-        await context.SearchParsingReceiverService.HandleParsingResultAsync(payload.TargetRoomId, payload.MovieIds);
+        await context.SearchParsingReceiverService.DistinctMoviesAsync(payload.TargetRoomId, payload.MovieInfos);
     }
 }

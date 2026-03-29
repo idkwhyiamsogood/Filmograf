@@ -23,9 +23,6 @@ public class SearchParsingService
             ReplyProps = new []
             {
                 new IntegrationReplyDto
-                { ReplyQueue = "parser_to_search", ReplyAction = "apply_search_parsing" },
-                
-                new IntegrationReplyDto
                 { ReplyQueue = "parser_to_movies", ReplyAction = "apply_search_parsing" },
             }
         };

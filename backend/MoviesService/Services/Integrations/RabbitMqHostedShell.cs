@@ -10,9 +10,10 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
     internal protected readonly static string[] Queues = new[]
     {
         "parser_to_movies", "movies_to_parser",
-        "analytics_to_movies", "movies_to_analytics"
+        "analytics_to_movies", "movies_to_analytics",
+        "search_to_movies", "movies_to_search",
     }; // взаимодействуем
-    internal protected readonly static string[] Consumes = new[] { "parser_to_movies", "analytics_to_movies" }; // слушаем
+    internal protected readonly static string[] Consumes = new[] { "parser_to_movies", "analytics_to_movies", "search_to_movies" }; // слушаем
 
     public RabbitMqHostedService(RabbitConnectionSettings settings, IServiceScopeFactory scopeFactory) 
         : base(settings, scopeFactory, Queues, Consumes) { }
@@ -24,6 +25,7 @@ public class RabbitMqHostedService : RabbitMqHostedServiceBase
         _integrationsBus["apply_movies_details"] = new MoviesApplyDetailsIntegration(_channel, "apply_movies_details");
         _integrationsBus["apply_one_movie_details"] = new OneMovieApplyDetailsIntegration(_channel, "apply_one_movie_details");
         _integrationsBus["complete_parsing"] = new CompleteParsingIntegration(_channel, "complete_parsing");
+        _integrationsBus["apply_search_parsing"] = new ReceiveParsingResultIntegration(_channel, "apply_search_parsing");
     }
 }
 
