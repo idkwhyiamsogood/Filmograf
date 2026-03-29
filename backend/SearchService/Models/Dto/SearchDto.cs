@@ -29,6 +29,7 @@ public class CollectionSearchRequestDto
     public SearchBaseQueryProps? Genres { get; set; }
     public SearchBaseQueryProps? Tags { get; set; }
     public bool StrictMatch { get; set; }
+    
 }
 
 public class MovieSearchRequestDto

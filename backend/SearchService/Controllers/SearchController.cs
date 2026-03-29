@@ -1,4 +1,5 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.SearchService.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +18,17 @@ public class SearchController : CustomControllerBase
 
     [HttpPost("movies")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromQuery] string? roomId, [FromBody] MovieSearchRequestDto? data)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
+        [FromQuery] string? roomId, [FromBody] MovieSearchRequestDto? data)
     {
-        var response = await _searchService.SearchFilmAsync(query, roomId, data);
+        var response = await _searchService.SearchFilmAsync(query, pagination, roomId,data);
         return Ok(response);
     }
     
     [HttpPost("collections")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, [FromBody] CollectionSearchRequestDto data)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, 
+        [FromQuery] PaginationQueryDto pagination, [FromBody] CollectionSearchRequestDto data)
     {
         var response = await _searchService.SearchCollectionAsync(query, data);
         return Ok(response);
@@ -33,7 +36,7 @@ public class SearchController : CustomControllerBase
     
     [HttpGet("tags")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination)
     {
         var response = await _searchService.SearchTagAsync(query);
         return Ok(response);
@@ -41,7 +44,7 @@ public class SearchController : CustomControllerBase
     
     [HttpGet("genres")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination)
     {
         var response = await _searchService.SearchGenreAsync(query);
         return Ok(response);

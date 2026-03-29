@@ -8,6 +8,7 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.SearchService.Caching;
 using Filmograf.SearchService.Hubs;
 using Filmograf.SearchService.Integration.Hosted;
 using Filmograf.SearchService.Services;
@@ -195,6 +196,7 @@ public class Program
         
         // cache
         builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<SearchCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
