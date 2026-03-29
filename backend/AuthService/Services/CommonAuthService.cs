@@ -17,12 +17,25 @@ public class CommonAuthService
         _authProvider = authProvider;
         _jwtService = jwtService;
     }
+    
+    private async Task HandleAddAuthAsync(string jwt, Guid userId, string? userAgent, string? ip)
+    {
+        var authEntity = new Auth
+        { 
+            Jwt = jwt,
+            UserId = userId,
+            UserAgent = userAgent,
+            Ip = ip
+        };
+        
+        await _authProvider.AddAsync(authEntity);
+    }
 
     /// <summary>
     /// p.s. все http-ошибки лишины смысла для исключения конкретики при скомпроментированной атаке 
     /// </summary>
     /// <returns></returns>
-    public async Task<AuthResponseDto> RefreshJwtAsync(string jwt)
+    public async Task<AuthResponseDto> RefreshJwtAsync(string jwt, string? userAgent, string? ip)
     {
         var lastJwt = await _authProvider.GetByJwtAsync(jwt);
         if (lastJwt == null) throw new ForbiddenHttpException("Bad auth-refresh");
@@ -33,6 +46,7 @@ public class CommonAuthService
         await _authProvider.DeleteByJwtAsync(jwt);
         
         var newJwt = _jwtService.GenerateToken(targetUser);
+        await HandleAddAuthAsync(newJwt, targetUser.Id, userAgent, ip);
         
         return new AuthResponseDto 
         { Jwt = newJwt };
