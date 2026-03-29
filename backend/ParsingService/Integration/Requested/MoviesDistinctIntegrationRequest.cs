@@ -4,7 +4,7 @@ using Filmograf.BaseLibrary.Models.Types;
 
 namespace Filmograf.ParsingService.Integration.Requested;
 
-public class FilmsDistinctIntegrationRequest : IntegrationRequestPayloadBase
+public class MoviesDistinctIntegrationRequest : IntegrationRequestPayloadBase
 {
     [RegularExpression("^(IMDb|Kinopoisk)$")]
     public string Source { get; set; }

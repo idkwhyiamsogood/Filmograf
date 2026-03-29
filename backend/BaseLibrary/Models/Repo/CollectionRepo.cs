@@ -17,6 +17,7 @@ public class CollectionRepo : RepoBase
     
     public string[] Movies { get; set; }
     public Guid[] Tags { get; set; }
+    public Guid[] GenreIds { get; set; }
     public string[] ProdCollections { get; set; } = Array.Empty<string>();
     
     [DefaultValue(false)]

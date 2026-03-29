@@ -1,7 +1,13 @@
 using System.Runtime.CompilerServices;
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.BaseLibrary.Models.Repo;
+using Filmograf.SearchService.Caching;
+using Filmograf.SearchService.Hubs;
 using Filmograf.SearchService.Models.Dto;
+using Filmograf.SearchService.Util;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Filmograf.SearchService.Services;
 
@@ -12,36 +18,90 @@ public class SearchService
     private readonly CollectionRepository _collectionRepository;
     private readonly CollectionTagProvider _tagProvider; 
     private readonly GenreProvider _genreProvider; 
+    private readonly SearchParsingService _searchParsingService;
+    private readonly SearchCaching _searchCaching;
+
     
-    
-    public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, CollectionTagProvider tagProvider, GenreProvider genreProvider)
+    public SearchService(MovieRepository movieRepository, CollectionRepository collectionRepository, CollectionTagProvider tagProvider, 
+        GenreProvider genreProvider, SearchParsingService searchParsingService, SearchCaching searchCaching)
     {
         _movieRepository = movieRepository;
         _collectionRepository = collectionRepository;
         _tagProvider = tagProvider;
         _genreProvider = genreProvider;
+        _searchParsingService = searchParsingService;
+        _searchCaching = searchCaching;
     }
-    
-    public async Task<SearchPartResponseDto> SearchFilmAsync(string query)
+
+    private async Task HandleSearchParsingAsync(string query, string roomId)
+    {
+        await _searchParsingService.ParseSearchAsync(query, roomId);
+    }
+
+    private async Task<SearchPartResponseDto> CreateCacheForSearchFilmAsync(string query, PaginationQueryDto pagination, MovieSearchRequestDto? filters = null)
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = Array.Empty<string>() };
 
-        var movies = await _movieRepository.GetByNameAsync(query);
-        var sortedMovies = SortByQuery(movies, query, m => m.Name, m => m.Id);
+        List<MovieRepo> movies;
 
-        return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = sortedMovies };
+        if (filters?.Genres != null)
+        {
+            movies = await _movieRepository.GetByNameWithFiltersAsync(
+                query,
+                filters.Genres.IncludeIds,
+                filters.Genres.ExcludeIds,
+                filters.StrictMatch);
+        }
+        else
+        {
+            movies = await _movieRepository.GetByNameAsync(query);
+        }
+
+        var sortedMovies = movies.SortByQuery(query, m => m.Name, m => m.Id);
+        
+        var pagedIds = sortedMovies
+            .Skip(pagination.Page * pagination.Count)
+            .Take(pagination.Count)
+            .ToArray();
+        
+        if (!pagedIds.Any()) return new SearchPartResponseDto();
+
+        
+        return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = pagedIds };
     }
     
-    public async Task<SearchPartResponseDto> SearchCollectionAsync(string query)
+    public async Task<SearchPartResponseDto> SearchFilmAsync(string query, PaginationQueryDto pagination, string? roomId, MovieSearchRequestDto? filters = null)
+    {
+        if (roomId != null) await HandleSearchParsingAsync(query, roomId);
+        
+        var method = async () => await CreateCacheForSearchFilmAsync(query, pagination, filters);
+        return await _searchCaching.CachingSearchingMoviesAsync(query, pagination, filters, method);
+    }
+    
+    public async Task<SearchPartResponseDto> SearchCollectionAsync(string query, CollectionSearchRequestDto? filters = null)
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = Array.Empty<string>() };
-        
-        var collections = await _collectionRepository.GetByNameAsync(query);
 
-        var sortedCollections = SortByQuery(collections, query, c => c.Name, c => c.Id);
-        
+        List<CollectionRepo> collections;
+
+        if (filters != null)
+        {
+            collections = await _collectionRepository.GetByNameWithFiltersAsync(
+                query,
+                filters.Genres?.IncludeIds,
+                filters.Genres?.ExcludeIds,
+                filters.Tags?.IncludeIds,
+                filters.Tags?.ExcludeIds,
+                filters.StrictMatch);
+        }
+        else
+        {
+            collections = await _collectionRepository.GetByNameAsync(query);
+        }
+
+        var sortedCollections = collections.SortByQuery(query, m => m.Name, m => m.Id);
         return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = sortedCollections };
     }
     
@@ -51,7 +111,7 @@ public class SearchService
             return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = Array.Empty<string>() };
         
         var tags = await _tagProvider.SearchAllByNameAsync(query);
-        var sortedTags = SortByQuery(tags, query, t => t.Name, t => t.Id.ToString());
+        var sortedTags = tags.SortByQuery(query, t => t.Name, t => t.Id.ToString());
         
         return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = sortedTags };
     }
@@ -62,24 +122,10 @@ public class SearchService
             return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = Array.Empty<string>() };
         
         var genres = await _genreProvider.SearchAllByNameAsync(query);
-        var sortedGenres = SortByQuery(genres, query, t => t.Name, t => t.Id.ToString());
+        var sortedGenres = genres.SortByQuery(query, t => t.Name, t => t.Id.ToString());
         
         return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = sortedGenres };
     }
-    
-    
-    private string[] SortByQuery<T>(
-        IEnumerable<T> items,
-        string query,
-        Func<T, string> nameSelector,
-        Func<T, string> idSelector)
-    {
-        return items
-            .Where(x => nameSelector(x).Contains(query, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(x => nameSelector(x).IndexOf(query, StringComparison.OrdinalIgnoreCase))
-            .ThenBy(x => nameSelector(x).Length)
-            .Select(x => idSelector(x))
-            .ToArray();
-    }
+
     
 }

@@ -9,6 +9,7 @@ public class CollectionTagsCaching
 {
     protected static readonly TimeSpan DefaultExpirationTime = new TimeSpan(0, 45, 0);
     protected readonly CachingProviderAtomic<IEnumerable<CollectionTagResponseDto>> _cachingAllAtomic;
+    protected readonly CachingProviderAtomic<CollectionTagResponseDto> _cachingAtomic;
     protected readonly IConnectionMultiplexer _redis;
     protected readonly string _baseKey = "collection-tags";
     
@@ -48,5 +49,24 @@ public class CollectionTagsCaching
     public async Task RemoveCachingByRootAsync()
     {
         await _cachingAllAtomic.RemoveByRootAsync();
+    }
+    
+    
+    public virtual async Task<CollectionTagResponseDto> CachingAsync(Guid tagId, 
+        Func<Task<CollectionTagResponseDto>> createItem)
+    {
+        return await _cachingAtomic.GetOrCreateAsync(tagId, createItem, DefaultExpirationTime);
+    }
+
+    public async Task ResetCachingAsync(Guid tagId, 
+        Func<Task<CollectionTagResponseDto>> createItem)
+    {
+        var payloadData = await createItem();
+        await _cachingAtomic.CreateAsync(tagId, payloadData, DefaultExpirationTime);
+    }
+
+    public async Task<bool> RemoveCachingAsync(Guid tagId)
+    {
+        return await _cachingAtomic.RemoveAsync(tagId);
     }
 }

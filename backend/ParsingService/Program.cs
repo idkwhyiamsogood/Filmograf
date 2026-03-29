@@ -13,6 +13,7 @@ using StackExchange.Redis;
 using Filmograf.ParsingService.Services;
 using Filmograf.ParsingService.Services.IMDb;
 using Filmograf.ParsingService.Services.Integrations;
+using Filmograf.ParsingService.Services.Kinogo;
 using Filmograf.ParsingService.Services.Kinopoisk;
 using Filmograf.ParsingService.Services.Middlewares;
 using Filmograf.ParsingService.Util;
@@ -133,8 +134,10 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
-        builder.Services.AddScoped<ParseFilmsIntegrationContext>();
-        builder.Services.AddScoped<ParseFilmsDetailsIntegrationContext>();
+        builder.Services.AddScoped<ParseMoviesIntegrationContext>();
+        builder.Services.AddScoped<ParseMoviesDetailsIntegrationContext>();
+        builder.Services.AddScoped<ParseOneMovieDetailsIntegrationContext>();
+        builder.Services.AddScoped<ParseSearchingIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -154,6 +157,9 @@ public class Program
         builder.Services.AddScoped<IMDbParserService>();
         builder.Services.AddScoped<IMDbDetailsParserService>();
         builder.Services.AddScoped<KinopoiskParserService>();
+        builder.Services.AddScoped<IMDbOneMovieParserService>();
+        builder.Services.AddScoped<SearchService>();
+        builder.Services.AddScoped<KinogoSearchService>();
         
         // providers
         // ...

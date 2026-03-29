@@ -24,7 +24,7 @@ public class EntitiesCommentCaching
     {
         var entityTypeKey = entityType.GetCommentEntityTypeKey();
         var paginationHash = pagination.ToString();
-        return _cachingAtomic.MakeIdKey($"{entityTypeKey}-{entityId}:{paginationHash}");
+        return _cachingAtomic.MakeIdKey($"{entityTypeKey}:{entityId}:{paginationHash}");
     }
     
     public virtual async Task<IEnumerable<CommentResponseDto>> CachingResponseAsync(CommentEntityType entityType, string entityId, 
@@ -48,7 +48,7 @@ public class EntitiesCommentCaching
         return await _cachingAtomic.RemoveAsync(key);
     }
     
-    public async Task<long> RemoveCachingMovieRootAsync(CommentEntityType entityType, string entityId)
+    public async Task<long> RemoveCachingEntitiesRootAsync(CommentEntityType entityType, string entityId)
     {
         var entityTypeKey = entityType.GetCommentEntityTypeKey();
         var topPickTempSpecificAtomic = new CachingProviderAtomic<IEnumerable<CommentResponseDto>>(

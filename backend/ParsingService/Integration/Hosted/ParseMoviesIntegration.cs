@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 
 namespace Filmograf.ParsingService.Integration.Hosted;
 
-public class ParseFilmsIntegrationRequestPayload : IntegrationRequestPayloadBase
+public class ParseMoviesIntegrationRequestPayload : IntegrationRequestPayloadBase
 {
     [RegularExpression("^(IMDb|Kinopoisk)$")]
     public string Source { get; set; }
@@ -22,24 +22,24 @@ public class ParseFilmsIntegrationRequestPayload : IntegrationRequestPayloadBase
     public bool SendUpdateTopPickRequest { get; set; } = true;
 }
 
-public class ParseFilmsIntegrationContext : IntegrationContextBase
+public class ParseMoviesIntegrationContext : IntegrationContextBase
 {
     public MoviesParserService MoviesParserService { get; set; }
 
-    public ParseFilmsIntegrationContext(MoviesParserService moviesParserService)
+    public ParseMoviesIntegrationContext(MoviesParserService moviesParserService)
     {
         MoviesParserService = moviesParserService;
     }
 }
 
-public class ParseFilmsIntegration : NoAskIntegrationBase<ParseFilmsIntegrationRequestPayload, ParseFilmsIntegrationContext>
+public class ParseMoviesIntegration : NoAskIntegrationBase<ParseMoviesIntegrationRequestPayload, ParseMoviesIntegrationContext>
 {
-    public ParseFilmsIntegration(IChannel channel, string actionName) : base(channel, actionName)
+    public ParseMoviesIntegration(IChannel channel, string actionName) : base(channel, actionName)
     {
     }
 
-    protected override async Task ProcessingAsync(IntegrationRequest request, ParseFilmsIntegrationRequestPayload? payload,
-        ParseFilmsIntegrationContext context)
+    protected override async Task ProcessingAsync(IntegrationRequest request, ParseMoviesIntegrationRequestPayload? payload,
+        ParseMoviesIntegrationContext context)
     {
         if (payload == null) 
             throw new EmptyPayloadIntegrationException(_actionName);

@@ -8,6 +8,10 @@ using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Services;
 using Filmograf.BaseLibrary.Util;
+using Filmograf.SearchService.Caching;
+using Filmograf.SearchService.Hubs;
+using Filmograf.SearchService.Integration.Hosted;
+using Filmograf.SearchService.Services;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
@@ -33,6 +37,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddSignalR();
+        
         
         // Add AutoMapper
         builder.Services.AddAutoMapper(_ => { }, typeof(Program).Assembly);
@@ -46,7 +52,9 @@ public class Program
         SettingUpAuthenticationService(builder);
         
         var app = builder.Build();
-        
+
+        app.MapHub<SearchHub>("/search-hub");
+            
         // ловушка для ошибок
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -154,6 +162,7 @@ public class Program
         
         // integration contexts
         builder.Services.AddScoped<IntegrationContextBase>();
+        builder.Services.AddScoped<ReceiveParsingResultIntegrationContext>();
     }
 
     private static void SettingComponents(WebApplicationBuilder builder)
@@ -172,6 +181,8 @@ public class Program
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<Services.SearchService>();
+        builder.Services.AddScoped<SearchParsingReceiverService>();
+        builder.Services.AddScoped<SearchParsingService>();
         
         // providers
         builder.Services.AddScoped<AuthProvider>();
@@ -185,6 +196,7 @@ public class Program
         
         // cache
         builder.Services.AddScoped<UserCaching>();
+        builder.Services.AddScoped<SearchCaching>();
     }
 
     private static void SettingUpAuthenticationService(WebApplicationBuilder builder)
