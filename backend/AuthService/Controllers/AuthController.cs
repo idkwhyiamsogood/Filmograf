@@ -100,10 +100,13 @@ public class AuthController : CustomControllerBase
     [HttpPatch("refresh-token")]
     public async Task<ActionResult<AuthResponseDto>> RefreshTokenAsync()
     {
+        var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        
         var jwt = GetJwt();
         if (jwt == null) return Unauthorized();
         
-        var result = await _commonAuthService.RefreshJwtAsync(jwt);
+        var result = await _commonAuthService.RefreshJwtAsync(jwt, userAgent, ip);
         return Ok(result);
     }
 
