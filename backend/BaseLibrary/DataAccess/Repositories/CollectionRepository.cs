@@ -113,4 +113,41 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
         var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: ct);
         return result.ModifiedCount > 0;
     }
+    
+    public async Task<List<CollectionRepo>> GetByNameWithFiltersAsync(string name, IEnumerable<Guid>? includeGenreIds, IEnumerable<Guid>? excludeGenreIds, 
+        IEnumerable<Guid>? includeTagsIds, IEnumerable<Guid>? excludeTagsIds, bool strictMatch, CancellationToken ct = default)
+    {
+        var escapedName = Regex.Escape(name);
+        var filters = new List<FilterDefinition<CollectionRepo>>
+        {
+            Builders<CollectionRepo>.Filter.Regex(x => x.Name, new BsonRegularExpression(escapedName, "i"))
+        };
+
+        if (includeGenreIds?.Any() == true)
+        {
+            filters.Add(strictMatch
+                ? Builders<CollectionRepo>.Filter.All(x => x.GenreIds, includeGenreIds)
+                : Builders<CollectionRepo>.Filter.AnyIn(x => x.GenreIds, includeGenreIds));
+        }
+
+        if (excludeGenreIds?.Any() == true)
+        {
+            filters.Add(Builders<CollectionRepo>.Filter.Not(
+                Builders<CollectionRepo>.Filter.AnyIn(x => x.GenreIds, excludeGenreIds)));
+        } 
+        if (includeTagsIds?.Any() == true)
+        {
+            filters.Add(strictMatch
+                ? Builders<CollectionRepo>.Filter.All(x => x.Tags, includeTagsIds)
+                : Builders<CollectionRepo>.Filter.AnyIn(x => x.Tags, includeTagsIds));
+        }
+
+        if (excludeTagsIds?.Any() == true)
+        {
+            filters.Add(Builders<CollectionRepo>.Filter.Not(
+                Builders<CollectionRepo>.Filter.AnyIn(x => x.Tags, excludeTagsIds)));
+        }
+
+        return await _collection.Find(Builders<CollectionRepo>.Filter.And(filters)).ToListAsync(ct);
+    }
 }

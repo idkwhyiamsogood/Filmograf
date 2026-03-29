@@ -16,14 +16,14 @@ public class SearchService
         _rabbitMqService = rabbitMqService;
     }
 
-    public async Task HandleSearchAsync(Guid parsingTaskId, string query, IntegrationReplyDto[] replies)
+    public async Task HandleSearchAsync(string targetRoomId, string query, IntegrationReplyDto[] replies)
     {
         var parsingResult = await _kinogoSearchService.SearchMoviesAsync(query);
 
         foreach (var reply in replies)
         {
             var completeRequest = new ParseSearchingIntegrationResultPayload
-            { MovieInfos = parsingResult.ToArray(), ParsingTaskId = parsingTaskId };
+            { MovieInfos = parsingResult.ToArray(), TargetRoomId = targetRoomId };
             
             await _rabbitMqService.SendNoReplyAsync(reply.ReplyAction, reply.ReplyQueue, completeRequest);
         }
