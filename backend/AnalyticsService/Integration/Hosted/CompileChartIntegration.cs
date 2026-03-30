@@ -8,7 +8,7 @@ namespace Filmograf.AnalyticsService.Integration.Hosted;
 
 public class CompileChartIntegrationRequest : IntegrationRequestPayloadBase
 {
-    [RegularExpression("^(FilmTopMovies|FilmTopCollection)$")]
+    [RegularExpression("^(FilmTopMovies|FilmTopCollections)$")]
     public string ChartType { get; set; }
 }
 

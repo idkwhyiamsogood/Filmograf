@@ -22,7 +22,7 @@ public class ChartService
         _handlers = new Dictionary<string, HandleCompileChart>
         {
             { "FilmTopMovies", _moviesChartService.HandleCompileTopChartAsync },
-            { "FilmTopCollection", _collectionsChartService.HandleCompileTopChartAsync },
+            { "FilmTopCollections", _collectionsChartService.HandleCompileTopChartAsync },
         };
     }
 

@@ -1,6 +1,7 @@
 ﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Integrations.Requested;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
+using Filmograf.BaseLibrary.Services;
 using Filmograf.MoviesService.Integration.Requested;
 using Filmograf.MoviesService.Util;
 

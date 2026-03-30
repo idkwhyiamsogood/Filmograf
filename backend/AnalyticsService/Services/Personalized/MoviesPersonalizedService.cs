@@ -24,7 +24,7 @@ public class MoviesPersonalizedService
         _topPicksService = topPicksService;
     }
 
-    public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId)
+    public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId, CancellationToken ct = default)
     {
         var pagination = new PaginationQueryDto 
         { Page = 0, Count = 100 };
@@ -32,7 +32,7 @@ public class MoviesPersonalizedService
         var globalTopChartIds = await _topPicksService
             .GetFromChartAsync(pagination, "FilmTopMovies");
 
-        return await GenerateForUserAsync(userId, globalTopChartIds.Ids);
+        return await GenerateForUserAsync(userId, globalTopChartIds.Ids, ct);
     }
 
     // globalTopChartIds передаем извне, чтобы не пересчитывать глобальный топ для каждого юзера

@@ -1,7 +1,7 @@
-﻿using Filmograf.MoviesService.Caching;
-using Filmograf.MoviesService.Models.Types;
+﻿using Filmograf.BaseLibrary.Caching;
+using Filmograf.BaseLibrary.Models.Types;
 
-namespace Filmograf.MoviesService.Services;
+namespace Filmograf.BaseLibrary.Services;
 
 public class MissionPlannerService
 {
