@@ -1,11 +1,12 @@
 ﻿using Filmograf.AnalyticsService.DataAccess.Repositories;
+using Filmograf.AnalyticsService.Util;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Services;
 
 namespace Filmograf.AnalyticsService.Services.Personalized;
 
-public class MoviePersonalizedService
+public class MoviesPersonalizedService
 {
     private readonly TopPicksService _topPicksService;
     private readonly UserMoviesActivityDailyRepository _activityRepository;
@@ -15,7 +16,7 @@ public class MoviePersonalizedService
     private const int TargetRecommendationSize = 100; // Размер выдачи
     private const float TimeDecayAlpha = 0.02f; // Коэффициент затухания интереса
 
-    public MoviePersonalizedService(UserMoviesActivityDailyRepository activityRepository, MovieRepository movieRepository,
+    public MoviesPersonalizedService(UserMoviesActivityDailyRepository activityRepository, MovieRepository movieRepository,
         TopPicksService topPicksService)
     {
         _activityRepository = activityRepository;
@@ -23,7 +24,7 @@ public class MoviePersonalizedService
         _topPicksService = topPicksService;
     }
 
-    public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId)
+    public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId, CancellationToken ct = default)
     {
         var pagination = new PaginationQueryDto 
         { Page = 0, Count = 100 };
@@ -31,7 +32,7 @@ public class MoviePersonalizedService
         var globalTopChartIds = await _topPicksService
             .GetFromChartAsync(pagination, "FilmTopMovies");
 
-        return await GenerateForUserAsync(userId, globalTopChartIds.Ids);
+        return await GenerateForUserAsync(userId, globalTopChartIds.Ids, ct);
     }
 
     // globalTopChartIds передаем извне, чтобы не пересчитывать глобальный топ для каждого юзера
@@ -87,7 +88,7 @@ public class MoviePersonalizedService
         var topGenreIds = topGenres.Select(g => g.Key).ToList();
 
         // 4. Candidate Generation (Отбор кандидатов)
-        // Ищем фильмы, у которых есть хотя бы один из топовых жанров (метод нужно реализовать в MovieRepository)
+        // Ищем фильмы, у которых есть хотя бы один из топовых жанров
         var candidateMovies = await _movieRepository.GetByGenresAsync(topGenreIds, limit: 300, ct);
 
         // 5. Ранжирование (Scoring)
@@ -124,41 +125,9 @@ public class MoviePersonalizedService
             .ToList();
 
         // 6. Микс с глобальным топом (Разбавление / Serendipity)
-        var finalRecommendations = MixWithGlobalChart(scoredCandidates, globalTopChartIds, watchedMovieIds, TargetRecommendationSize);
+        var finalRecommendations = CollectionsPersonalizedUtils.MixWithGlobalChart(scoredCandidates, globalTopChartIds, watchedMovieIds, TargetRecommendationSize);
 
         // 7. Сохраняем в БД
         return finalRecommendations;
-    }
-
-    private List<string> MixWithGlobalChart(List<string> personalIds, IEnumerable<string> globalIds, HashSet<string> watchedIds, int targetSize)
-    {
-        var result = new List<string>();
-        
-        // Очищаем глобальный топ от того, что юзер уже видел
-        var cleanGlobalIds = globalIds.Where(id => !watchedIds.Contains(id)).ToList();
-
-        var personalQueue = new Queue<string>(personalIds);
-        var globalQueue = new Queue<string>(cleanGlobalIds);
-
-        // Пропорция: 4 персональных, 1 из топа (80% / 20%)
-        while (result.Count < targetSize && (personalQueue.Count > 0 || globalQueue.Count > 0))
-        {
-            for (int i = 0; i < 4 && personalQueue.Count > 0 && result.Count < targetSize; i++)
-            {
-                result.Add(personalQueue.Dequeue());
-            }
-
-            if (globalQueue.Count > 0 && result.Count < targetSize)
-            {
-                var globalId = globalQueue.Dequeue();
-                // Защита от дублей, если фильм из топа уже попал в персональную выдачу
-                if (!result.Contains(globalId)) 
-                {
-                    result.Add(globalId);
-                }
-            }
-        }
-
-        return result;
     }
 }

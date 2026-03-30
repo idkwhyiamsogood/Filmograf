@@ -1,4 +1,4 @@
-﻿namespace Filmograf.MoviesService.Models.Types;
+﻿namespace Filmograf.BaseLibrary.Models.Types;
 
 public class MissionTaskCache
 {

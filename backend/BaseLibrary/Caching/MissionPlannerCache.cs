@@ -1,9 +1,8 @@
-﻿using Filmograf.BaseLibrary.Caching;
+﻿using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
-using Filmograf.MoviesService.Models.Types;
 using StackExchange.Redis;
 
-namespace Filmograf.MoviesService.Caching;
+namespace Filmograf.BaseLibrary.Caching;
 
 public class MissionPlannerCache
 {

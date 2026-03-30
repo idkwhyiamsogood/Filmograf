@@ -12,10 +12,12 @@ namespace Filmograf.CollectionsService.Controllers;
 public class CollectionsController : CustomControllerBase
 {
     private readonly CollectionService _collectionService;
+    private readonly CollectionTopPicksService _collectionTopPicksService;
     
-    public CollectionsController(CollectionService collectionService)
+    public CollectionsController(CollectionService collectionService, CollectionTopPicksService collectionTopPicksService)
     {
         _collectionService = collectionService;
+        _collectionTopPicksService = collectionTopPicksService;
     }
 
     [HttpGet("{collectionId}")]
@@ -44,18 +46,21 @@ public class CollectionsController : CustomControllerBase
         return Ok(result);
     }
 
-    [HttpGet("top")]
+    [HttpGet("popular")]
     [UserTypePolicy]
-    public async Task<ActionResult<CollectionsBatchDto>> GetTopCollectionsAsync()
+    public async Task<ActionResult<CollectionsBatchDto>> GetTopCollectionsAsync([FromQuery] PaginationQueryDto pagination)
     {
-        return Ok("Don't implemented yet.");
+        var result = await _collectionTopPicksService.GetPopularAsync(pagination);
+        return Ok(result);
     }
     
     [HttpGet("recommended")]
     [UserTypePolicy(Guest = false)]
-    public async Task<ActionResult<CollectionsBatchDto>> GetRecommendedCollectionsAsync()
+    public async Task<ActionResult<CollectionsBatchDto>> GetRecommendedCollectionsAsync([FromQuery] PaginationQueryDto pagination, 
+        [FromServices] AuthContext authContext)
     {
-        return Ok("Don't implemented yet.");
+        var result = await _collectionTopPicksService.GetUserRecommendedChartAsync(pagination, authContext.CurrentUser!.Id);
+        return Ok(result);
     }
     
     [HttpPost]

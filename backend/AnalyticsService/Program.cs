@@ -124,7 +124,9 @@ public class Program
         builder.Services.AddScoped<ChartService>();
         builder.Services.AddScoped<TopPicksService>();
         builder.Services.AddScoped<PersonalizedService>();
-        builder.Services.AddScoped<MoviePersonalizedService>();
+        builder.Services.AddScoped<MoviesPersonalizedService>();
+        builder.Services.AddScoped<CollectionsChartService>();
+        builder.Services.AddScoped<CollectionsPersonalizedService>();
         
         // providers
         // ...

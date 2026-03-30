@@ -11,9 +11,10 @@ public class MovieTopPicksService
     private readonly MoviesParserService _moviesParserService;
     private readonly MovieRepository _movieRepository;
     private readonly TopPicksService _topPicksService;
-    private readonly MoviesChartService _moviesChartService;
     private readonly MissionPlannerService _missionPlannerService;
+    
     private readonly PersonalizedService _personalizedService;
+    private readonly MoviesChartService _moviesChartService;
     
     public MovieTopPicksService(MoviesParserService moviesParserService, MovieRepository movieRepository, 
         TopPicksService topPicksService, MoviesChartService moviesChartService, MissionPlannerService missionPlannerService,

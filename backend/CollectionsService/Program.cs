@@ -183,6 +183,10 @@ public class Program
         builder.Services.AddScoped<CollectionTagService>();
         builder.Services.AddScoped<CollectionService>();
         builder.Services.AddScoped<ClickEntityService>();
+        builder.Services.AddScoped<PersonalizedService>();
+        builder.Services.AddScoped<CollectionsChartService>();
+        builder.Services.AddScoped<CollectionTopPicksService>();
+        builder.Services.AddScoped<TopPicksService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

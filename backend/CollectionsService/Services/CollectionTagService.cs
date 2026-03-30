@@ -2,6 +2,7 @@
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Entities;
+using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.CollectionsService.Caching;
 using Filmograf.CollectionsService.Models.Dto;
 
@@ -57,6 +58,10 @@ public class CollectionTagService
 
     public async Task<CollectionTagResponseDto> CreateAsync(CreateCollectionTagRequestDto data, User createdBy)
     {
+        var exitingTag = await _collectionTagProvider.GetByNameAsync(data.Name);
+        if (exitingTag != null) throw new BadRequestHttpException("TagWithSomeNameAlreadyExits",
+                "The collection tag with the some name already exiting.");
+        
         var newCollectionTag = new CollectionTag
         {
             Name = data.Name,
