@@ -34,4 +34,8 @@ public class CollectionRepo : RepoBase
     
     [DefaultValue(false)]
     public bool IsDeleted { get; set; } = false;
+    
+    [DefaultValue(0)] 
+    public long ViewsCount { get; set; } = 0;
+    public DateTime LastViewsCheck { get; set; } = DateTime.UtcNow;
 }

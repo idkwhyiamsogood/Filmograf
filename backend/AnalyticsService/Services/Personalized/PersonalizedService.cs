@@ -6,19 +6,23 @@ namespace Filmograf.AnalyticsService.Services.Personalized;
 public class PersonalizedService
 {
     private readonly TopPicksService _topPicksService;
-    private readonly MoviePersonalizedService _moviePersonalizedService;
+    private readonly MoviesPersonalizedService _moviesPersonalizedService;
+    private readonly CollectionsPersonalizedService _collectionsPersonalizedService;
 
     private delegate Task<IEnumerable<string>> HandleCompileChart(Guid userId);
     private readonly Dictionary<string, HandleCompileChart> _handlers;
     
-    public PersonalizedService(MoviePersonalizedService moviePersonalizedService, TopPicksService topPicksService)
+    public PersonalizedService(MoviesPersonalizedService moviesPersonalizedService, TopPicksService topPicksService, 
+        CollectionsPersonalizedService collectionsPersonalizedService)
     {
-        _moviePersonalizedService = moviePersonalizedService;
+        _moviesPersonalizedService = moviesPersonalizedService;
         _topPicksService = topPicksService;
+        _collectionsPersonalizedService = collectionsPersonalizedService;
         
         _handlers = new Dictionary<string, HandleCompileChart>
         {
-            { "Movie", _moviePersonalizedService.GenerateForUserAsync }
+            { "Movie", _moviesPersonalizedService.GenerateForUserAsync },
+            { "Collection", _moviesPersonalizedService.GenerateForUserAsync }
         };
     }
 

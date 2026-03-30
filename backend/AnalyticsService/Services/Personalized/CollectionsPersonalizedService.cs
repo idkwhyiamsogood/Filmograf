@@ -1,40 +1,40 @@
-﻿using Filmograf.AnalyticsService.DataAccess.Repositories;
+using Filmograf.AnalyticsService.DataAccess.Repositories;
+using Filmograf.AnalyticsService.Util;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Services;
 
 namespace Filmograf.AnalyticsService.Services.Personalized;
 
-public class MoviePersonalizedService
+public class CollectionsPersonalizedService
 {
     private readonly TopPicksService _topPicksService;
-    private readonly UserMoviesActivityDailyRepository _activityRepository;
-    private readonly MovieRepository _movieRepository;
+    private readonly UserCollectionsActivityDailyRepository _activityRepository;
+    private readonly CollectionRepository _collectionRepository;
     
     private const int HistoryDays = 30; // Берем историю за 30 дней
     private const int TargetRecommendationSize = 100; // Размер выдачи
     private const float TimeDecayAlpha = 0.02f; // Коэффициент затухания интереса
-
-    public MoviePersonalizedService(UserMoviesActivityDailyRepository activityRepository, MovieRepository movieRepository,
-        TopPicksService topPicksService)
+    
+    public CollectionsPersonalizedService(TopPicksService topPicksService, UserCollectionsActivityDailyRepository activityRepository,
+        CollectionRepository collectionRepository)
     {
-        _activityRepository = activityRepository;
-        _movieRepository = movieRepository;
         _topPicksService = topPicksService;
+        _activityRepository = activityRepository;
+        _collectionRepository = collectionRepository;
     }
-
-    public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId)
+    
+    public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId, CancellationToken ct = default)
     {
         var pagination = new PaginationQueryDto 
         { Page = 0, Count = 100 };
 
         var globalTopChartIds = await _topPicksService
-            .GetFromChartAsync(pagination, "FilmTopMovies");
+            .GetFromChartAsync(pagination, "FilmTopCollections");
 
-        return await GenerateForUserAsync(userId, globalTopChartIds.Ids);
+        return await GenerateForUserAsync(userId, globalTopChartIds.Ids ?? [], ct);
     }
-
-    // globalTopChartIds передаем извне, чтобы не пересчитывать глобальный топ для каждого юзера
+    
     public async Task<IEnumerable<string>> GenerateForUserAsync(Guid userId, IEnumerable<string> globalTopChartIds, CancellationToken ct = default)
     {
         var now = DateTime.UtcNow;
@@ -56,20 +56,20 @@ public class MoviePersonalizedService
         }
 
         // Собираем ID просмотренных фильмов, чтобы не рекомендовать их снова
-        var watchedMovieIds = allClicks.Select(c => c.MovieId).ToHashSet();
+        var watchedCollectionIds = allClicks.Select(c => c.CollectionId).ToHashSet();
 
         // 3. Формируем профиль жанров (Time Decay)
         var genreWeights = new Dictionary<Guid, float>();
 
         foreach (var click in allClicks)
         {
-            if (click.MovieCache?.Genres == null) continue;
+            if (click.CollectionCache?.Tags == null) continue;
 
             // Считаем вес клика в зависимости от давности
             int daysAgo = (now - click.Timestamp).Days;
             float weight = Math.Max(0.1f, 1.0f - (daysAgo * TimeDecayAlpha));
 
-            foreach (var genreId in click.MovieCache.Genres)
+            foreach (var genreId in click.CollectionCache.Tags)
             {
                 if (!genreWeights.ContainsKey(genreId))
                     genreWeights[genreId] = 0;
@@ -84,15 +84,20 @@ public class MoviePersonalizedService
             .Take(5)
             .ToList();
 
-        var topGenreIds = topGenres.Select(g => g.Key).ToList();
+        var topTagIds = topGenres.Select(g => g.Key).ToList();
 
         // 4. Candidate Generation (Отбор кандидатов)
-        // Ищем фильмы, у которых есть хотя бы один из топовых жанров (метод нужно реализовать в MovieRepository)
-        var candidateMovies = await _movieRepository.GetByGenresAsync(topGenreIds, limit: 300, ct);
+        var candidateMovies = await _collectionRepository.GetByAnyTagsAsync(
+            tagIds: topTagIds.ToArray(), 
+            skip:0, 
+            limit: 300, 
+            showDeleted: true, 
+            ct: ct
+        );
 
         // 5. Ранжирование (Scoring)
         var scoredCandidates = candidateMovies
-            .Where(m => !watchedMovieIds.Contains(m.Id)) // Исключаем просмотренное
+            .Where(m => !watchedCollectionIds.Contains(m.Id)) // Исключаем просмотренное
             .Select(m => 
             {
                 // Считаем совпадение по жанрам (Genre Match Score)
@@ -101,21 +106,19 @@ public class MoviePersonalizedService
                 {
                     foreach (var gId in m.GenreIds)
                     {
-                        if (genreWeights.TryGetValue(gId, out float weight))
-                        {
-                            genreScore += weight;
-                        }
+                        if (!genreWeights.TryGetValue(gId, out float weight)) continue;
+                        genreScore += weight;
                     }
                 }
 
                 // Бонус за качество (от 0 до 1)
-                float qualityBonus = m.RateIMDb / 10.0f;
+                // float qualityBonus = m.RateIMDb / 10.0f;
                 
                 // Легкий бонус за популярность (нормализуем логарифмом, чтобы хиты не перевешивали жанр)
                 float popularityBonus = m.ViewsCount > 0 ? (float)Math.Log10(m.ViewsCount) * 0.1f : 0;
 
                 // Итоговый скор (жанр - самое важное)
-                float finalScore = (genreScore * 2.0f) + qualityBonus + popularityBonus;
+                float finalScore = (genreScore * 2.0f) + /*qualityBonus +*/ popularityBonus;
 
                 return new { MovieId = m.Id, Score = finalScore };
             })
@@ -124,41 +127,9 @@ public class MoviePersonalizedService
             .ToList();
 
         // 6. Микс с глобальным топом (Разбавление / Serendipity)
-        var finalRecommendations = MixWithGlobalChart(scoredCandidates, globalTopChartIds, watchedMovieIds, TargetRecommendationSize);
+        var finalRecommendations = CollectionsPersonalizedUtils.MixWithGlobalChart(scoredCandidates, globalTopChartIds, watchedCollectionIds, TargetRecommendationSize);
 
         // 7. Сохраняем в БД
         return finalRecommendations;
-    }
-
-    private List<string> MixWithGlobalChart(List<string> personalIds, IEnumerable<string> globalIds, HashSet<string> watchedIds, int targetSize)
-    {
-        var result = new List<string>();
-        
-        // Очищаем глобальный топ от того, что юзер уже видел
-        var cleanGlobalIds = globalIds.Where(id => !watchedIds.Contains(id)).ToList();
-
-        var personalQueue = new Queue<string>(personalIds);
-        var globalQueue = new Queue<string>(cleanGlobalIds);
-
-        // Пропорция: 4 персональных, 1 из топа (80% / 20%)
-        while (result.Count < targetSize && (personalQueue.Count > 0 || globalQueue.Count > 0))
-        {
-            for (int i = 0; i < 4 && personalQueue.Count > 0 && result.Count < targetSize; i++)
-            {
-                result.Add(personalQueue.Dequeue());
-            }
-
-            if (globalQueue.Count > 0 && result.Count < targetSize)
-            {
-                var globalId = globalQueue.Dequeue();
-                // Защита от дублей, если фильм из топа уже попал в персональную выдачу
-                if (!result.Contains(globalId)) 
-                {
-                    result.Add(globalId);
-                }
-            }
-        }
-
-        return result;
     }
 }
