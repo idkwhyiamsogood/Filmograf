@@ -13,8 +13,13 @@ export interface ModalOptions {
   modalProps?: any;
 }
 
-export interface ModalContextType extends ModalState {
+export interface ModalContextType {
+  activeModals: ModalOptions[],
   openModal: (modalType: ModalType, modalProps?: any) => void;
   closeModal: () => void;
-  prevModal: () => void;
+  closeModals: () => void;
+}
+
+export interface BaseModalProps {
+  isOpen: boolean
 }

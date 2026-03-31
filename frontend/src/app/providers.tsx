@@ -1,7 +1,7 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import React from "react";
+import React, { useState } from "react";
 
 import { UserProvider } from "@/entities/user";
 import { AuthProvider, ModalProvider } from "@/shared/context";
@@ -11,11 +11,20 @@ import { ThemeProvider } from "next-themes";
 
 import { FilterProvider } from "@/features/filter/common";
 import { TooltipProvider } from "@/shared/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  infiniteQueryOptions,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        
+      })
+  );
 
   return (
     <ThemeProvider
@@ -34,7 +43,7 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
                     <div className="flex-1 overflow-y-auto">{children}</div>
                     <Navigation />
                   </div>
-                  <ReactQueryDevtools initialIsOpen={false} />
+                  {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" /> */}
                   <ModalRenderer />
                 </TooltipProvider>
               </FilterProvider>

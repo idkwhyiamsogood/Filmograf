@@ -19,8 +19,10 @@ import { NavigationMenu } from "./ui/NavigationMenu";
 import { WrapperContent } from "./ui/WrapperContent";
 import { ThemeToggleFull } from "@/features/change-theme";
 
-export const RightMenu: React.FC = memo(() => {
-  const { isOpen, closeModal, openModal } = useModals();
+import type { BaseModalProps } from "@/shared/types";
+
+export const RightMenu: React.FC<BaseModalProps> = memo(({ isOpen }) => {
+  const { closeModal, openModal } = useModals();
   const { user, logout } = useUser();
 
   const [userAvailable, setUserAvailable] = useState<boolean>(true);
@@ -47,7 +49,12 @@ export const RightMenu: React.FC = memo(() => {
           </SheetHeader>
         </SheetHeader>
 
-        <SheetContent side="right" className="p-0" showCloseButton={false}>
+        <SheetContent
+          side="right"
+          className="p-0"
+          showCloseButton={false}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
           <WrapperContent>
             <div className="flex flex-col gap-4">
               <UserFull

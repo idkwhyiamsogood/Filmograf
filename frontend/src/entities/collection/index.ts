@@ -5,11 +5,13 @@ export { collectionApi } from "./model/api/collection.api";
 export { CollectionCard } from "./ui/Collection";
 export { CollectionCover } from "./ui/CollectionCover";
 export { CollectionSkeleton } from "./ui/CollectionSkeleton";
+export { CollectionWrapper } from "./ui/CollectionWrapper/CollectionWrapper";
+export { CollectionSkeletonWrapper } from "./ui/CollectionSkeletonWrapper";
 
 // schemas
 export {
   collectionRedactSchema,
-  type CollectionRedactSchema
+  type CollectionRedactSchema,
 } from "./model/schemas/collection.schema";
 
 // hooks
@@ -22,4 +24,3 @@ export { useUpdateCollection } from "./model/hooks/useUpdateCollection";
 
 // types
 export type { Collection, CreateCollection } from "./model/types";
-

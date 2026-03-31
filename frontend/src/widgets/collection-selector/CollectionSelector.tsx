@@ -6,7 +6,7 @@ import type { Collection } from "@/entities/collection";
 import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area";
 import { TabsContent, Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
-import { MovieWrapper, useMovie } from "@/entities/movie";
+import { MovieWrapper, useMovie, MovieSkeletonWrapper } from "@/entities/movie";
 
 interface Props {
   collections: Collection[];
@@ -47,7 +47,11 @@ export const CollectionSelector: React.FC<Props> = ({
               value={collection.id}
               key={"collection-content-" + String(idx)}
             >
-              <MovieWrapper movies={movies || []}/>
+              {isLoading ? (
+                <MovieSkeletonWrapper count={9} />
+              ) : (
+                <MovieWrapper movies={movies || []} />
+              )}
             </TabsContent>
           );
         })}

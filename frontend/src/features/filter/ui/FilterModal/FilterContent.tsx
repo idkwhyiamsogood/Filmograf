@@ -1,18 +1,23 @@
 "use client";
 
+// types
 import type { EntityType } from "@/shared/types";
 import type { FC } from "react";
 
+// ui
 import { CommonCheckboxField } from "@/shared/components";
 import { WrapperSheetContent } from "@/shared/components/";
-import { Button } from "@/shared/ui/button";
-import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Separator } from "@/shared/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
-import { MessageCircleQuestionMark } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { Input } from "@/shared/ui/input";
 
+// const
+import { ratings } from "../../model/constants/ageRatings";
+
+// hooks
 import { useModals } from "@/shared/hooks";
 import { useFilter } from "../../common/model/hooks/useFilter";
+import { cn } from "@/shared/lib/utils";
 
 interface Props {
   targetType: EntityType;
@@ -22,45 +27,147 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
   const { openModal } = useModals();
   const { toggleStrictMatch, filterState } = useFilter();
 
+  const selectedGenresCount =
+    (filterState.filterOptions.genres?.include?.length || 0) +
+    (filterState.filterOptions.genres?.exclude?.length || 0);
+
+  const selectedTagsCount =
+    (filterState.filterOptions.tags?.include?.length || 0) +
+    (filterState.filterOptions.tags?.exclude?.length || 0);
+
+  const isCollection = filterState.filterOptions.targetType === "Collection";
+
   return (
     <div className="my-11 h-max">
       <WrapperSheetContent>
-        <div className="flex justify-between items-center py-2.5 max-h-10 h-10 mb-1">
-          <CommonCheckboxField
-            label="Строгое совпадение"
-            handleToggle={toggleStrictMatch}
-            checked={filterState.strictMatch}
-          />
+        <div
+          className="flex justify-between items-center py-2.5 max-h-10 h-10 cursor-pointer"
+          onClick={() => openModal("search-genres-filter")}
+        >
+          <p className="text-sm font-bold">Жанры</p>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" className="bg-blue-400 rounded-full max-h-8 max-w-8">
-                <MessageCircleQuestionMark size={12} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              При строгом совпадении результаты поиска будут содержать только те
-              элементы, которые полностью соответствуют поисковому запросу.
-              Частичные совпадения и похожие варианты не будут включены в
-              результат.
-            </TooltipContent>
-          </Tooltip>
+          <div className="flex gap-1 items-center text-[12px] text-muted-foreground/70">
+            {selectedGenresCount > 0
+              ? `Выбрано ${selectedGenresCount}...`
+              : "Любые"}
+            <ChevronRight size={16} />
+          </div>
         </div>
       </WrapperSheetContent>
 
       <Separator />
 
       <WrapperSheetContent>
-        <ScrollArea className="w-full mt-2.5">
-          <Button
-            onClick={() => {
-              openModal("search-genres-filter");
-            }}
-          >
-            клик
-          </Button>
-        </ScrollArea>
+        <div
+          className={cn(
+            "flex justify-between items-center py-2.5 max-h-10 h-10 transition-all",
+            isCollection
+              ? "cursor-pointer hover:bg-accent/50"
+              : "opacity-40 cursor-not-allowed pointer-events-none select-none",
+          )}
+          onClick={() => isCollection && openModal("search-tags-filter")}
+        >
+          <p className="text-sm font-bold">Теги</p>
+
+          <div className="flex gap-1 items-center text-[12px] text-muted-foreground/70">
+            {!isCollection
+              ? "Только для коллекций"
+              : selectedTagsCount > 0
+                ? `Выбрано ${selectedTagsCount}...`
+                : "Любые"}
+            <ChevronRight
+              size={16}
+              className={cn(!isCollection && "invisible")}
+            />
+          </div>
+        </div>
       </WrapperSheetContent>
+
+      <Separator />
+
+      <WrapperSheetContent>
+        <div className="flex justify-between items-center py-2.5 max-h-10 h-10 my-1">
+          <CommonCheckboxField
+            label="Строгое совпадение"
+            handleToggle={toggleStrictMatch}
+            checked={filterState.strictMatch}
+          />
+        </div>
+      </WrapperSheetContent>
+
+      <Separator />
+
+      <div className="space-y-2.5">
+        <WrapperSheetContent>
+          <div className="py-1 flex flex-col gap-1">
+            <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
+              Год релиза
+            </span>
+            <div className="flex justify-between items-center">
+              <Input
+                placeholder="От"
+                className="w-full h-7.5 px-[6px] py-[2px] 
+                 text-[13px] leading-[20px] text-[#212529] 
+                 bg-[#ffffff] border-1 rounded-[5px]
+                 placeholder:text-[#8a8a8e]"
+              />
+              <span className="w-4 h-[1px] bg-[#8a8a8e] shrink-0 mx-2"></span>
+              <Input
+                placeholder="До"
+                className="w-full h-7.5 px-[6px] py-[2px] 
+                 text-[13px] leading-[20px] text-[#212529] 
+                 bg-[#ffffff] border-1 rounded-[5px]
+                 placeholder:text-[#8a8a8e]"
+              />
+            </div>
+          </div>
+        </WrapperSheetContent>
+
+        <WrapperSheetContent>
+          <div className="py-1 flex flex-col gap-1">
+            <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
+              Оценка
+            </span>
+            <div className="flex justify-between items-center">
+              <Input
+                placeholder="От"
+                className="w-full h-7.5 px-[6px] py-[2px] 
+                 text-[13px] leading-[20px] text-[#212529] 
+                 bg-[#ffffff] border-1 rounded-[5px]
+                 placeholder:text-[#8a8a8e]"
+              />
+              <span className="w-4 h-[1px] bg-[#8a8a8e] shrink-0 mx-2"></span>
+              <Input
+                placeholder="До"
+                className="w-full h-7.5 px-[6px] py-[2px] 
+                 text-[13px] leading-[20px] text-[#212529] 
+                 bg-[#ffffff] border-1 rounded-[5px]
+                 placeholder:text-[#8a8a8e]"
+              />
+            </div>
+          </div>
+        </WrapperSheetContent>
+
+        <Separator />
+
+        <WrapperSheetContent>
+          <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
+            Возрастные ограничения
+          </span>
+          <div className="flex flex-wrap gap-2.5">
+            {ratings.map((rate) => (
+              <div className="w-[calc(50vw-20px)]">
+                <CommonCheckboxField
+                  label={String(rate.value) + "+"}
+                  key={"rating-" + String(rate.id)}
+                  checked={false}
+                  handleToggle={() => {}}
+                />
+              </div>
+            ))}
+          </div>
+        </WrapperSheetContent>
+      </div>
     </div>
   );
 };

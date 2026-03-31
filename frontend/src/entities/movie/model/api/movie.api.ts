@@ -24,6 +24,13 @@ class MovieApi extends BaseHttpClient {
       /api/movies/recommended?Page=${params.page}&Count=${params.count}`);
   };
 
+  public getPopular = async (
+    params: QueryParams = { page: 0, count: 21 },
+  ): APIResponse<IdsEntity> => {
+    return this.get(`
+      /api/movies/popular?Page=${params.page}&Count=${params.count}`);
+  };
+
   public batchMany = async (data: IdsEntity): APIResponse<IMovie[]> => {
     return this.post("/api/movies/batch-many", data);
   };

@@ -1,35 +1,35 @@
 "use client";
 
-import React, { useCallback } from "react";
+// types
+import type { FC } from "react";
+import type { BaseModalProps } from "@/shared/types";
 
-import { useModals, useSwipe } from "@/shared/hooks";
-
-
+// ui
 import { FilterCommonHeader } from "./common/ui/FilterCommonHeader";
 import { FilterContent } from "./ui/FilterModal/FilterContent";
 import { FilterFooter } from "./ui/FilterModal/FilterFooter";
-
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle
+  SheetTitle,
 } from "@/shared/ui/sheet";
-import { useFilter } from "./common/model/hooks/useFilter";
 
-export const FilterModal: React.FC = () => {
-  const { isOpen, closeModal } = useModals();
+// hooks
+import { useCallback } from "react";
+import { useModals, useSwipe } from "@/shared/hooks";
+import { useFilter } from "./common";
+
+export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
+  const { closeModal } = useModals();
+  const { filterState, globalReset } = useFilter();
 
   const { translateY, isDragging, handlers } = useSwipe({
-    isOpen,
     onClose: closeModal,
     threshold: 190,
     maxDrag: 200,
   });
-
-  const { filterState, globalReset } =
-    useFilter();
 
   const handleSubmit = useCallback(() => {
     try {
@@ -50,6 +50,8 @@ export const FilterModal: React.FC = () => {
         </SheetHeader>
 
         <SheetContent
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
           side="bottom"
           className={`
             h-full
@@ -69,7 +71,7 @@ export const FilterModal: React.FC = () => {
           showCloseButton={false}
           {...handlers}
         >
-          <FilterCommonHeader title="Фильтры"/>
+          <FilterCommonHeader title="Фильтры" handleClose={closeModal} />
 
           <FilterContent targetType={filterState.filterOptions.targetType} />
 

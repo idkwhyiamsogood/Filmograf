@@ -60,6 +60,9 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({
     setFilterState((prev) => ({
       ...prev,
       filterOptions: { targetType: "Movie" },
+      fromGradeTo: undefined,
+      fromYearTo: undefined,
+      ageRating: undefined,
     }));
   }, []);
 

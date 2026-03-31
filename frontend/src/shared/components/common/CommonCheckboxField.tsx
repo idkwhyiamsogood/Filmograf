@@ -23,11 +23,11 @@ export const CommonCheckboxField: React.FC<Props> = ({
   const checkboxId = `checkbox-${label.replace(/\s+/g, "-").toLowerCase()}`;
 
   const renderIcon = () => {
-    if (indeterminate) {
-      return <X className="h-3.5 w-3.5" />;
-    }
     if (checked) {
       return <Check className="h-3.5 w-3.5" />;
+    }
+    if (indeterminate) {
+      return <X className="h-3.5 w-3.5" />;
     }
     return null;
   };

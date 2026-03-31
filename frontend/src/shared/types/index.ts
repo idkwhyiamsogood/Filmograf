@@ -1,5 +1,5 @@
 export type { INavigationItem, INavigationMenu } from "./navigation";
-export type { ModalType, ModalContextType, ModalOptions, ModalState } from "./modals";
+export type { ModalType, ModalContextType, ModalOptions, ModalState, BaseModalProps } from "./modals";
 export type { JWT } from "./user";
 export type { APIResponse, APIError, QueryParams, IdsEntity } from "./api";
 

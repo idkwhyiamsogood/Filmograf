@@ -1,7 +1,7 @@
 import type { ModalState, ModalOptions, ModalType } from "../types";
 
 class ModalService {
-  private listeners: ((state: ModalState | null) => void)[] = [];
+  private listeners: ((state: ModalOptions[]) => void)[] = [];
   private history: ModalOptions[] = [];
   private static instance: ModalService;
 
@@ -11,40 +11,30 @@ class ModalService {
     if (!ModalService.instance) {
       ModalService.instance = new ModalService();
     }
+
     return ModalService.instance;
   }
 
-  getCurrentState(): ModalState | null {
-    if (this.history.length === 0) return null;
-
-    const current = this.history[this.history.length - 1];
-    return {
-      isOpen: true,
-      modalType: current.modalType,
-      modalProps: current.modalProps,
-    };
+  getHistory(): ModalOptions[] {
+    return [...this.history];
   }
 
-  subscribe(listener: (state: ModalState | null) => void) {
+  subscribe(listener: (state: ModalOptions[]) => void) {
     this.listeners.push(listener);
-
-    const currentState = this.getCurrentState();
-    if (currentState) {
-      listener(currentState);
-    }
-
+    listener(this.getHistory());
     return () => {
       this.listeners = this.listeners.filter((l) => l !== listener);
     };
   }
 
   open(modalType: ModalType, modalProps?: any) {
-    const newItem: ModalOptions = {
-      modalType: modalType,
-      modalProps: modalProps || null,
-    };
-
+    const newItem: ModalOptions = { modalType, modalProps: modalProps || null };
     this.history.push(newItem);
+    this.notifyListeners();
+  }
+
+  back() {
+    this.history.pop();
     this.notifyListeners();
   }
 
@@ -53,23 +43,9 @@ class ModalService {
     this.notifyListeners();
   }
 
-  back() {
-    if (this.history.length <= 1) {
-      this.close();
-    } else {
-      this.history.pop();
-      this.notifyListeners();
-    }
-  }
-
-  isOpen(): boolean {
-    return this.history.length > 0;
-  }
-
   private notifyListeners() {
-    const state = this.getCurrentState();
+    const state = this.getHistory();
     this.listeners.forEach((listener) => listener(state));
   }
 }
-
 export const modalService = ModalService.getInstance();

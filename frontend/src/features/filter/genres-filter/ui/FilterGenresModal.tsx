@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { GenreType, useGenres } from "@/entities/genres";
 import { useModals } from "@/shared/hooks";
@@ -17,13 +17,20 @@ import {
 import { FilterCommonBody } from "../../common/ui/FilterCommonBody";
 import { FilterCommonFooter } from "../../common/ui/FIlterCommonFooter";
 import { FilterCommonHeader } from "../../common/ui/FilterCommonHeader";
+import { LoadingSplashScreen } from "@/shared/components";
 
-export const FilterGenresModal: React.FC = () => {
-  const { isOpen, closeModal } = useModals();
+import type { BaseModalProps } from "@/shared/types";
+
+export const FilterGenresModal: React.FC<BaseModalProps> = ({ isOpen }) => {
+  const { closeModal } = useModals();
   const { handleGenresReset, toggleGenre, getGenreState } = useGenresFilter();
-  const { data: genres } = useGenres();
+  const { data: genres, isLoading } = useGenres();
 
   const [data, setData] = useState<GenreType[]>(genres);
+
+  useEffect(() => {
+    setData(genres);
+  }, [isLoading]);
 
   const handleSearch = (value: string) => {
     if (!value.trim()) {
@@ -38,17 +45,26 @@ export const FilterGenresModal: React.FC = () => {
     setData(filtered);
   };
 
+  const handleClose = () => {
+    handleGenresReset();
+    closeModal();
+  };
+
   return (
     <div className="bg-background border-accent">
-      <Sheet open={isOpen} onOpenChange={closeModal}>
+      <Sheet open={isOpen} onOpenChange={handleClose}>
         <SheetHeader>
-          <SheetTitle hidden>Фильтры</SheetTitle>
-          <SheetDescription hidden>
+          <SheetTitle className="sr-only" hidden>
+            Фильтры
+          </SheetTitle>
+          <SheetDescription className="sr-only" hidden>
             Выбор фильтров для настройки поиска
           </SheetDescription>
         </SheetHeader>
 
         <SheetContent
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
           showCloseButton={false}
           side="bottom"
           className={`
@@ -59,23 +75,30 @@ export const FilterGenresModal: React.FC = () => {
             data-[state=open]:slide-in-from-bottom 
             data-[state=closed]:animate-out 
             data-[state=closed]:slide-out-to-top
-            duration-100
+            duration-200
           `}
         >
           <FilterCommonHeader
             title="Жанры"
             handleReset={handleGenresReset}
+            handleClose={handleClose}
             inputOptions={{
               placeholder: "Поиск по жарнам",
               handleSearch: handleSearch,
             }}
           />
 
-          <FilterCommonBody
-            items={data}
-            handleToggleItem={toggleGenre}
-            getStatus={getGenreState}
-          />
+          {isLoading ? (
+            <div className="h-full flex items-center">
+              <LoadingSplashScreen />
+            </div>
+          ) : (
+            <FilterCommonBody
+              items={data}
+              handleToggleItem={toggleGenre}
+              getStatus={getGenreState}
+            />
+          )}
 
           <FilterCommonFooter
             handleSubmit={() => console.log("submitet genres modal")}

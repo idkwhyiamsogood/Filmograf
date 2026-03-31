@@ -1,27 +1,19 @@
 "use client";
 
-import React from 'react';
-import { Button } from '@/shared/ui/button';
+// types
+import type { FC } from "react";
 
-import { useModals } from '@/shared/hooks';
+// ui
+import { ActionsWrapper, CatalogTabs } from "@/widgets/Catalog/";
 
-import { SortingButton } from '@/features/sort';
-
-interface Props {
-  className?: string;
-}
-
-
-
-const Page: React.FC<Props> = ({ className }) => {
-  const { openModal } = useModals();
-
+const Page: FC = () => {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <Button onClick={() => openModal("search-filter")}>
-        Фильтры
-      </Button>
-      <SortingButton />
+    <div className="flex flex-col gap-2.5">
+      <span className="text-[30px] font-bold">Каталог</span>
+
+      <ActionsWrapper />
+
+      <CatalogTabs />
     </div>
   );
 };

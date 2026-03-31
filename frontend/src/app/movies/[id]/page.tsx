@@ -9,12 +9,14 @@ import { LoadingSplashScreen } from "@/shared/components";
 import { Button } from "@/shared/ui/button";
 import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
-import { ArrowLeft, BookmarkMinus, Star } from "lucide-react";
+import { ArrowLeft, Star } from "lucide-react";
 
 import { useGenres } from "@/entities/genres";
 import { CommentWrapper } from "@/widgets/comments/CommentWrapper";
 
 import { GenreWrapper } from "@/entities/genres";
+
+import { MovieToCollection } from "@/features/movie/movie-to-collection";
 
 interface Props {
   label: string;
@@ -54,9 +56,7 @@ const Page: FC = () => {
   const movie = data?.[0];
 
   const handleBack = () => router.back();
-  const handleBookmark = () => {
-    console.log("Bookmark clicked");
-  };
+
 
   const handleSubmitRating = () => {
     if (userRating > 0) {
@@ -245,14 +245,7 @@ const Page: FC = () => {
       </div>
 
       {value === "default" && (
-        <div className="fixed bottom-24 right-4 z-50">
-          <Button
-            className="rounded-full bg-black/80 hover:bg-black text-white p-0 w-10 h-10 flex items-center justify-center shadow-lg transition-colors"
-            onClick={handleBookmark}
-          >
-            <BookmarkMinus size={18} />
-          </Button>
-        </div>
+        <MovieToCollection filmId={movie.id} />
       )}
     </div>
   );

@@ -1,1 +1,0 @@
-export { CatalogTabs } from "./CatalogTabs"

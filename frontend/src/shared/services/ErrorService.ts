@@ -2,6 +2,8 @@ import type { APIError } from "@/shared/types";
 import { modalService } from "./ModalService";
 import { ERROR_HANDLERS } from "../configs/errors-handler";
 
+import type { ModalType } from "@/shared/types";
+
 type ErrorListener = (error: APIError) => void;
 
 class ErrorService {
@@ -24,16 +26,29 @@ class ErrorService {
     };
   }
 
+  private activeErrorTypes = new Set<ModalType>();
+
   showError(error: APIError): void {
     const statusCode = error.statusCode;
     const handler = ERROR_HANDLERS[statusCode];
 
     if (handler) {
-      const props = handler.getProps ? handler.getProps(error) : {};
+      if (this.activeErrorTypes.has(handler.type)) return;
 
-      modalService.open(handler.type, props);
-    } else {
-      modalService.open("confirmation-menu");
+      const history = modalService.getHistory();
+      const isAlreadyOpen = history.some((m) => m.modalType === handler.type);
+
+      if (!isAlreadyOpen) {
+        this.activeErrorTypes.add(handler.type);
+        const props = handler.getProps ? handler.getProps(error) : {};
+
+        modalService.open(handler.type, {
+          ...props,
+          onClose: () => {
+            this.activeErrorTypes.delete(handler.type);
+          },
+        });
+      }
     }
   }
 

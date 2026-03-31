@@ -15,10 +15,11 @@ import { SortingOptions } from "./ui/SortingOptions";
 import { SortingVariants } from "./ui/SortingVariants";
 import { WrapperSheetContent } from "@/shared/components";
 
-export const SortingModal: FC = () => {
-  const { closeModal, isOpen } = useModals();
+import type { BaseModalProps } from "@/shared/types";
+
+export const SortingModal: FC<BaseModalProps> = ({ isOpen }) => {
+  const { closeModal } = useModals();
   const { translateY, isDragging, handlers } = useSwipe({
-    isOpen,
     onClose: closeModal,
     threshold: 190,
     maxDrag: 200,
@@ -34,6 +35,7 @@ export const SortingModal: FC = () => {
       </SheetHeader>
 
       <SheetContent
+        onCloseAutoFocus={(e) => e.preventDefault()}
         side="bottom"
         className={`
           h-auto max-h-[85vh] overflow-y-auto overflow-x-hidden /* Сделал высоту авто, чтобы шторка не была пустой внизу */
@@ -49,7 +51,9 @@ export const SortingModal: FC = () => {
         `}
         style={{
           transform: `translateY(${translateY}px)`,
-          transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)",
+          transition: isDragging
+            ? "none"
+            : "transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)",
           touchAction: "pan-y",
         }}
         {...handlers}
@@ -66,9 +70,9 @@ export const SortingModal: FC = () => {
 
             <div className="flex flex-col gap-6">
               <SortingOptions />
-              
-              <Separator className="bg-border/60" /> 
-              
+
+              <Separator className="bg-border/60" />
+
               <SortingVariants />
             </div>
           </WrapperSheetContent>

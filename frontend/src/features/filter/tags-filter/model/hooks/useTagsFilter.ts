@@ -27,26 +27,33 @@ export const useTagsFilter = () => {
     (id: string) => {
       updateFilterOption("tags", (prev) => {
         if (!prev) {
-          return { exclude: [], include: [id] };
+          return { include: [id], exclude: [] };
         }
 
-        if (prev.include?.includes(id)) {
+        const isInInclude = prev.include?.includes(id);
+        const isInExclude = prev.exclude?.includes(id);
+
+        if (!isInInclude && !isInExclude) {
+          // Состояние 1: unchecked → include (галочка)
           return {
             ...prev,
-            include: prev.include.filter((genreId) => genreId !== id),
-          };
-        }
-
-        if (prev.exclude?.includes(id)) {
-          return {
-            exclude: prev.exclude.filter((genreId) => genreId !== id),
             include: [...(prev.include || []), id],
           };
         }
 
+        if (isInInclude) {
+          // Состояние 2: include → exclude (крестик)
+          return {
+            ...prev,
+            include: (prev.include || []).filter((genreId) => genreId !== id),
+            exclude: [...(prev.exclude || []), id],
+          };
+        }
+
+        // Состояние 3: exclude → unchecked (убираем)
         return {
           ...prev,
-          exclude: [...(prev.exclude || []), id],
+          exclude: (prev.exclude || []).filter((genreId) => genreId !== id),
         };
       });
     },
@@ -58,6 +65,9 @@ export const useTagsFilter = () => {
       exclude: [],
       include: [],
     }));
+
+    // dev only
+    // console.log("updated")
   }, [updateFilterOption]);
 
   return {

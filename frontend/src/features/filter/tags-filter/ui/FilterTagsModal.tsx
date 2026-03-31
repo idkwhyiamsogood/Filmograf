@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
-import { GenreType, useGenres } from "@/entities/genres";
+import { useInfinityTags } from "@/entities/collection-tags/model/hooks/useInfinityTags";
 import { useModals } from "@/shared/hooks";
 import { useTagsFilter } from "../model/hooks/useTagsFilter";
 
@@ -14,72 +15,83 @@ import {
   SheetTitle,
 } from "@/shared/ui/sheet";
 
+import { LoadingSplashScreen } from "@/shared/components";
 import { FilterCommonBody } from "../../common/ui/FilterCommonBody";
 import { FilterCommonFooter } from "../../common/ui/FIlterCommonFooter";
 import { FilterCommonHeader } from "../../common/ui/FilterCommonHeader";
 
-export const FilterTagsModal: React.FC = () => {
-  const { isOpen, closeModal } = useModals();
+import type { BaseModalProps } from "@/shared/types";
+
+export const FilterTagsModal: React.FC<BaseModalProps> = ({ isOpen }) => {
+  const { closeModal } = useModals();
   const { handleTagReset, toggleTag, getTagState } = useTagsFilter();
-  const { data: genres } = useGenres();
+  const { tags, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfinityTags({ pageSize: 21 });
 
-  const [data, setData] = useState<GenreType[]>(genres);
+  const { ref, inView } = useInView();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = (value: string) => {
-    if (!value.trim()) {
-      setData(genres);
-      return;
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    const filtered = (genres || []).filter((genre) =>
-      genre.name.toLowerCase().includes(value.toLowerCase()),
+  const filteredTags = useMemo(() => {
+    if (!searchQuery.trim()) return tags;
+    return tags.filter((tag) =>
+      tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+  }, [tags, searchQuery]);
 
-    setData(filtered);
+  const handleClose = () => {
+    handleTagReset();
+    closeModal();
   };
 
   return (
     <div className="bg-background border-accent">
-      <Sheet open={isOpen} onOpenChange={closeModal}>
+      <Sheet open={isOpen} onOpenChange={handleClose}>
         <SheetHeader>
-          <SheetTitle hidden>Фильтры</SheetTitle>
-          <SheetDescription hidden>
-            Выбор фильтров для настройки поиска
+          <SheetTitle className="sr-only" hidden>
+            Фильтры тегов
+          </SheetTitle>
+          <SheetDescription className="sr-only" hidden>
+            Выбор тегов для настройки поиска
           </SheetDescription>
         </SheetHeader>
 
         <SheetContent
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
           showCloseButton={false}
           side="bottom"
-          className={`
-            h-full
-            w-full
-            bg-background 
-            data-[state=open]:animate-in 
-            data-[state=open]:slide-in-from-bottom 
-            data-[state=closed]:animate-out 
-            data-[state=closed]:slide-out-to-top
-            duration-100
-          `}
+          className="h-full w-full bg-background duration-100"
         >
           <FilterCommonHeader
-            title="Жанры"
+            title="Теги"
             handleReset={handleTagReset}
+            handleClose={handleClose}
             inputOptions={{
               placeholder: "Поиск по тегам",
-              handleSearch: handleSearch,
+              handleSearch: (val) => setSearchQuery(val),
             }}
           />
 
-          <FilterCommonBody
-            items={data}
-            handleToggleItem={toggleTag}
-            getStatus={getTagState}
-          />
+          {isLoading ? (
+            <div className="flex items-center h-full">
+              <LoadingSplashScreen />
+            </div>
+          ) : (
+            <FilterCommonBody
+              items={filteredTags}
+              handleToggleItem={toggleTag}
+              getStatus={getTagState}
+              ref={ref}
+            />
+          )}
 
-          <FilterCommonFooter
-            handleSubmit={() => console.log("submitet genres modal")}
-          />
+          <FilterCommonFooter handleSubmit={() => closeModal()} />
         </SheetContent>
       </Sheet>
     </div>

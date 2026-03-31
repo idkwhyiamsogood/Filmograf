@@ -1,81 +1,72 @@
 "use client";
 
 import React, { type FormEvent } from "react";
-
 import { useModals } from "@/shared/hooks";
 import { toast } from "sonner";
-
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
+import type { BaseModalProps } from "@/shared/types";
 
-interface IConfirmationModalProps {
+interface Props {
   title?: string;
-  deskription?: string;
+  description?: string;
   confirmText?: string;
-  function: Function;
+  onConfirm?: () => Promise<void> | void;
 }
 
-export const ConfirmationModal: React.FC = () => {
-  const { isOpen, closeModal, modalProps } = useModals();
-
-  const receivedData = modalProps as IConfirmationModalProps | null;
+export const ConfirmationModal: React.FC<BaseModalProps & Props> = ({
+  isOpen,
+  title,
+  description,
+  confirmText,
+  onConfirm,
+}) => {
+  const { closeModal } = useModals();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!receivedData?.function) {
+    if (!onConfirm) {
       toast.error("Не удалось выполнить действие");
       closeModal();
       return;
     }
 
     try {
-      await receivedData.function();
+      await onConfirm();
+      closeModal();
     } catch (error) {
-      toast.error(
-        "Произошла непредвиденная ошибка, пожалуйста повторите позже",
-      );
+      toast.error("Произошла ошибка, пожалуйста повторите позже");
     }
-
-    closeModal();
   };
-
-  if (!isOpen || !receivedData) {
-    return null;
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent
+        showCloseButton={false}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader className="text-left">
-            <DialogTitle>
-              {receivedData.title ? receivedData.title : "Вы уверены?"}
-            </DialogTitle>
+            <DialogTitle>{title ?? "Вы уверены?"}</DialogTitle>
             <DialogDescription>
-              {receivedData.deskription
-                ? receivedData.deskription
-                : "Данное действие является необратимым."}
+              {description ?? "Данное действие является необратимым."}
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="flex flex-row justify-end">
-            <DialogClose asChild>
-              <Button variant="outline">Отмена</Button>
-            </DialogClose>
-            <Button type="submit">
-              {receivedData.confirmText
-                ? receivedData.confirmText
-                : "Подтвердить"}
+          <DialogFooter className="flex flex-row justify-end gap-2">
+            {/* Используем closeModal напрямую для отмены */}
+            <Button type="button" variant="outline" onClick={closeModal}>
+              Отмена
             </Button>
+            <Button type="submit">{confirmText ?? "Подтвердить"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { movieApi } from "../api/movie.api";
 import type { IMovie } from "../types/types";
 
-export const useMovie = (ids: string[] | string) => {
+export const useMovie = (ids: string[] | string, options?: { enabled?: boolean }) => {
   const queryClient = useQueryClient();
 
   const getMovies = async (ids: string[] | string) => {
@@ -58,5 +58,6 @@ export const useMovie = (ids: string[] | string) => {
     queryFn: () => getMovies(ids),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    ...options
   });
 };

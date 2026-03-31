@@ -13,6 +13,10 @@ class AuthApi extends TokenApi {
     return this.get("/api/auth/temporary");
   };
 
+  public refreshToken = async (): APIResponse<JWT> => {
+    return this.patch("/api/auth/refresh-token");
+  };
+
   public verifyIdempotence = async (code: string): APIResponse<JWT> => {
     return this.post("/api/auth/verify-idempotence-code", { code });
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useModals } from "@/shared/hooks";
 import { Button } from "@/shared/ui/button";
@@ -25,14 +25,15 @@ import {
 import { Input } from "@/shared/ui/input";
 import { TagsSearchSelector } from "../../common/";
 
-import { useCreateCollection } from "entities/collection";
-import { useCollectionForm } from "entities/collection";
 import type { CreateCollection } from "entities/collection";
+import { useCollectionForm, useCreateCollection } from "entities/collection";
 
-export const CreateCollectionModal: React.FC = () => {
+import type { BaseModalProps } from "@/shared/types";
+
+export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
   const createCollection = useCreateCollection();
   const { collectionRedactForm, isPublic } = useCollectionForm();
-  const { isOpen, closeModal } = useModals();
+  const { closeModal } = useModals();
 
   const [step, setStep] = useState<number>(0);
 
@@ -51,7 +52,10 @@ export const CreateCollectionModal: React.FC = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent
+        showCloseButton={false}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <Form {...collectionRedactForm}>
           <form
             onSubmit={collectionRedactForm.handleSubmit(handleSubmit)}
@@ -153,7 +157,9 @@ export const CreateCollectionModal: React.FC = () => {
                 )}
               </div>
             ) : (
-              <TagsSearchSelector />
+              <div className="space-y-2.5">
+                <TagsSearchSelector />
+              </div>
             )}
 
             <DialogFooter className="flex flex-row justify-end">

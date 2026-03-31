@@ -13,7 +13,7 @@ export const GenreWrapper: FC<Props> = ({ genres }) => {
   return (
     <div className="flex gap-1.25 flex-wrap px-2.5 py-1">
       {genres.map((genre) => (
-        <Genre genre={genre} />
+        <Genre genre={genre} key={genre.id} />
       ))}
     </div>
   );

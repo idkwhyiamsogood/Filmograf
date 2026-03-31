@@ -3,28 +3,25 @@
 import React from "react";
 
 // types
-import type { Ref } from "react";
 import type { IMovie } from "../../model/types/types";
 
 // ui
-import { MovieCover } from "../MovieCover";
-import { Carousel, CarouselContent, CarouselItem } from "@/shared/ui/carousel";
 import { Button } from "@/shared/ui/button";
-import Link from "next/link";
+import { Carousel, CarouselContent, CarouselItem } from "@/shared/ui/carousel";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { MovieCover } from "../MovieCover";
 import { MovieSkeleton } from "../MovieSkeleton";
 
 interface Props {
   title: string;
   movies: IMovie[];
-  ref: Ref<HTMLDivElement>;
   isLoading: boolean;
 }
 
 export const MovieCarousel: React.FC<Props> = ({
   title,
   movies,
-  ref,
   isLoading,
 }) => {
   const moviesLength = movies.length;
@@ -56,7 +53,6 @@ export const MovieCarousel: React.FC<Props> = ({
             : movies.map((movie, idx) => (
                 <CarouselItem
                   key={movie.id || idx}
-                  ref={moviesLength === idx + 1 ? ref : undefined}
                   className="max-w-35"
                 >
                   <MovieCover movie={movie} />

@@ -2,5 +2,11 @@
 export { collecionTagsApi } from "./model/api/collection-tags.api";
 
 
+// types
+export type { Tag } from "./model/types"
+
+
 // hooks
-export {  } from "./model/hooks/useTags";
+export { useInfinityTags } from "./model/hooks/useInfinityTags";
+export { useTags } from "./model/hooks/useTags";
+export { useTagsSearch } from "./model/hooks/useSearchTags";

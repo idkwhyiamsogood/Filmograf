@@ -1,4 +1,3 @@
-// hooks/useInfiniteMovies.ts
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { movieApi } from "../api/movie.api";
 import type { IMovie } from "../types/types";
@@ -6,7 +5,7 @@ import type { IMovie } from "../types/types";
 interface UseInfiniteMoviesParams {
   pageSize?: number;
   initialPage?: number;
-  type?: "top" | "recommended";
+  type?: "top" | "recommended" | "popular";
 }
 
 export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
@@ -26,19 +25,28 @@ export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
     queryKey: ["infinite-movies", type, pageSize],
     queryFn: async ({ pageParam = initialPage }) => {
       let idsResponse;
-      
-      if (type === "top") {
-        idsResponse = await movieApi.getTop({ 
-          page: pageParam, 
-          count: pageSize 
-        });
-      } else {
-        idsResponse = await movieApi.getRecommended({ 
-          page: pageParam, 
-          count: pageSize 
-        });
-      }
-      
+
+      switch (type) {
+        case "recommended":
+          idsResponse = await movieApi.getRecommended({
+            page: pageParam,
+            count: pageSize,
+          });
+          break;
+        case "top":
+          idsResponse = await movieApi.getTop({
+            page: pageParam,
+            count: pageSize,
+          });
+          break;
+        case "popular":
+          idsResponse = await movieApi.getPopular({
+            page: pageParam,
+            count: pageSize,
+          });
+          break;
+      };
+
       if (!idsResponse.data) {
         throw new Error("Не удалось получить ID фильмов");
       }
@@ -57,7 +65,7 @@ export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
       const movies = await getMoviesWithCache(movieIds, queryClient);
 
       const hasMore = movies.length === pageSize;
-      
+
       return {
         movies,
         nextPage: hasMore ? pageParam + 1 : null,
@@ -66,13 +74,13 @@ export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: initialPage,
-    staleTime: 5 * 60 * 1000, 
-    gcTime: 10 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
-  const allMovies = data?.pages.flatMap(page => page.movies) ?? [];
-  
-  const allIds = data?.pages.flatMap(page => page.ids) ?? [];
+  const allMovies = data?.pages.flatMap((page) => page.movies) ?? [];
+
+  const allIds = data?.pages.flatMap((page) => page.ids) ?? [];
 
   return {
     movies: allMovies,
@@ -90,8 +98,8 @@ export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
 };
 
 async function getMoviesWithCache(
-  ids: string[], 
-  queryClient: ReturnType<typeof useQueryClient>
+  ids: string[],
+  queryClient: ReturnType<typeof useQueryClient>,
 ): Promise<IMovie[]> {
   const missing: string[] = [];
   const cachedMovies: IMovie[] = [];
@@ -115,7 +123,7 @@ async function getMoviesWithCache(
     missingMovies.forEach((movie) => {
       queryClient.setQueryData(["movie", movie.id], movie);
     });
-    
+
     return [...cachedMovies, ...missingMovies];
   }
 

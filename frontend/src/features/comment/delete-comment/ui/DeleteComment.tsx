@@ -28,7 +28,7 @@ export const DeleteComment: FC<Props> = ({ comment }) => {
   };
 
   const handleDelete = () => {
-    openModal("confirmation-menu", { function: () => onDelete(comment.id) });
+    openModal("confirmation-menu", { onConfirm: () => onDelete(comment.id) });
   };
 
   if (comment.userId !== user!.id) return null;

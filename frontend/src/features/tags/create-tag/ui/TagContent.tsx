@@ -12,8 +12,12 @@ import { MessageCircleWarning } from "lucide-react";
 
 import { useTagsForm } from "../model/hooks/useTagsForm";
 
-export const TagContent: FC = () => {
-  const { tagsForm } = useTagsForm();
+interface Props {
+  text: string;
+} 
+
+export const TagContent: FC<Props> = ({ text }) => {
+  const { tagsForm } = useTagsForm(text);
 
   return (
     <div className="space-y-2.5">

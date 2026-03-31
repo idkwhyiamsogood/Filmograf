@@ -6,6 +6,7 @@ export const useGenres = () => {
     queryKey: ["genres"],
     queryFn: () => genreApi.getGenres(),
     staleTime: Infinity,
+    gcTime: Infinity
   });
 
   return {

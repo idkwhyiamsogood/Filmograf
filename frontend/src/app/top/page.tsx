@@ -4,7 +4,7 @@ import { type FC, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteMovies } from "@/entities/movie";
 import { MovieWrapper } from "@/entities/movie";
-import { WrappedSkeleton } from "@/entities/movie/";
+import { MovieSkeletonWrapper } from "@/entities/movie/";
 
 const Page: FC = () => {
   const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
@@ -25,7 +25,7 @@ const Page: FC = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading) {
-    return <WrappedSkeleton count={21} />;
+    return <MovieSkeletonWrapper count={21} />;
   }
 
   return (
@@ -33,7 +33,7 @@ const Page: FC = () => {
       <MovieWrapper movies={movies} />
 
       <div ref={ref} className="py-8">
-        {isFetchingNextPage && <WrappedSkeleton count={6} />}
+        {isFetchingNextPage && <MovieSkeletonWrapper count={6} />}
       </div>
 
       {!hasNextPage && <div></div>}

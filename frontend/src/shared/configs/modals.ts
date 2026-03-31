@@ -17,7 +17,7 @@ export const MODALS = {
     })),
   ),
   "authorization-menu": lazy(() =>
-    import("@/widgets/LoginModal/AuthorizationModal").then((module) => ({
+    import("@/entities/user/").then((module) => ({
       default: module.AuthorizationModal,
     })),
   ),
@@ -39,6 +39,11 @@ export const MODALS = {
   "search-genres-filter": lazy(() =>
     import("@/features/filter/").then((module) => ({
       default: module.FilterGenresModal,
+    })),
+  ),
+  "search-tags-filter": lazy(() =>
+    import("@/features/filter/").then((module) => ({
+      default: module.FilterTagsModal,
     })),
   ),
   "select-sorting": lazy(() =>

@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { collectionApi } from "../api/collection.api";
 import type { Collection } from "../types";
 
-export const useCollections = (ids: string[] | string) => {
+export const useCollections = (ids: string[] | string, options?: { enabled?: boolean }) => {
   const queryClient = useQueryClient();
 
   const getCollections = async (ids: string[] | string) => {
@@ -57,5 +57,6 @@ export const useCollections = (ids: string[] | string) => {
     queryFn: () => getCollections(ids),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    ...options
   });
 };

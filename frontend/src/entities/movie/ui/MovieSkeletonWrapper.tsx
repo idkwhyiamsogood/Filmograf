@@ -5,7 +5,7 @@ interface Props {
   count: number;
 }
 
-export const WrappedSkeleton: React.FC<Props> = ({ count }) => {
+export const MovieSkeletonWrapper: React.FC<Props> = ({ count }) => {
   return (
     <div className="grid grid-cols-3 gap-[5px]">
       {Array.from({ length: count }).map((_, index) => (

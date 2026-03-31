@@ -2,25 +2,37 @@
 
 import { FC } from "react";
 import { Spinner } from "@/shared/ui/spinner";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/shared/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/shared/ui/dialog";
 import { useModals } from "@/shared/hooks";
 
-interface ILoadingSplashScreenModalProps {
+interface Props {
   message?: string;
   showMessage?: boolean;
 }
 
-export const LoadingSplashScreenModal: FC = () => {
-  const { isOpen, modalProps } = useModals();
+import type { BaseModalProps } from "@/shared/types";
 
-  const { message = "Загрузка данных", showMessage = true } =
-    (modalProps as ILoadingSplashScreenModalProps) || {};
-
+export const LoadingSplashScreenModal: FC<BaseModalProps & Props> = ({
+  isOpen,
+  message,
+  showMessage,
+}) => {
   return (
     <Dialog open={isOpen}>
-      <DialogContent showCloseButton={false} className="sm:max-w-md">
+      <DialogContent
+        showCloseButton={false}
+        className="sm:max-w-md"
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogTitle hidden>Загрузка</DialogTitle>
-        <DialogDescription hidden>Дождитесь окончания загрузки</DialogDescription>
+        <DialogDescription hidden>
+          Дождитесь окончания загрузки
+        </DialogDescription>
 
         <div className="flex flex-col items-center justify-center py-8 space-y-4">
           <Spinner className="opacity-65 h-12 w-12" />

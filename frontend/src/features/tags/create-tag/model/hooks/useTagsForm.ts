@@ -4,13 +4,13 @@ import { createTag } from "../schemas/tag.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-export const useTagsForm = () => {
+export const useTagsForm = (text: string | undefined) => {
   const tagsForm = useForm<TagSchema>({
     defaultValues: {
-      name: "",
+      name: text || "",
     },
-    resolver: zodResolver(createTag)
+    resolver: zodResolver(createTag),
   });
 
-  return {tagsForm};
+  return { tagsForm };
 };

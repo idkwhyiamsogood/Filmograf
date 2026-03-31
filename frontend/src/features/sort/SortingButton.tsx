@@ -15,8 +15,11 @@ export const SortingButton: FC = () => {
   };
 
   return (
-    <Button onClick={handleOpenModal}>
-      <ArrowDownUp size={16}/> Сортировка
+    <Button
+      onClick={handleOpenModal}
+      variant={"secondary"}
+    >
+      <ArrowDownUp size={16} /> Сортировка
     </Button>
   );
 };

@@ -36,21 +36,27 @@ interface Props {
   };
 }
 
-export const UpdateCollectionModal: React.FC = () => {
+import type { BaseModalProps } from "@/shared/types";
+
+export const UpdateCollectionModal: React.FC<BaseModalProps & Props> = ({
+  isOpen,
+  data: { id },
+}) => {
   const { collectionRedactForm, isPublic } = useCollectionForm();
-  const { isOpen, closeModal, modalProps } = useModals();
+  const { closeModal } = useModals();
   const updateCollection = useUpdateCollection();
 
-  const { data: recieveData } = modalProps as Props;
-
   const handleSubmit = (data: CollectionRedactSchema) => {
-    updateCollection.mutate({ id: recieveData.id, data: data });
+    updateCollection.mutate({ id: id, data: data });
     closeModal();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent
+        showCloseButton={false}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <Form {...collectionRedactForm}>
           <form
             onSubmit={collectionRedactForm.handleSubmit(handleSubmit)}

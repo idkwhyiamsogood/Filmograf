@@ -11,14 +11,14 @@ export const useGenresFilter = () => {
       if (!genres) return { checked: false, indeterminate: false };
 
       if (genres.include?.includes(genreId)) {
-        return { checked: true, indeterminate: false };
+        return { checked: true, indeterminate: false }; // галочка
       }
 
       if (genres.exclude?.includes(genreId)) {
-        return { checked: false, indeterminate: true };
+        return { checked: false, indeterminate: true }; // крестик
       }
 
-      return { checked: false, indeterminate: false };
+      return { checked: false, indeterminate: false }; // unchecked
     },
     [filterState.filterOptions?.genres],
   );
@@ -27,26 +27,34 @@ export const useGenresFilter = () => {
     (id: string) => {
       updateFilterOption("genres", (prev) => {
         if (!prev) {
-          return { exclude: [], include: [id] };
+          // Первый клик: добавляем в include
+          return { include: [id], exclude: [] };
         }
 
-        if (prev.include?.includes(id)) {
+        const isInInclude = prev.include?.includes(id);
+        const isInExclude = prev.exclude?.includes(id);
+
+        if (!isInInclude && !isInExclude) {
+          // Состояние 1: unchecked → include (галочка)
           return {
             ...prev,
-            include: prev.include.filter((genreId) => genreId !== id),
-          };
-        }
-
-        if (prev.exclude?.includes(id)) {
-          return {
-            exclude: prev.exclude.filter((genreId) => genreId !== id),
             include: [...(prev.include || []), id],
           };
         }
 
+        if (isInInclude) {
+          // Состояние 2: include → exclude (крестик)
+          return {
+            ...prev,
+            include: (prev.include || []).filter((genreId) => genreId !== id),
+            exclude: [...(prev.exclude || []), id],
+          };
+        }
+
+        // Состояние 3: exclude → unchecked (убираем)
         return {
           ...prev,
-          exclude: [...(prev.exclude || []), id],
+          exclude: (prev.exclude || []).filter((genreId) => genreId !== id),
         };
       });
     },

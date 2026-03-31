@@ -19,8 +19,10 @@ import { useRouter } from "next/navigation";
 
 import { authApi } from "@/shared/lib";
 
-export const AuthorizationModal: React.FC = () => {
-  const { isOpen, closeModal, modalProps } = useModals();
+import type { BaseModalProps } from "@/shared/types";
+
+export const AuthorizationModal: React.FC<BaseModalProps> = ({ isOpen }) => {
+  const { closeModal } = useModals();
   const { temporaryToken, callAuthError } = useAuth();
   const { setCurrentUser } = useUser();
 
@@ -43,7 +45,10 @@ export const AuthorizationModal: React.FC = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent
+        showCloseButton={false}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader className="text-left">
             <DialogTitle>Авторизация</DialogTitle>

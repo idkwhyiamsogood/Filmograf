@@ -9,3 +9,12 @@ export interface IUser extends BaseModel {
   name: string;
   avatarURL: string;
 }
+
+export interface UserLight {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl: string;
+  isAdmin: boolean;
+  isDeleted: boolean
+}
