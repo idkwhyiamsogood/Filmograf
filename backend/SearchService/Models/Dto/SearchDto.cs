@@ -17,8 +17,8 @@ public class SearchPartResponseDto // вот это будут контролл�
 
 public class SearchBaseQueryProps
 {
-    public Guid[] ExcludeIds { get; set; }
-    public Guid[] IncludeIds { get; set; }
+    public Guid[] Exclude { get; set; }
+    public Guid[] Include { get; set; }
 }
 
 // если мы передаем его в SearchBaseQueryProps тогда надо два разныцх обработчикат - сложнее

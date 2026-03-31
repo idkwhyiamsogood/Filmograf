@@ -49,8 +49,8 @@ public class SearchService
         {
             movies = await _movieRepository.GetByNameWithFiltersAsync(
                 query,
-                filters.Genres.IncludeIds,
-                filters.Genres.ExcludeIds,
+                filters.Genres.Include,
+                filters.Genres.Exclude,
                 filters.StrictMatch);
         }
         else
@@ -90,10 +90,10 @@ public class SearchService
         {
             collections = await _collectionRepository.GetByNameWithFiltersAsync(
                 query,
-                filters.Genres?.IncludeIds,
-                filters.Genres?.ExcludeIds,
-                filters.Tags?.IncludeIds,
-                filters.Tags?.ExcludeIds,
+                filters.Genres?.Include,
+                filters.Genres?.Exclude,
+                filters.Tags?.Include,
+                filters.Tags?.Exclude,
                 filters.StrictMatch);
         }
         else
