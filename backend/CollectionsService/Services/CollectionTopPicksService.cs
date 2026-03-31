@@ -24,7 +24,7 @@ public class CollectionTopPicksService
     {
         var chart = await _topPicksService.GetFromChartAsync(pagination, "FilmTopCollections");
 
-        var hasMission = await _missionPlannerService.CheckLastMissionAsync("FilmTopCollections");
+        var hasMission = await _missionPlannerService.CheckLastMissionOrTaskAsync("FilmTopCollections");
         if (hasMission) await _collectionsChartService.CompileChartAsync();
         
         return chart;
@@ -35,7 +35,7 @@ public class CollectionTopPicksService
         var userKey = _topPicksService.GetUserKey("Collection", userId);
         var chart = await _topPicksService.GetFromChartAsync(pagination, userKey);
         
-        var hasMission = await _missionPlannerService.CheckLastMissionAsync(userKey);
+        var hasMission = await _missionPlannerService.CheckLastMissionOrTaskAsync(userKey);
         if (hasMission) await _personalizedService.CompilePersonalizedAsync("Collection", userId);
 
         return chart;

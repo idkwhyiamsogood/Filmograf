@@ -42,7 +42,7 @@ public class MoviesParserService
     public async Task CheckLastParsingAsync(string chartType)
     {
         // проверяем, не настало ли время чекнуть еще раз imdb и кинопоиск
-        var parsingLast = await _missionPlannerService.CheckLastMissionAsync(chartType);
+        var parsingLast = await _missionPlannerService.CheckLastMissionOrTaskAsync(chartType);
         if (!parsingLast) return;
 
         // создаем запрос на парсинг
