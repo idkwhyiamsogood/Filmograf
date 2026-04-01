@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { GenreType, useGenres } from "@/entities/genres";
 import { useModals } from "@/shared/hooks";
@@ -32,7 +32,7 @@ export const FilterGenresModal: React.FC<BaseModalProps> = ({ isOpen }) => {
     setData(genres);
   }, [isLoading]);
 
-  const handleSearch = (value: string) => {
+  const handleSearch = useCallback((value: string) => {
     if (!value.trim()) {
       setData(genres);
       return;
@@ -43,12 +43,12 @@ export const FilterGenresModal: React.FC<BaseModalProps> = ({ isOpen }) => {
     );
 
     setData(filtered);
-  };
+  }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     handleGenresReset();
     closeModal();
-  };
+  }, []);
 
   return (
     <div className="bg-background border-accent">
@@ -100,9 +100,7 @@ export const FilterGenresModal: React.FC<BaseModalProps> = ({ isOpen }) => {
             />
           )}
 
-          <FilterCommonFooter
-            handleSubmit={() => console.log("submitet genres modal")}
-          />
+          <FilterCommonFooter handleSubmit={closeModal} />
         </SheetContent>
       </Sheet>
     </div>

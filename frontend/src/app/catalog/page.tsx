@@ -4,7 +4,7 @@
 import type { FC } from "react";
 
 // ui
-import { ActionsWrapper, CatalogTabs } from "@/widgets/Catalog/";
+import { ActionsWrapper, CatalogTabs } from "@/widgets/catalog";
 
 const Page: FC = () => {
   return (

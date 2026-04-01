@@ -68,8 +68,6 @@ const Page: FC = () => {
     return <LoadingSplashScreen />;
   }
 
-  console.log(movie);
-
   return (
     <div className="relative w-full">
       <Button

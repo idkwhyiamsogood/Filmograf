@@ -1,6 +1,6 @@
 // types
 import type { EntityType } from "@/shared/types";
-import type { FC } from "react";
+import { memo, type FC } from "react";
 
 // ui
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
@@ -10,7 +10,7 @@ import { MovieContent } from "./TabsContent/MovieContent";
 // hooks
 import { useCatalog } from "../model/hooks/useCatalog";
 
-export const CatalogTabs: FC = () => {
+export const CatalogTabs: FC = memo(() => {
   const { activeType, setActiveType } = useCatalog();
 
   return (
@@ -30,4 +30,6 @@ export const CatalogTabs: FC = () => {
       <CollectionContent />
     </Tabs>
   );
-};
+});
+
+CatalogTabs.displayName = "CatalogTabs";
