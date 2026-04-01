@@ -1,52 +1,16 @@
-"use client";
+import React from 'react'
 
-import { collectionApi, useCollections } from "@/entities/collection/";
-import React, { useEffect, useState } from "react";
+import { CommentWrapper } from '@/widgets/comments/CommentWrapper';
 
-import {
-  CreateCollectionButton,
-  EditCollectionButton,
-} from "@/widgets/collection-editor";
-import { CollectionSelector } from "@/widgets/collection-selector";
-
-
-interface Props {
-  className?: string;
+export async function generateStaticParams() {
+  return [];
 }
+export const dynamicParams = false;
 
-const Page: React.FC<Props> = ({ className }) => {
-  const [collectionsIds, setCollectionsIds] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string>("");
-
-  useEffect(() => {
-    const getMy = async () => {
-      try {
-        const { data: collectionsIds } = await collectionApi.getMy();
-
-        if (collectionsIds) {
-          setCollectionsIds(collectionsIds.ids);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    getMy();
-  }, []);
-
-  const { data: collections } = useCollections(collectionsIds);
-
+const Page: React.FC = () => {
   return (
-    <div className={className}>
-      <h1 className="text-foreground text-xl font-semibold">Коллекции</h1>
-      <CollectionSelector
-        collections={collections || []}
-        onClick={setSelected}
-      />
-      <div className="flex gap-2.5 w-full">
-        <CreateCollectionButton />
-        <EditCollectionButton collectionId={selected} />
-      </div>
+    <div>
+      <CommentWrapper />
     </div>
   );
 };
