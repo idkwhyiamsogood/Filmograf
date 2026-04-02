@@ -26,27 +26,29 @@ export const RightMenu: React.FC<BaseModalProps> = memo(({ isOpen }) => {
   const { user, logout } = useUser();
 
   const [userAvailable, setUserAvailable] = useState<boolean>(true);
-
+/*
   useEffect(() => {
     if (!user) {
-      openModal("authorization-menu", { function: openModal("right-menu") });
+      // ✅ ПРАВИЛЬНО: Обернули в () => ...
+      openModal("authorization-menu", { 
+        function: () => openModal("right-menu") 
+      });
       setUserAvailable(false);
     }
-  }, []);
+  }, [user, openModal]); // Добавил зависимости для порядка*/
 
   if (!userAvailable || !user) return null;
 
   return (
     <div className="bg-background border-accent-foreground">
       <Sheet open={isOpen} onOpenChange={closeModal}>
+        {/* ✅ Убрал дублирующийся SheetHeader */}
         <SheetHeader>
-          <SheetHeader>
-            <SheetTitle hidden>Боковая менюшка</SheetTitle>
-            <SheetDescription hidden>
-              Меню для упралвения текущим пользователем и доступа к расширенной
-              навигации
-            </SheetDescription>
-          </SheetHeader>
+          <SheetTitle hidden>Боковая менюшка</SheetTitle>
+          <SheetDescription hidden>
+            Меню для управления текущим пользователем и доступа к расширенной
+            навигации
+          </SheetDescription>
         </SheetHeader>
 
         <SheetContent
