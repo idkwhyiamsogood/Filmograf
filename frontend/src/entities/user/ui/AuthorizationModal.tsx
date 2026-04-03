@@ -22,7 +22,7 @@ import { authApi } from "@/shared/lib";
 import type { BaseModalProps } from "@/shared/types";
 
 export const AuthorizationModal: React.FC<BaseModalProps> = ({ isOpen }) => {
-  const { closeModal } = useModals();
+  const { closeModals } = useModals();
   const { temporaryToken, callAuthError } = useAuth();
   const { setCurrentUser } = useUser();
 
@@ -44,7 +44,7 @@ export const AuthorizationModal: React.FC<BaseModalProps> = ({ isOpen }) => {
   }, []);
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeModal}>
+    <Dialog open={isOpen} onOpenChange={closeModals}>
       <DialogContent
         showCloseButton={false}
         onCloseAutoFocus={(e) => e.preventDefault()}

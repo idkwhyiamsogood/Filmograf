@@ -14,7 +14,7 @@ interface Props {
 
 export const MovieCover: React.FC<Props> = memo(({ movie }) => {
   return (
-    <Link href={`/movies/?id=${movie.id}`} className="block h-full">
+    <Link href={`/movies/${movie.id}`} className="block h-full">
       <article className="flex flex-col h-full w-full rounded-2xl overflow-hidden select-none gap-2">
         <div className="relative w-full flex-shrink-0" style={{ aspectRatio: '2/3' }}>
           <Image

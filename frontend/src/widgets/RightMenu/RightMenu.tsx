@@ -26,16 +26,15 @@ export const RightMenu: React.FC<BaseModalProps> = memo(({ isOpen }) => {
   const { user, logout } = useUser();
 
   const [userAvailable, setUserAvailable] = useState<boolean>(true);
-/*
+
   useEffect(() => {
     if (!user) {
-      // ✅ ПРАВИЛЬНО: Обернули в () => ...
       openModal("authorization-menu", { 
         function: () => openModal("right-menu") 
       });
       setUserAvailable(false);
     }
-  }, [user, openModal]); // Добавил зависимости для порядка*/
+  }, [user]);
 
   if (!userAvailable || !user) return null;
 

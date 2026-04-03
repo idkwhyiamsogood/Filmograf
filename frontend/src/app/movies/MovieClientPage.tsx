@@ -46,6 +46,9 @@ const TagsItem: FC<Props> = ({ label, item, colorClass }) => {
 
 const MovieClientPage = () => {
   const params = useParams();
+  
+  console.log(params);
+
   const router = useRouter();
   const [userRating, setUserRating] = useState(0);
   const [value, setValue] = useState<string>("default");

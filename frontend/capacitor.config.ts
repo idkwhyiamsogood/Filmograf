@@ -3,9 +3,9 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "com.filmograf",
   appName: "Filmograf",
-webDir: 'out',
+  webDir: "out",
   server: {
-    url: "http://26.254.134.172:3000",
+    url: "http://192.168.0.196:3000",
     androidScheme: "http",
     cleartext: true,
   },

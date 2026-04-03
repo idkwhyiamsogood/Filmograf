@@ -14,7 +14,9 @@ interface Props {
   className?: string;
 }
 
-const Page: React.FC<Props> = ({ className }) => {
+
+
+export const CollectionsClientPage: React.FC<Props> = ({ className }) => {
   const [collectionsIds, setCollectionsIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>("");
 
@@ -51,4 +53,3 @@ const Page: React.FC<Props> = ({ className }) => {
   );
 };
 
-export default Page;
