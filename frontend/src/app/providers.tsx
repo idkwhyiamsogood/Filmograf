@@ -18,6 +18,7 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   const [queryClient] = useState(
     () =>

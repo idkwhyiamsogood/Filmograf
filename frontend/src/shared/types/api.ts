@@ -13,6 +13,11 @@ export interface IdsEntity {
   ids: string[];
 }
 
+export interface SearchedIds {
+  entityIds: string[];
+  type: number;
+}
+
 export interface QueryParams {
   page?: number;
   count?: number;

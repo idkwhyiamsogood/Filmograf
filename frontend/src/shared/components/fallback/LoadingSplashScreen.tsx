@@ -8,7 +8,7 @@ interface Props {
 
 export const LoadingSplashScreen: FC<Props> = ({ showMessage = false }) => {
   return (
-    <div className="flex w-full h-[calc(100vh - 15rem)] items-center justify-center space-x-4">
+    <div className="flex w-full h-[calc(100vh-15rem)] items-center justify-center space-x-4">
       <div className="flex justify-around items-center gap-3">
         <Spinner className="opacity-65 items-center" />
         {(showMessage === undefined || showMessage == true) && (

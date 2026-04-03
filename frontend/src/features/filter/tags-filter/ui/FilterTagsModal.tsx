@@ -91,7 +91,7 @@ export const FilterTagsModal: React.FC<BaseModalProps> = ({ isOpen }) => {
             />
           )}
 
-          <FilterCommonFooter handleSubmit={() => closeModal()} />
+          <FilterCommonFooter handleSubmit={closeModal} />
         </SheetContent>
       </Sheet>
     </div>

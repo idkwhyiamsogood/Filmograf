@@ -12,6 +12,7 @@ export { MovieWrapper } from "./ui/MovieWrapper/MovieWrapper";
 export { MovieSkeleton } from "./ui/MovieSkeleton";
 export { MovieCarousel } from "./ui/MovieCarausel/MovieCarausel";
 export { MovieSkeletonWrapper } from "./ui/MovieSkeletonWrapper"
+export { MovieFull } from "./ui/MovieFull";
 
 
 // hooks

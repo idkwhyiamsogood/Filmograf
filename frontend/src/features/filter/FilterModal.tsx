@@ -17,7 +17,7 @@ import {
 } from "@/shared/ui/sheet";
 
 // hooks
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useModals, useSwipe } from "@/shared/hooks";
 import { useFilter } from "./common";
 
@@ -33,11 +33,13 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
 
   const handleSubmit = useCallback(() => {
     try {
-      console.log("filter handled", filterState.filterOptions);
+      closeModal();
     } catch (e) {
       console.log();
     }
   }, []);
+
+  useEffect(() => console.log(filterState), [filterState]);
 
   return (
     <div className="bg-background border-accent">

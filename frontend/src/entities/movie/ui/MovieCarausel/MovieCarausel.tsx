@@ -1,65 +1,89 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
-// types
 import type { IMovie } from "../../model/types/types";
-
-// ui
 import { Button } from "@/shared/ui/button";
 import { Carousel, CarouselContent, CarouselItem } from "@/shared/ui/carousel";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { MovieCover } from "../MovieCover";
+import { MovieFull } from "../MovieFull";
 import { MovieSkeleton } from "../MovieSkeleton";
 
-interface Props {
+interface MovieCarouselProps {
   title: string;
   movies: IMovie[];
   isLoading: boolean;
+  type: "full" | "partial";
+  orientation: "horizontal" | "vertical";
+  onFetch?: () => void;
+  viewAllHref?: string;
 }
 
-export const MovieCarousel: React.FC<Props> = ({
+export const MovieCarousel: React.FC<MovieCarouselProps> = ({
   title,
   movies,
   isLoading,
+  type,
+  orientation,
+  onFetch,
+  viewAllHref,
 }) => {
-  const moviesLength = movies.length;
+  const MovieComponent = type === "full" ? MovieFull : MovieCover;
+
+  const [width, setWidth] = useState<number>(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const className = useMemo(() => {
+    return width < 380 ? "basis-1/2" : "basis-1/3";
+  }, [width]);
 
   return (
-    <div className="flex flex-col gap-2.5 py-2.5 px-2.5">
-      <div className="flex justify-between items-center">
-        <h2 className="text-[22px]">{title + " фильмов"}</h2>
-        <Button variant={"link"} className="text-accent-foreground">
-          <Link href={"/top"}>
-            <ArrowRight className="sizes-3" />
-          </Link>
-        </Button>
+    <section className="flex flex-col gap-4 py-4 px-2">
+      <div className="flex justify-between items-center px-1">
+        <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+        {viewAllHref && (
+          <Button variant="ghost" size="sm" asChild className="gap-2">
+            <Link href={viewAllHref}>
+              <ArrowRight className="size-5" />
+            </Link>
+          </Button>
+        )}
       </div>
 
       <Carousel
-        opts={{
-          loop: true,
-          align: "start",
-        }}
+        opts={{ align: "start", loop: movies.length > 1 }}
+        orientation={orientation}
+        className="w-full"
       >
         <CarouselContent>
-          {isLoading
-            ? Array.from({ length: 2 }).map((_, idx) => (
-                <CarouselItem key={`skeleton-${idx}`} className="max-w-35 w-full">
+          {isLoading && movies.length === 0
+            ? Array.from({ length: 4 }).map((_, idx) => (
+                <CarouselItem key={`skeleton-${idx}`} className={className}>
                   <MovieSkeleton />
                 </CarouselItem>
               ))
-            : movies.map((movie, idx) => (
-                <CarouselItem
-                  key={movie.id || idx}
-                  className="max-w-35"
-                >
-                  <MovieCover movie={movie} />
+            : movies.map((movie) => (
+                <CarouselItem key={movie.id} className={className}>
+                  <MovieComponent movie={movie} />
                 </CarouselItem>
               ))}
         </CarouselContent>
       </Carousel>
-    </div>
+
+      {onFetch && !isLoading && (
+        <Button variant="outline" className="w-full mt-2" onClick={onFetch}>
+          Показать больше
+        </Button>
+      )}
+    </section>
   );
 };

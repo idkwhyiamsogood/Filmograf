@@ -1,8 +1,8 @@
 import { BaseHttpClient } from "@/shared/lib";
 
 // types
-import type { APIResponse, QueryParams } from "@/shared/types/api";
-import type { SearcedTags, Tag } from "../types";
+import type { APIResponse, QueryParams, SearchedIds } from "@/shared/types/api";
+import type { Tag } from "../types";
 
 class CollecionTagsApi extends BaseHttpClient {
   public getTags = async (
@@ -37,7 +37,7 @@ class CollecionTagsApi extends BaseHttpClient {
   };
 
   // search service
-  public searchTags = (query: string): APIResponse<SearcedTags> => {
+  public searchTags = (query: string): APIResponse<SearchedIds> => {
     return this.get(`api/search/tags?query=${query}`);
   };
 }

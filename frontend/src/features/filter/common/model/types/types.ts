@@ -7,6 +7,9 @@ export interface FilterOptions {
   targetType: EntityType;
   tags?: BaseQuery;
   genres?: BaseQuery;
+  fromYearTo?: string[]; // 1980 - 2000 => 1980 year[0], 2000[1]
+  fromGradeTo?: number[];
+  ageRating?: number[];
 }
 
 interface BaseQuery {
@@ -17,10 +20,7 @@ interface BaseQuery {
 export interface FilterState {
   strictMatch: boolean;
   filterOptions: FilterOptions;
-  fromYearTo?: string[]; // 1980 - 2000 => 1980 year[0], 2000[1]
-  fromGradeTo?: number[];
-  ageRating?: number[]; 
-};
+}
 
 export type FilterAction = {
   header: {
