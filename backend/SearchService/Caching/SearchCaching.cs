@@ -50,9 +50,6 @@ public class SearchCaching
         return await _cachingSearchingCollectionAtomic.RemoveAsync(key);
     }
     
-    
-    
-    
     private string MakeSearchingMoviesKey(string query, PaginationQueryDto pagination, MovieSearchRequestDto? searchProps)
     {
         var queryHash = HashUtil.HashSHA256(query);

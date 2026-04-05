@@ -27,10 +27,10 @@ public class SearchController : CustomControllerBase
     
     [HttpPost("collections")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, 
-        [FromQuery] PaginationQueryDto pagination, [FromBody] CollectionSearchRequestDto data)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
+        [FromQuery] string? roomId, [FromBody] CollectionSearchRequestDto data)
     {
-        var response = await _searchService.SearchCollectionAsync(query, data);
+        var response = await _searchService.SearchCollectionAsync(query, pagination, roomId, data);
         return Ok(response);
     }
     
