@@ -1,9 +1,12 @@
+import { Badge } from "@/shared/ui/badge";
+import { Separator } from "@/shared/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import React, { memo, useCallback } from "react";
 import type { IMovie } from "../model/types/types";
-import { Badge } from "@/shared/ui/badge";
-import { Separator } from "@/shared/ui/separator";
+
+// lib
+import { getValidURL } from "@/shared/lib";
 
 interface Props {
   movie: IMovie;
@@ -23,7 +26,7 @@ export const MovieFull: React.FC<Props> = memo(({ movie }) => {
       <article className="flex gap-4 p-2 transition-colors hover:bg-accent/50 rounded-xl">
         <div className="relative flex-shrink-0 w-[100px] aspect-[2/3]">
           <Image
-            src={movie.imageUrl}
+            src={getValidURL(movie.imageUrl)}
             alt={movie.name}
             fill
             className="rounded-lg object-cover max-h-40"

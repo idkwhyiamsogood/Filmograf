@@ -7,6 +7,9 @@ import Image from "next/image";
 
 import { Badge } from "@/shared/ui/badge";
 
+// lib
+import { getValidURL } from "@/shared/lib";
+
 interface Props {
   movie: IMovie;
 }
@@ -20,7 +23,7 @@ export const MovieCover: React.FC<Props> = memo(({ movie }) => {
           style={{ aspectRatio: "2/3" }}
         >
           <Image
-            src={movie.imageUrl}
+            src={getValidURL(movie.imageUrl)}
             alt={movie.name}
             className="rounded-2xl object-cover"
             fill

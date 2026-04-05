@@ -4,6 +4,6 @@ export const getValidURL = (url: string): string => {
     return url;
   } catch (e) {
     console.log(e);
-    return "invalid-url-error"
+    return "";
   }
 };

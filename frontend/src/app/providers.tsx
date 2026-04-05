@@ -44,7 +44,7 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
                     <div className="flex-1 overflow-y-auto">{children}</div>
                     <Navigation />
                   </div>
-                  {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" /> */}
+                  <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" />
                   <ModalRenderer />
                 </TooltipProvider>
               </FilterProvider>

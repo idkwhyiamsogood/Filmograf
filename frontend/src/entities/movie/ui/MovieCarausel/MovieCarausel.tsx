@@ -32,19 +32,19 @@ export const MovieCarousel: React.FC<MovieCarouselProps> = ({
 }) => {
   const MovieComponent = type === "full" ? MovieFull : MovieCover;
 
-  const [width, setWidth] = useState<number>(window.innerWidth);
+  // const [width, setWidth] = useState<number>(window.innerWidth);
 
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
+  // useEffect(() => {
+  //   const handleResize = () => setWidth(window.innerWidth);
 
-    window.addEventListener("resize", handleResize);
+  //   window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
-  const className = useMemo(() => {
-    return width < 380 ? "basis-1/2" : "basis-1/3";
-  }, [width]);
+  // const className = useMemo(() => {
+  //   return width < 380 ? "basis-1/2" : "basis-1/3";
+  // }, [width]);
 
   return (
     <section className="flex flex-col gap-4 py-4 px-2">
@@ -67,12 +67,12 @@ export const MovieCarousel: React.FC<MovieCarouselProps> = ({
         <CarouselContent>
           {isLoading && movies.length === 0
             ? Array.from({ length: 4 }).map((_, idx) => (
-                <CarouselItem key={`skeleton-${idx}`} className={className}>
+                <CarouselItem key={`skeleton-${idx}`} className={"basis-1/3"}>
                   <MovieSkeleton />
                 </CarouselItem>
               ))
             : movies.map((movie) => (
-                <CarouselItem key={movie.id} className={className}>
+                <CarouselItem key={movie.id} className={"basis-1/3"}>
                   <MovieComponent movie={movie} />
                 </CarouselItem>
               ))}

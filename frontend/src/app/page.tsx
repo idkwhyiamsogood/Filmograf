@@ -1,23 +1,12 @@
-"use client";
-
 // types
 import { FC } from "react";
 
 // ui
 import { MoviesSection } from "@/widgets/MovieSection";
 
-// hooks
-import { useAuth, useModals } from "@/shared/hooks";
-import { useEffect } from "react";
+export const dynamicParams = true;
 
 const Page: FC = () => {
-  const { openModal } = useModals();
-  const { token } = useAuth();
-
-  useEffect(() => {
-    !token && openModal("authorization-menu");
-  }, []);
-
   return (
     <div className="flex flex-col gap-1">
       <MoviesSection title="Топ" type="top" viewAllHref="/top" />
