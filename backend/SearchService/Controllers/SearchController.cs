@@ -36,9 +36,10 @@ public class SearchController : CustomControllerBase
     
     [HttpGet("tags")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination)
+    public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
+        [FromQuery] string? roomId)
     {
-        var response = await _searchService.SearchTagAsync(query);
+        var response = await _searchService.SearchTagAsync(query, pagination, roomId);
         return Ok(response);
     }
     
@@ -46,11 +47,8 @@ public class SearchController : CustomControllerBase
     [Authorize]
     public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination)
     {
-        var response = await _searchService.SearchGenreAsync(query);
+        var response = await _searchService.SearchGenreAsync(query, pagination);
         return Ok(response);
     }
     
-    //todo поиск в кеше
-    
-    //todo сокеты
 }

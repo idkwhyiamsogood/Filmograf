@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.SearchService.Caching;
 using Filmograf.SearchService.Hubs;
@@ -104,6 +105,45 @@ public class SearchService
         
         return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = pagedIds };
     }
+    
+    private async Task<SearchPartResponseDto> CreateCacheForSearchTagAsync(string query, PaginationQueryDto pagination)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = Array.Empty<string>() };
+        
+        var tags = await _tagProvider.SearchAllByNameAsync(query);
+        var sortedTags = tags.SortByQuery(query, t => t.Name, t => t.Id.ToString());
+        
+        var pagedIds = sortedTags
+            .Skip(pagination.Page * pagination.Count)
+            .Take(pagination.Count)
+            .ToArray();
+        
+        if (!pagedIds.Any()) return new SearchPartResponseDto();
+
+        
+        return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = pagedIds };
+    }
+    
+    private async Task<SearchPartResponseDto> CreateCacheForSearchGenreAsync(string query, PaginationQueryDto pagination)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = Array.Empty<string>() };
+
+        var genres = await _genreProvider.SearchAllByNameAsync(query);
+        var sortedGenres = genres.SortByQuery(query, t => t.Name, t => t.Id.ToString());
+
+        var pagedIds = sortedGenres
+            .Skip(pagination.Page * pagination.Count)
+            .Take(pagination.Count)
+            .ToArray();
+
+        if (!pagedIds.Any()) return new SearchPartResponseDto();
+
+        return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = pagedIds };
+    }
+    
+    
 
     public async Task<SearchPartResponseDto> SearchFilmAsync(string query, PaginationQueryDto pagination, string? roomId, MovieSearchRequestDto? filters = null)
     {
@@ -121,27 +161,18 @@ public class SearchService
         return await _searchCaching.CachingSearchingCollectionAsync(query, pagination, filters, method);
     }
     
-    public async Task<SearchPartResponseDto> SearchTagAsync(string query)
+    public async Task<SearchPartResponseDto> SearchTagAsync(string query, PaginationQueryDto pagination, string? roomId)
     {
-        if (string.IsNullOrWhiteSpace(query))
-            return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = Array.Empty<string>() };
-        
-        var tags = await _tagProvider.SearchAllByNameAsync(query);
-        var sortedTags = tags.SortByQuery(query, t => t.Name, t => t.Id.ToString());
-        
-        return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = sortedTags };
-    }
-    
-    public async Task<SearchPartResponseDto> SearchGenreAsync(string query)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-            return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = Array.Empty<string>() };
-        
-        var genres = await _genreProvider.SearchAllByNameAsync(query);
-        var sortedGenres = genres.SortByQuery(query, t => t.Name, t => t.Id.ToString());
-        
-        return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = sortedGenres };
+        if (roomId != null) await HandleSearchParsingAsync(query, roomId);
+
+        var method = async () => await CreateCacheForSearchTagAsync(query, pagination);
+        return await _searchCaching.CachingSearchingTagsAsync(query, pagination, method);
     }
 
+    public async Task<SearchPartResponseDto> SearchGenreAsync(string query, PaginationQueryDto pagination)
+    {
+        var method = async () => await CreateCacheForSearchGenreAsync(query, pagination);
+        return await _searchCaching.CachingSearchingGenresAsync(query, pagination, method);
+    }
     
 }
