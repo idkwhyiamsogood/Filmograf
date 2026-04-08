@@ -29,11 +29,14 @@ export const CatalogProvider = ({ children }: { children: ReactNode }) => {
   const [activeType, setActiveType] = useState<EntityType>("Movie");
 
   const { filterState, updateFilterOption } = useFilter();
-  const { data } = useSearch(query, filterState.filterOptions);
 
   useEffect(() => {
     updateFilterOption("targetType", () => activeType);
   }, [activeType, updateFilterOption]);
+
+  const { data, isLoading } = useSearch(query, filterState.filterOptions);
+
+  console.log(data, isLoading)
 
   const value = {
     data,

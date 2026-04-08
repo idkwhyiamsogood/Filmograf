@@ -54,5 +54,6 @@ export const fullNavigation: INavigationMenu = {
       label: "История просмотра",
       url: "/user/history",
     },
+    { id: 8, icon: Package, label: "Избранные подборки", url: "/favorites" },
   ],
 };

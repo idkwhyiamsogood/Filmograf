@@ -2,7 +2,6 @@
 export { collectionApi } from "./model/api/collection.api";
 
 // ui
-export { CollectionCard } from "./ui/Collection";
 export { CollectionCover } from "./ui/CollectionCover";
 export { CollectionSkeleton } from "./ui/CollectionSkeleton";
 export { CollectionWrapper } from "./ui/CollectionWrapper/CollectionWrapper";
@@ -24,3 +23,7 @@ export { useUpdateCollection } from "./model/hooks/useUpdateCollection";
 
 // types
 export type { Collection, CreateCollection } from "./model/types";
+
+
+// mock
+export { MOCK_COLLECTIONS } from "./model/constants/mock-collections";

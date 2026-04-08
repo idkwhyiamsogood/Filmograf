@@ -3,8 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { collecionPinsApi } from "../api/collectionPins.api";
 
 export const useCollectionPins = () => {
-  return useQuery({
+  const response = useQuery({
     queryKey: ["pins"],
     queryFn: () => collecionPinsApi.getMyPins(),
   });
+
+  return {
+    data: response.data?.data || [],
+    isLoading: response.isLoading
+  }
 };

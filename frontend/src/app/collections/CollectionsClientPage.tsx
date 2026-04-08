@@ -15,7 +15,6 @@ interface Props {
 }
 
 
-
 export const CollectionsClientPage: React.FC<Props> = ({ className }) => {
   const [collectionsIds, setCollectionsIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>("");

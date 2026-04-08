@@ -4,6 +4,8 @@ import { searchApi } from "@/features/search/";
 
 import type { FilterOptions } from "@/features/filter";
 
+import { connection } from "../constants/connections";
+
 export const useSearch = (value: string, filterOptions: FilterOptions) => {
   return useQuery({
     queryKey: ["search", filterOptions.targetType, value],
@@ -11,14 +13,18 @@ export const useSearch = (value: string, filterOptions: FilterOptions) => {
       if (!value) return { entityIds: [] };
 
       if (filterOptions.targetType === "Movie") {
-        const response = await searchApi.searchMovies(filterOptions, value);
-        return response.data; 
+        const response = await searchApi.searchMovies(filterOptions, value, connection);
+        return response.data;
       } else {
-        const response = await searchApi.searchCollections(filterOptions, value);
+        const response = await searchApi.searchCollections(
+          filterOptions,
+          value,
+          connection
+        );
         return response.data;
       }
     },
-    placeholderData: keepPreviousData, 
+    placeholderData: keepPreviousData,
     enabled: value.length > 0,
   });
 };

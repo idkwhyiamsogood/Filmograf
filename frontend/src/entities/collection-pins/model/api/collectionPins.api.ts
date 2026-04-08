@@ -2,7 +2,7 @@ import { BaseHttpClient } from "@/shared/lib";
 import { APIResponse } from "@/shared/types/api";
 
 class CollecionPinsApi extends BaseHttpClient {
-  public getMyPins = async (): APIResponse<number[]> => {
+  public getMyPins = async (): APIResponse<string[]> => {
     return this.get("api/collections/pins/my");
   };
 

@@ -3,7 +3,7 @@ import { collecionPinsApi } from "../api/collectionPins.api";
 
 import { toast } from "sonner";
 
-export const useCollectionUnpin = () => {
+export const useUnpinCollection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

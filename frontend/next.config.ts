@@ -9,7 +9,13 @@ const nextConfig: NextConfig = {
         hostname: "m.media-amazon.com",
         port: "",
         pathname: "/**",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "image.tmdb.org",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
