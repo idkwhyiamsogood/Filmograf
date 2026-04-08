@@ -10,10 +10,17 @@ namespace Filmograf.SearchService.Controllers;
 [Route("api/search")]
 public class SearchController : CustomControllerBase
 {
-    private readonly  Services.SearchService _searchService;
-    public SearchController(Services.SearchService searchService)
+    private readonly  Services.SearchMovieService _searchMovieService;
+    private readonly  Services.SearchCollectionService _searchCollectionService;
+    private readonly  Services.SearchTagService _searchTagService;
+    private readonly  Services.SearchGenreService _searchGenreService;
+    public SearchController(Services.SearchMovieService searchMovieService, Services.SearchCollectionService searchCollectionService, 
+        Services.SearchTagService searchTagService,Services.SearchGenreService searchGenreService)
     {
-        _searchService = searchService;
+        _searchMovieService = searchMovieService;
+        _searchCollectionService = searchCollectionService;
+        _searchTagService = searchTagService;
+        _searchGenreService = searchGenreService;
     }
 
     [HttpPost("movies")]
@@ -21,7 +28,7 @@ public class SearchController : CustomControllerBase
     public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId, [FromBody] MovieSearchRequestDto? data)
     {
-        var response = await _searchService.SearchFilmAsync(query, pagination, roomId,data);
+        var response = await _searchMovieService.SearchFilmAsync(query, pagination, roomId,data);
         return Ok(response);
     }
     
@@ -30,7 +37,7 @@ public class SearchController : CustomControllerBase
     public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId, [FromBody] CollectionSearchRequestDto data)
     {
-        var response = await _searchService.SearchCollectionAsync(query, pagination, roomId, data);
+        var response = await _searchCollectionService.SearchCollectionAsync(query, pagination, roomId, data);
         return Ok(response);
     }
     
@@ -39,7 +46,7 @@ public class SearchController : CustomControllerBase
     public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId)
     {
-        var response = await _searchService.SearchTagAsync(query, pagination, roomId);
+        var response = await _searchTagService.SearchTagAsync(query, pagination, roomId);
         return Ok(response);
     }
     
@@ -47,7 +54,7 @@ public class SearchController : CustomControllerBase
     [Authorize]
     public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination)
     {
-        var response = await _searchService.SearchGenreAsync(query, pagination);
+        var response = await _searchGenreService.SearchGenreAsync(query, pagination);
         return Ok(response);
     }
     

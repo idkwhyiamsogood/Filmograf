@@ -180,7 +180,10 @@ public class Program
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<Services.SearchService>();
+        builder.Services.AddScoped<Services.SearchMovieService>();
+        builder.Services.AddScoped<Services.SearchCollectionService>();
+        builder.Services.AddScoped<Services.SearchTagService>();
+        builder.Services.AddScoped<Services.SearchGenreService>();
         builder.Services.AddScoped<SearchParsingReceiverService>();
         builder.Services.AddScoped<SearchParsingService>();
         

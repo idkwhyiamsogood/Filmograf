@@ -65,7 +65,7 @@ public class MovieRepository : RepositoryBase<MovieRepo>
     }
     
     public async Task<List<MovieRepo>> GetByNameWithFiltersAsync(string name, IEnumerable<Guid>? includeGenreIds, IEnumerable<Guid>? excludeGenreIds,
-        bool strictMatch, CancellationToken ct = default)
+        bool strictMatch, string[]? fromYearTo = null, float[]? fromGradeTo = null, int[]? ageRating = null, CancellationToken ct = default)
     {
         var escapedName = Regex.Escape(name);
         var filters = new List<FilterDefinition<MovieRepo>>
@@ -84,6 +84,28 @@ public class MovieRepository : RepositoryBase<MovieRepo>
         {
             filters.Add(Builders<MovieRepo>.Filter.Not(
                 Builders<MovieRepo>.Filter.AnyIn(x => x.GenreIds, excludeGenreIds)));
+        }
+        if (fromYearTo?.Length == 2)
+        {
+            filters.Add(Builders<MovieRepo>.Filter.Gte(x => x.Year, fromYearTo[0]));
+            filters.Add(Builders<MovieRepo>.Filter.Lte(x => x.Year, fromYearTo[1]));
+        }
+        
+        if (fromGradeTo?.Length == 2)
+        {
+            var gradeFrom = fromGradeTo[0];
+            var gradeTo = fromGradeTo[1];
+        
+            filters.Add(Builders<MovieRepo>.Filter.Or(
+                Builders<MovieRepo>.Filter.And(
+                    Builders<MovieRepo>.Filter.Gte(x => x.RateIMDb, gradeFrom),
+                    Builders<MovieRepo>.Filter.Lte(x => x.RateIMDb, gradeTo))
+            ));
+        }
+        
+        if (ageRating?.Any() == true)
+        {
+            filters.Add(Builders<MovieRepo>.Filter.In(x => x.AgeLimit, ageRating));
         }
 
         return await _collection.Find(Builders<MovieRepo>.Filter.And(filters)).ToListAsync(ct);
