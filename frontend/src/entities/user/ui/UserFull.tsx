@@ -2,7 +2,7 @@ import React from "react";
 
 import { getDaysFromReg } from "@/shared/lib";
 
-import type { IUser } from "../model/types";
+import type { IUser, UserLight } from "../model/types";
 import { UserLogo } from "./UserLogo";
 
 import { TemporaryUserFull } from "./TemporaryUserFull";
@@ -27,7 +27,7 @@ export const UserFull: React.FC<Props> = ({ user, isComment = true, openModal })
         )}
       </div>
 
-      <UserLogo logo={user.avatarURL} />
+      <UserLogo logo={user.avatarUrl} />
     </div>
   );
 };

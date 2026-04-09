@@ -10,7 +10,7 @@ import { Input } from "@/shared/ui/input";
 
 // hooks
 import { useState, useEffect } from "react";
-import useDebounce from "react-use/esm/useDebounce";
+import { useDebounce } from "react-use";
 
 interface Props {
   onSearch: (value: string) => void;

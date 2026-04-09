@@ -7,7 +7,7 @@ export interface IUser extends BaseModel {
   email: string;
   googleId: string;
   name: string;
-  avatarURL: string;
+  avatarUrl: string;
 }
 
 export interface UserLight {

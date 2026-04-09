@@ -15,6 +15,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     isCopiable: true,
     isByFilmograf: false,
     isDeleted: false,
+    moviePreviews: [],
   },
   {
     id: '2',
@@ -30,6 +31,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     isCopiable: false,
     isByFilmograf: true,
     isDeleted: false,
+    moviePreviews: [],
   },
   {
     id: '3',
@@ -45,6 +47,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     isCopiable: true,
     isByFilmograf: false,
     isDeleted: false,
+    moviePreviews: [],
   },
   {
     id: '4',
@@ -60,6 +63,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     isCopiable: true,
     isByFilmograf: false,
     isDeleted: false,
+    moviePreviews: [],
   },
   {
     id: '5',
@@ -75,6 +79,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     isCopiable: false,
     isByFilmograf: true,
     isDeleted: false,
+    moviePreviews: [],
   },
   {
     id: '6',
@@ -89,6 +94,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     isCommentable: false,
     isCopiable: false,
     isByFilmograf: false,
-    isDeleted: true, // Эта коллекция удалена
+    isDeleted: true, 
+    moviePreviews: [],
   },
 ];

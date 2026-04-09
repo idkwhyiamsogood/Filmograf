@@ -20,6 +20,7 @@ export { useCollections } from "./model/hooks/useCollections";
 export { useCreateCollection } from "./model/hooks/useCreateCollection";
 export { useDeleteCollection } from "./model/hooks/useDeleteCollection";
 export { useUpdateCollection } from "./model/hooks/useUpdateCollection";
+export { useCopyCollection } from "./model/hooks/useCopyCollection";
 
 // types
 export type { Collection, CreateCollection } from "./model/types";

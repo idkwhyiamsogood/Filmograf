@@ -1,3 +1,5 @@
+"use client";
+
 // types
 import type { EntityType } from "@/shared/types";
 import { memo, type FC } from "react";

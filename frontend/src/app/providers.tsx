@@ -17,6 +17,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "@/shared/ui/sonner";
 
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -44,7 +45,8 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
                     <div className="flex-1 overflow-y-auto">{children}</div>
                     <Navigation />
                   </div>
-                  <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" />
+                  <Toaster position="top-center" />
+                  {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" /> */}
                   <ModalRenderer />
                 </TooltipProvider>
               </FilterProvider>

@@ -7,14 +7,17 @@ export const useUnpinCollection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: collecionPinsApi.unpinCollection,
-    onSuccess: (_, id) => {
-      queryClient.setQueryData(["pins"], (oldData: string[]) =>
-        oldData.filter((pin) => pin !== id),
-      );
+    mutationFn: async (id: string) =>
+      await collecionPinsApi.unpinCollection(id),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["pins"], () => data);
+      toast.success("Успешно удалено.");
     },
     onError: () => {
       toast.error("При удаления коллекции из избраного произошла ошибка");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["pins"] });
     },
   });
 };

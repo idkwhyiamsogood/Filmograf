@@ -1,1 +1,1 @@
-export {  } from "./ui/CollectionDetails"
+export { CollectionDetails } from "./ui/CollectionDetails";

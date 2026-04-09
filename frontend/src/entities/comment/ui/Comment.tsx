@@ -59,7 +59,7 @@ export const Comment: FC<Props> = ({
       >
         <div className="flex flex-col gap-1 items-center">
           <Avatar className="size-10 flex-shrink-0">
-            <AvatarImage src={user.avatarURL} alt={user.name} />
+            <AvatarImage src={user.avatarUrl} alt={user.name} />
             <AvatarFallback>
               {user.name.slice(0, 2).toUpperCase()}
             </AvatarFallback>

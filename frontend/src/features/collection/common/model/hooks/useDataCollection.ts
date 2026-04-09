@@ -4,19 +4,19 @@
 import { useState, useCallback } from "react";
 
 // types
-import { Tag } from "@/entities/collection-tags";
+import { TagType } from "@/entities/collection-tags";
 
 interface ReturnedProps {
-  tagState: Tag[];
-  addTag: (tag: Tag) => void;
+  tagState: TagType[];
+  addTag: (tag: TagType) => void;
   removeTag: (tagId: string) => void;
   clearTags: () => void;
 }
 
 export const useTagCollector = (): ReturnedProps => {
-  const [tagState, setTagState] = useState<Tag[]>([]);
+  const [tagState, setTagState] = useState<TagType[]>([]);
 
-  const addTag = useCallback((tag: Tag) => {
+  const addTag = useCallback((tag: TagType) => {
     return setTagState((prev) => [...prev, tag]);
   }, []);
 

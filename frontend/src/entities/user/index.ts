@@ -11,3 +11,6 @@ export { userApi } from "./model/api/user.api";
 
 export { UserProvider } from "./model/context/user.context";
 export { useUser } from "./model/hooks/useUser";
+
+// constants
+export { USER_MOCK, USER_MOCK_LIGHT } from "./model/constants/mock-user"

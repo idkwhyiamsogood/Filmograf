@@ -9,7 +9,7 @@ export const useCollectionPins = () => {
   });
 
   return {
-    data: response.data?.data || [],
+    data: response.data?.data.collectionIds || [],
     isLoading: response.isLoading
   }
 };

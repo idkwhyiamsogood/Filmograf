@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FC, useMemo } from "react";
-import useDebounce from "react-use/esm/useDebounce";
+import { useDebounce } from "react-use";
 import { useInfinityTags, useTagsSearch } from "@/entities/collection-tags";
 import { CommonSearchSelector, type SearchItem } from "@/shared/components";
 import { CommandEmpty } from "./CommandEmpty";

@@ -9,11 +9,12 @@ interface Props {
   onClick?: () => void;
 }
 
-const TMDB_IMAGE_BASE =
-  "https://m.media-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1_.jpg";
+// const TMDB_IMAGE_BASE =
+//   "https://m.media-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1_.jpg";
 
 export const CollectionCover: React.FC<Props> = ({ collection, onClick }) => {
-  const hasPosters = collection.movies.length > 0;
+  const hasPosters = collection.moviePreviews.length === 3;
+  const posters = collection.moviePreviews
 
   return (
     <Link
@@ -38,7 +39,7 @@ export const CollectionCover: React.FC<Props> = ({ collection, onClick }) => {
                 >
                   <div className="relative h-full w-full">
                     <Image
-                      src={TMDB_IMAGE_BASE}
+                      src={posters[0]}
                       alt="poster 3"
                       fill
                       className="rounded-lg object-cover shadow-md brightness-90"
@@ -54,7 +55,7 @@ export const CollectionCover: React.FC<Props> = ({ collection, onClick }) => {
                 >
                   <div className="relative h-full w-full">
                     <Image
-                      src={TMDB_IMAGE_BASE}
+                      src={posters[1]}
                       alt="poster 2"
                       fill
                       className="rounded-lg object-cover shadow-md brightness-95"
@@ -70,7 +71,7 @@ export const CollectionCover: React.FC<Props> = ({ collection, onClick }) => {
                 >
                   <div className="relative h-full w-full">
                     <Image
-                      src={TMDB_IMAGE_BASE}
+                      src={posters[2]}
                       alt="poster 1"
                       fill
                       className="rounded-lg object-cover shadow-2xl"

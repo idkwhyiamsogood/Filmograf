@@ -8,14 +8,9 @@ import {
   EditCollectionButton,
 } from "@/widgets/collection-editor";
 import { CollectionSelector } from "@/widgets/collection-selector";
+import { LoadingSplashScreen } from "@/shared/components";
 
-
-interface Props {
-  className?: string;
-}
-
-
-export const CollectionsClientPage: React.FC<Props> = ({ className }) => {
+export const FavoriteClientPage: React.FC = () => {
   const [collectionsIds, setCollectionsIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>("");
 
@@ -35,20 +30,24 @@ export const CollectionsClientPage: React.FC<Props> = ({ className }) => {
     getMy();
   }, []);
 
-  const { data: collections } = useCollections(collectionsIds);
+  const { data: collections, isLoading } = useCollections(collectionsIds);
 
   return (
-    <div className={className}>
+    <div className={"flex flex-col gap-1.25"}>
       <h1 className="text-foreground text-xl font-semibold">Коллекции</h1>
-      <CollectionSelector
-        collections={collections || []}
-        onClick={setSelected}
-      />
       <div className="flex gap-2.5 w-full">
         <CreateCollectionButton />
         <EditCollectionButton collectionId={selected} />
       </div>
+
+      {isLoading ? (
+        <LoadingSplashScreen />
+      ) : (
+        <CollectionSelector
+          collections={collections || []}
+          onClick={setSelected}
+        />
+      )}
     </div>
   );
 };
-

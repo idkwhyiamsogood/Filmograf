@@ -8,7 +8,7 @@ class UserApi extends BaseHttpClient {
   };
 
   public getUser = async (userId: string): APIResponse<UserLight> => {
-    return this.get(`api/users/${userId}`);
+    return this.get(`/api/users/${userId}`);
   };
 }
 

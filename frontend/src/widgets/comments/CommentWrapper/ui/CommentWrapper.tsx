@@ -42,46 +42,48 @@ export const CommentWrapper: React.FC = () => {
   if (!parentComments) return null;
 
   return (
-    <ScrollArea className="max-w-full px-2.5">
-      <div className="pb-5">
-        <CommentEditor entity={entity} />
-      </div>
+    <div className="w-full">
+      <ScrollArea className="max-w-full w-full px-2.5 h-screen">
+        <div className="pb-5">
+          <CommentEditor entity={entity} />
+        </div>
 
-      <CommentList
-        comments={parentComments}
-        getUser={(userId: string) => {
-          return {
-            avatarURL: "",
-            name: "",
-            userType: "Member",
-            email: "",
-            googleId: "",
-            createDate: new Date(),
-            updateDate: new Date(),
-            id: "",
-          };
-        }}
-        onDislike={dislikeComment}
-        onLike={likeComment}
-        resetReaction={resetReaction}
-        onReply={(commentId) =>
-          setActiveReplyId((prev) => (prev === commentId ? null : commentId))
-        }
-        renderReplyEditor={(commentId) => {
-          return activeReplyId === commentId ? (
-            <div className="mt-2">
-              <CommentEditor
-                entity={entity}
-                parentCommentId={commentId}
-                onClose={() => setActiveReplyId(null)}
-              />
-            </div>
-          ) : null;
-        }}
-        updateWithChilds={updateWithChilds}
-      />
+        <CommentList
+          comments={parentComments}
+          getUser={(userId: string) => {
+            return {
+              avatarUrl: "",
+              name: "",
+              userType: "Member",
+              email: "",
+              googleId: "",
+              createDate: new Date(),
+              updateDate: new Date(),
+              id: "",
+            };
+          }}
+          onDislike={dislikeComment}
+          onLike={likeComment}
+          resetReaction={resetReaction}
+          onReply={(commentId) =>
+            setActiveReplyId((prev) => (prev === commentId ? null : commentId))
+          }
+          renderReplyEditor={(commentId) => {
+            return activeReplyId === commentId ? (
+              <div className="mt-2">
+                <CommentEditor
+                  entity={entity}
+                  parentCommentId={commentId}
+                  onClose={() => setActiveReplyId(null)}
+                />
+              </div>
+            ) : null;
+          }}
+          updateWithChilds={updateWithChilds}
+        />
 
-      <ScrollBar orientation="vertical" />
-    </ScrollArea>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
+    </div>
   );
 };

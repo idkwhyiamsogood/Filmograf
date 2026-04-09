@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { collecionTagsApi } from "@/entities/collection-tags";
-import type { Tag } from "@/entities/collection-tags";
+import type { TagType } from "@/entities/collection-tags";
 import { toast } from "sonner";
 
 export const useCreateTag = () => {
@@ -15,7 +15,7 @@ export const useCreateTag = () => {
       await queryClient.cancelQueries({ queryKey: listQueryKey });
       const previousTags = queryClient.getQueryData(listQueryKey);
 
-      const tempTag: Tag = {
+      const tempTag: TagType = {
         id: `temp-${Date.now()}`,
         name: newTagData.name,
         createData: new Date().toISOString(),
@@ -45,7 +45,7 @@ export const useCreateTag = () => {
             ...oldData,
             pages: oldData.pages.map((page: any) => ({
               ...page,
-              data: page.data.map((t: Tag) => 
+              data: page.data.map((t: TagType) => 
                 t.id === context?.tempTag.id ? serverTag : t
               ),
             })),
@@ -53,7 +53,7 @@ export const useCreateTag = () => {
         }
         
         return Array.isArray(oldData) 
-          ? oldData.map((t: Tag) => (t.id === context?.tempTag.id ? serverTag : t))
+          ? oldData.map((t: TagType) => (t.id === context?.tempTag.id ? serverTag : t))
           : oldData;
       });
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { Input } from "@/shared/ui/input";
-import useDebounce from "react-use/esm/useDebounce";
+import { useDebounce } from "react-use";
 
 interface Props {
   placeholder: string;

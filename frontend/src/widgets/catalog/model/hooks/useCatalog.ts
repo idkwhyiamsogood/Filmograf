@@ -1,3 +1,5 @@
+"use client";
+
 // ui
 import { CatalogContext } from "../context/catalog.context";
 

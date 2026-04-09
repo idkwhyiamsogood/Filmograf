@@ -42,7 +42,7 @@ class CollecionApi extends BaseHttpClient {
   };
 
   public copyCollection = async (id: string): APIResponse<Collection> => {
-    return this.post(`/api/collections/${id}/copy`);
+    return this.post(`/api/collections/${id}/copy`, {});
   };
 
   public addMovieToCollection = async (

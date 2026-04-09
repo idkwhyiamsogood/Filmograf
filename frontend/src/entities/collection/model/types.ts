@@ -5,6 +5,7 @@ export interface Collection extends BaseModel {
   sourceCollectionId: string;
   userId: string;
   movies: string[];
+  moviePreviews: string[];
   tags: string[];
   isPublic: boolean;
   isCommentable: boolean;

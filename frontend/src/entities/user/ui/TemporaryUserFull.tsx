@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const TemporaryUserFull: React.FC<Props> = ({ user, onClick }) => {
-  const validURL = getValidURL(user.avatarURL);
+  const validURL = getValidURL(user.avatarUrl);
 
   return (
     <div
