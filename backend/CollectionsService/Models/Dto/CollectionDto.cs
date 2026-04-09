@@ -18,6 +18,7 @@ public class CollectionResponseDto
     
     public string[] Movies { get; set; }
     public Guid[] Tags { get; set; }
+    public string[] MoviePreviews { get; set; }
     
     public bool IsPublic { get; set; } = false;
     public bool IsCommentable { get; set; } = false;

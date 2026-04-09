@@ -20,6 +20,15 @@ public abstract class RepositoryBase<TBase> where TBase : RepoBase
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
     
+    public async Task<IReadOnlyList<TBase>> GetByIdsAsync(IEnumerable<string> ids)
+    {
+        if (ids == null || !ids.Any()) return new List<TBase>();
+        var objectIds = ids.Select(id => ObjectId.Parse(id)).ToList();
+        
+        var filter = Builders<TBase>.Filter.In("_id", objectIds);
+        return await _collection.Find(filter).ToListAsync();
+    }
+    
     public async Task<IReadOnlyList<TBase>> GetAllAsync()
     {
         return await _collection.Find(_ => true).ToListAsync();

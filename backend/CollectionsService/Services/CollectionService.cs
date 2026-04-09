@@ -16,14 +16,16 @@ public class CollectionService
     private readonly CollectionsCaching _collectionsCaching;
     private readonly IMapper _mapper;
     private readonly ClickEntityService _clickEntityService;
+    private readonly MovieRepository _movieRepository;
 
     public CollectionService(CollectionRepository collectionRepository, CollectionsCaching collectionsCaching,
-        IMapper mapper, ClickEntityService clickEntityService)
+        IMapper mapper, ClickEntityService clickEntityService, MovieRepository movieRepository)
     {
         _collectionRepository = collectionRepository;
         _collectionsCaching = collectionsCaching;
         _mapper = mapper;
         _clickEntityService = clickEntityService;
+        _movieRepository = movieRepository;
     }
 
     private async Task<CollectionResponseDto> CreateCacheForCollectionAsync(string id)
@@ -31,7 +33,15 @@ public class CollectionService
         var collection = await _collectionRepository.GetByIdAsync(id);
         if (collection == null) throw new NotFoundHttpException("CollectionNorFound");
 
-        return _mapper.Map<CollectionResponseDto>(collection);
+        var dto = _mapper.Map<CollectionResponseDto>(collection);
+        
+        var partMovies = await _movieRepository.GetByIdsAsync(collection.Movies.Take(3));
+        dto.MoviePreviews = partMovies
+            .Where(i => i.ImageUrl != null || i.PreviewImageUrl != null)
+            .Select(i => (i.ImageUrl ?? i.PreviewImageUrl)!)
+            .ToArray();
+
+        return dto;
     }
 
     private void CheckPersonalAccess(CollectionRepo collection, User gettingBy)

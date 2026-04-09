@@ -37,10 +37,10 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
         
         // Add AutoMapper
         builder.Services.AddAutoMapper(_ => { }, typeof(Program).Assembly);
+        builder.Services.AddSwaggerGen();
         
         SettingUpSwagger(builder);
         SettingUpCors(builder);
@@ -116,7 +116,9 @@ public class Program
             options.AddPolicy("AllowFrontend",
                 policy => 
                 {
-                    policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
+                    policy.WithOrigins(
+                            AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin.Split(";")
+                        )
                         .AllowAnyHeader()
                         .AllowAnyMethod().AllowCredentials();
                 });
@@ -187,6 +189,11 @@ public class Program
         builder.Services.AddScoped<CollectionsChartService>();
         builder.Services.AddScoped<CollectionTopPicksService>();
         builder.Services.AddScoped<TopPicksService>();
+        builder.Services.AddScoped<MissionPlannerService>();
+        builder.Services.AddScoped<TopPicksRepository>();
+        builder.Services.AddScoped<MissionPlannerCache>();
+        builder.Services.AddScoped<TopPickCaching>();
+        builder.Services.AddScoped<CollectionPinService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();

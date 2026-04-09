@@ -32,7 +32,7 @@ public class AuthController : CustomControllerBase
     }
     
     [HttpGet("google")]
-    public IActionResult GoogleLogin()
+    public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
     {
         // путь к методу, который продолжит авторизацию (перекидываем на 2ой этап)
         var redirectUrl = Url.Action(nameof(GoogleResponse), "Auth", null, Request.Scheme);
@@ -40,6 +40,9 @@ public class AuthController : CustomControllerBase
 
         var properties = new AuthenticationProperties
         { RedirectUri = redirectUrl };
+        
+        var origin = returnUrl ?? Request.Headers[HeaderNames.Referer].ToString();
+        properties.Items.Add("returnUrl", origin);
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
@@ -62,6 +65,11 @@ public class AuthController : CustomControllerBase
         var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        
+        if (!result.Properties.Items.TryGetValue("returnUrl", out var frontendOrigin) || string.IsNullOrEmpty(frontendOrigin))
+        {
+            frontendOrigin = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin.Split(";")[0];
+        }
 
         var idempotence = await _googleO2AuthService.ProcessingGoogleResponseAsync(result, userAgent, ip);
             
@@ -69,8 +77,7 @@ public class AuthController : CustomControllerBase
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             
         // Редиректим на фронт с idempotence кодом
-        var frontendUrl = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin;
-        return Redirect($"{frontendUrl}/auth-success?idempotence={idempotence}");
+        return Redirect($"{frontendOrigin}/auth-success?idempotence={idempotence}");
     }
 
     [HttpPost("verify-idempotence-code")]
