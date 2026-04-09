@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.SearchService.Caching;
 using Filmograf.SearchService.Hubs;
@@ -70,16 +71,7 @@ public class SearchService
         
         return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = pagedIds };
     }
-    
-    public async Task<SearchPartResponseDto> SearchFilmAsync(string query, PaginationQueryDto pagination, string? roomId, MovieSearchRequestDto? filters = null)
-    {
-        if (roomId != null) await HandleSearchParsingAsync(query, roomId);
-        
-        var method = async () => await CreateCacheForSearchFilmAsync(query, pagination, filters);
-        return await _searchCaching.CachingSearchingMoviesAsync(query, pagination, filters, method);
-    }
-    
-    public async Task<SearchPartResponseDto> SearchCollectionAsync(string query, CollectionSearchRequestDto? filters = null)
+    private async Task<SearchPartResponseDto> CreateCacheForSearchCollectionAsync(string query, PaginationQueryDto pagination, CollectionSearchRequestDto? filters = null)
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = Array.Empty<string>() };
@@ -102,10 +94,19 @@ public class SearchService
         }
 
         var sortedCollections = collections.SortByQuery(query, m => m.Name, m => m.Id);
-        return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = sortedCollections };
+        
+        var pagedIds = sortedCollections
+            .Skip(pagination.Page * pagination.Count)
+            .Take(pagination.Count)
+            .ToArray();
+        
+        if (!pagedIds.Any()) return new SearchPartResponseDto();
+
+        
+        return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = pagedIds };
     }
     
-    public async Task<SearchPartResponseDto> SearchTagAsync(string query)
+    private async Task<SearchPartResponseDto> CreateCacheForSearchTagAsync(string query, PaginationQueryDto pagination)
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = Array.Empty<string>() };
@@ -113,19 +114,65 @@ public class SearchService
         var tags = await _tagProvider.SearchAllByNameAsync(query);
         var sortedTags = tags.SortByQuery(query, t => t.Name, t => t.Id.ToString());
         
-        return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = sortedTags };
+        var pagedIds = sortedTags
+            .Skip(pagination.Page * pagination.Count)
+            .Take(pagination.Count)
+            .ToArray();
+        
+        if (!pagedIds.Any()) return new SearchPartResponseDto();
+
+        
+        return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = pagedIds };
     }
     
-    public async Task<SearchPartResponseDto> SearchGenreAsync(string query)
+    private async Task<SearchPartResponseDto> CreateCacheForSearchGenreAsync(string query, PaginationQueryDto pagination)
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = Array.Empty<string>() };
-        
+
         var genres = await _genreProvider.SearchAllByNameAsync(query);
         var sortedGenres = genres.SortByQuery(query, t => t.Name, t => t.Id.ToString());
+
+        var pagedIds = sortedGenres
+            .Skip(pagination.Page * pagination.Count)
+            .Take(pagination.Count)
+            .ToArray();
+
+        if (!pagedIds.Any()) return new SearchPartResponseDto();
+
+        return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = pagedIds };
+    }
+    
+    
+
+    public async Task<SearchPartResponseDto> SearchFilmAsync(string query, PaginationQueryDto pagination, string? roomId, MovieSearchRequestDto? filters = null)
+    {
+        if (roomId != null) await HandleSearchParsingAsync(query, roomId);
         
-        return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = sortedGenres };
+        var method = async () => await CreateCacheForSearchFilmAsync(query, pagination, filters);
+        return await _searchCaching.CachingSearchingMoviesAsync(query, pagination, filters, method);
+    }
+    
+    public async Task<SearchPartResponseDto> SearchCollectionAsync(string query, PaginationQueryDto pagination, string? roomId, CollectionSearchRequestDto? filters = null)
+    {
+        if (roomId != null) await HandleSearchParsingAsync(query, roomId);
+        
+        var method = async () => await CreateCacheForSearchCollectionAsync(query, pagination, filters);
+        return await _searchCaching.CachingSearchingCollectionAsync(query, pagination, filters, method);
+    }
+    
+    public async Task<SearchPartResponseDto> SearchTagAsync(string query, PaginationQueryDto pagination, string? roomId)
+    {
+        if (roomId != null) await HandleSearchParsingAsync(query, roomId);
+
+        var method = async () => await CreateCacheForSearchTagAsync(query, pagination);
+        return await _searchCaching.CachingSearchingTagsAsync(query, pagination, method);
     }
 
+    public async Task<SearchPartResponseDto> SearchGenreAsync(string query, PaginationQueryDto pagination)
+    {
+        var method = async () => await CreateCacheForSearchGenreAsync(query, pagination);
+        return await _searchCaching.CachingSearchingGenresAsync(query, pagination, method);
+    }
     
 }
