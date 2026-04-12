@@ -69,6 +69,7 @@ public class MoviesParserService
         await _rabbitMqService.SendNoReplyAsync("parse_one_details", "movies_to_parser", request);
     }
 
+    // todo: костыть ебанутый, в проде убрать и забыть как страшный сон ибо это пиздец ребзеее
     public async Task<int> FixParsingBugsAsync()
     {
         var count = 0;

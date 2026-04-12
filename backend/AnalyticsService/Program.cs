@@ -130,6 +130,7 @@ public class Program
         builder.Services.AddScoped<CollectionsPersonalizedService>();
         builder.Services.AddScoped<CollectionViewsCountingService>();
         builder.Services.AddScoped<MovieViewsCountingService>();
+        builder.Services.AddScoped<MissionPlannerService>();
         
         // providers
         // ...
@@ -148,5 +149,6 @@ public class Program
         builder.Services.AddScoped<MoviesCaching>();
         builder.Services.AddScoped<CollectionsCaching>();
         builder.Services.AddScoped<TopPickCaching>();
+        builder.Services.AddScoped<MissionPlannerCache>();
     }
 }
