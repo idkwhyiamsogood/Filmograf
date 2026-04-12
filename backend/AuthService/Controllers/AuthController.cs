@@ -5,7 +5,7 @@ using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Models.Dto;
 using Filmograf.MoviesService.Services;
-
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -128,5 +128,38 @@ public class AuthController : CustomControllerBase
         {
             IsAuthenticated = true
         });
+    }
+    
+    [HttpPost("google-native")]
+    public async Task<ActionResult<AuthResponseDto>> GoogleNativeLoginAsync([FromBody] GoogleNativeTokenDto data)
+    {
+        var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        try
+        {
+            // Настройки валидации (сюда нужно передать ClientId из Google Console, который ты делал для Android/iOS)
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>
+                {
+                    AppSettingsUtil.AppSettings.GoogleO2AuthSettings.AndroidClientId,
+                    AppSettingsUtil.AppSettings.GoogleO2AuthSettings.ClientId,
+                }
+            };
+
+            // валидируем токен, который прислала мобилка. 
+            // если токен фейковый или протух, метод выкинет Exception.
+            var payload = await GoogleJsonWebSignature.ValidateAsync(data.IdToken, settings);
+
+            // Здесь мы получили данные юзера (payload.Email, payload.Name, payload.Subject - это GoogleId)
+            var jwt = await _googleO2AuthService.ProcessNativeGoogleUserAsync(payload, userAgent, ip);
+
+            return Ok(new AuthResponseDto { Jwt = jwt });
+        }
+        catch (InvalidJwtException)
+        {
+            return Unauthorized("Invalid Google Token");
+        }
     }
 }
