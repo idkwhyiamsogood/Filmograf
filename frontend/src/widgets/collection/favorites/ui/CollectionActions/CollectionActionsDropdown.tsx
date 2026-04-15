@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Collection } from "@/entities/collection";
+import { Collection, CreateCollection } from "@/entities/collection";
 import { Button } from "@/shared/ui/button";
 import {
   DropdownMenu,
@@ -11,12 +11,15 @@ import {
 import { EllipsisVertical } from "lucide-react";
 
 import { useCopyCollection } from "@/entities/collection";
+import { usePinCollection } from "@/entities/collection-pins";
 import { useUnpinCollection } from "@/entities/collection-pins";
+import { useCollectionPins } from "@/entities/collection-pins";
+import { LoadingSplashScreen } from "@/shared/components";
 
 interface Props {
   userId: string;
   collection: Collection;
-}
+};
 
 export const CollectionActionsDropdown: React.FC<Props> = ({
   collection,
@@ -25,24 +28,50 @@ export const CollectionActionsDropdown: React.FC<Props> = ({
   const isCopiable = collection.userId !== userId && collection.isCopiable;
   const router = useRouter();
 
+  const { data: pinned, isLoading } = useCollectionPins();
+
   const { mutate: copyCollection, isSuccess: isCopySuccess } =
     useCopyCollection();
   const { mutate: unpinCollection, isSuccess: isUnpinSuccess } =
     useUnpinCollection();
+  const { mutate: pinCollection, isSuccess: isPinSuccess } = usePinCollection();
+
+  const copyToCollection: CreateCollection = {
+    name: collection.name + "( Копия)",
+    tags: collection.tags,
+    isPublic: collection.isPublic,
+    isCommentable: collection.isCommentable,
+    isCopiable: collection.isCopiable,
+  };
+
+  const copyData = {
+    id: collection.id,
+    data: copyToCollection,
+  };
+
+  const currentState = pinned.find((pin) => pin === collection.id)
+    ? true
+    : false;
 
   const handleCopy = () => {
-    copyCollection(collection.id);
+    copyCollection(copyData);
   };
 
   const handleUnpin = () => {
     unpinCollection(collection.id);
   };
 
+  const handlePin = () => {
+    pinCollection(collection.id);
+  };
+
   useEffect(() => {
-    if (isCopySuccess || isUnpinSuccess) {
+    if (isCopySuccess || isUnpinSuccess || isPinSuccess) {
       router.push("/favorites");
     }
   }, [isCopySuccess, isUnpinSuccess, router]);
+
+  if (isLoading) return <LoadingSplashScreen />;
 
   return (
     <DropdownMenu>
@@ -60,12 +89,16 @@ export const CollectionActionsDropdown: React.FC<Props> = ({
             Скопировать подборку
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onClick={handleCopy}>
-          Скопировать подборку
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleUnpin}>
-          Удалить подборку
-        </DropdownMenuItem>
+
+        {currentState ? (
+          <DropdownMenuItem onClick={handleUnpin}>
+            Удалить из избранного
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem onClick={handlePin}>
+            Добавить в избранные
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

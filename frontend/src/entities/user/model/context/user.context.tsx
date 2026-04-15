@@ -4,14 +4,13 @@ import {
   createContext,
   useCallback,
   useEffect,
-  useMemo,
   useState,
-  type ReactNode,
+  type ReactNode
 } from "react";
 
-import type { IUser } from "../types";
-import { userApi } from "../api/user.api";
 import { authApi } from "@/shared/lib";
+import { userApi } from "../api/user.api";
+import type { IUser } from "../types";
 
 import { useAuth } from "@/shared/hooks";
 
@@ -43,7 +42,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       else return;
     } catch (e) {
       console.log(e);
-      userError();
+      // userError();
     }
   }, []);
 
@@ -55,7 +54,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (e) {
       console.log(e);
-      userError();
+      // userError();
     }
   }, []);
 

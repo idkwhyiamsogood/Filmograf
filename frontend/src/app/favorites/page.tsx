@@ -22,10 +22,21 @@ const Page: FC = () => {
   if (isPinnedLoading) {
     return <LoadingSplashScreen />;
   }
-  
+
+  if (!pinned || pinned.length === 0) {
+    return (
+      <div className="flex flex-col gap-2.5">
+        <span className="text-[20px] font-bold">Избранные подборки</span>
+        <div className="flex items-center justify-center">
+          Вы еще не добавили подборки в избранное.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2.5">
-      <span className="text-[30px] font-bold">Избранные подборки</span>
+      <span className="text-[20px] font-bold">Избранные подборки</span>
       <FavoritesClientPage pinned={pinned} />
     </div>
   );

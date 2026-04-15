@@ -11,7 +11,7 @@ interface MoviesSectionProps {
   orientation?: "horizontal" | "vertical";
   hasFetch?: boolean;
   viewAllHref?: string; 
-}
+};
 
 export const MoviesSection: React.FC<MoviesSectionProps> = ({
   title,

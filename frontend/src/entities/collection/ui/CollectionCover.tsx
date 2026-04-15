@@ -1,34 +1,28 @@
-import React from "react";
 import { Card, CardContent } from "@/shared/ui/card";
-import { Collection } from "../model/types";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
+import { Collection } from "../model/types";
 
 interface Props {
   collection: Collection;
-  onClick?: () => void;
 }
 
-// const TMDB_IMAGE_BASE =
-//   "https://m.media-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1_.jpg";
-
-export const CollectionCover: React.FC<Props> = ({ collection, onClick }) => {
+export const CollectionCover: React.FC<Props> = ({ collection }) => {
   const hasPosters = collection.moviePreviews.length === 3;
   const posters = collection.moviePreviews
 
   return (
     <Link
       href={`/collections/${collection.id}`}
-      className="block w-full border-1 px-1 overflow-hidden"
+      className="block w-full border-1 px-1 overflow-hidden rounded-xl"
     >
       <Card
-        onClick={onClick}
         className={
           "group relative w-full cursor-pointer overflow-visible border-none bg-transparent shadow-none transition-transform duration-300 hover:-translate-y-1"
         }
       >
         <CardContent className="p-0">
-          {/* Родительский контейнер с фиксированной высотой, чтобы вместить абсолютно позиционированные картинки */}
           <div className="relative mx-auto mb-3 h-40 sm:h-48">
             {hasPosters ? (
               <>

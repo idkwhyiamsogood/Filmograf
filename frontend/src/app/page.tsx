@@ -3,6 +3,7 @@ import { FC } from "react";
 
 // ui
 import { MoviesSection } from "@/widgets/MovieSection";
+import { CollectionsSection } from "@/widgets/CollectionSection";
 
 export const dynamicParams = true;
 
@@ -17,12 +18,24 @@ const Page: FC = () => {
         carouselType="full"
         orientation="vertical"
         hasFetch
-        viewAllHref="/catalog?type='popular'"
+        viewAllHref="/catalog?type=Movie&searchType=popular"
       />
       <MoviesSection
         title="Рекомендованные"
         type="recommended"
-        viewAllHref="/catalog?type='recommended'"
+        viewAllHref="/catalog?type=Movie?searchType=recommended"
+      />
+      <CollectionsSection
+        title="Рекомендованные"
+        type="recommended"
+        carouselType="partial"
+        viewAllHref="/catalog?type=Collection&searchType=recommended"
+      />
+      <CollectionsSection
+        title="Популярные"
+        type="popular"
+        carouselType="partial"
+        viewAllHref="/catalog?type=Collection&searchType=popular"
       />
     </div>
   );

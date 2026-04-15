@@ -37,14 +37,6 @@ export const MovieToCollection: React.FC<Props> = ({ filmId }) => {
     getMyCollections();
   }, []);
 
-  if (!collections || collections.length === 0) {
-    return (
-      <div className="text-sm text-muted-foreground px-2 py-1.5">
-        Нет доступных коллекций
-      </div>
-    );
-  }
-
   return (
     <CommonDropdownMenu
       trigger={
@@ -60,7 +52,7 @@ export const MovieToCollection: React.FC<Props> = ({ filmId }) => {
       }
       content={
         <>
-          {collections.map((collection: Collection) => {
+          {collections && collections.map((collection: Collection) => {
             const isMovieInCurrentCollection = (
               collection.movies || []
             ).includes(filmId);
