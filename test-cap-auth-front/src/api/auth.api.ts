@@ -13,8 +13,7 @@ export interface IVerifyIdempotenceResponse {
 }
 
 class AuthApi {
-  private API_URL =
-    process.env.NEXT_PUBLIC_API_URL || authLink;
+  private API_URL = authLink;
 
   /** Отправляем Google idToken с мобилки и получаем JWT */
   public verifyNativeGoogleToken = async (

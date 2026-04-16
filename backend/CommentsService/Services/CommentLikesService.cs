@@ -20,7 +20,7 @@ public class CommentLikesService
     public async Task SetCommentReactionAsync(string commentId, int reactionValue, User user)
     {
         // это чтобы проверить существование комментария
-        var comment = await _commentService.GetCommentWithCheckAsync(commentId, user);
+        var comment = await _commentService.GetCommentAsync(commentId);
         
         // чекаем текущую реакцию
         var reaction = await _commentLikeRepository.GetUserReactionAsync(commentId, user.Id);

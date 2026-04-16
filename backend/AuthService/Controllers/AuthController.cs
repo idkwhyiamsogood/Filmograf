@@ -1,7 +1,5 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Models.Entities;
-using Filmograf.BaseLibrary.Models.HttpExceptions;
-using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Models.Dto;
 using Filmograf.MoviesService.Services;

@@ -1,8 +1,11 @@
 import axios from "axios";
 
 export const authLink =
-  // process.env.NEXT_PUBLIC_API_URL || "https://filmograf.online";
-  process.env.NEXT_PUBLIC_API_URL || "http://192.168.162.222:5090";
+  "https://filmograf.online";
+  // process.env.NEXT_PUBLIC_API_URL || "http://192.168.162.222:5090";
+
+export const getToken = () => localStorage.getItem("access_token");
+export const setToken = (token: string) => localStorage.setItem("access_token", token);
 
 const settingUpAxiosInstance = (link: string) => {
   const axiosInstance = axios.create({
@@ -15,7 +18,7 @@ const settingUpAxiosInstance = (link: string) => {
 
   axiosInstance.interceptors.request.use((config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("access_token");
+      const token = getToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
