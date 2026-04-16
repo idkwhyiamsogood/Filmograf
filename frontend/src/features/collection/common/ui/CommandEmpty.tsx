@@ -18,7 +18,7 @@ export const CommandEmpty: FC<Props> = ({ text, handleOpenModal }) => {
         <Button
           variant={"default"}
           onClick={() => {
-            handleOpenModal("create-tag", { text });
+            handleOpenModal("create-tag", { text: text });
           }}
           className="w-2/3"
         >

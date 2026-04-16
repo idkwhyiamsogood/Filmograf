@@ -8,7 +8,7 @@ export const useCreateCollection = () => {
   return useMutation({
     mutationFn: (data: CreateCollection) =>
       collectionApi.createCollection(data),
-    mutationKey: ["createCollection"],
+      mutationKey: ["createCollection"],
     onSuccess: (response) => {
       try {
         const collection = response.data;
@@ -20,7 +20,7 @@ export const useCreateCollection = () => {
           exact: false,
         });
       } finally {
-        window.location.reload();
+        // window.location.reload();
       }
     },
     onError: () => {

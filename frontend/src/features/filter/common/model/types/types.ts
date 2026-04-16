@@ -13,8 +13,19 @@ export interface FilterOptions {
 }
 
 interface BaseQuery {
-  exclude: string[];
-  include: string[];
+  excludeIds: string[];
+  includeIds: string[];
+}
+
+export interface MovieParams {
+  genres?: BaseQuery;
+  strictMatch: boolean;
+}
+
+export interface CollectionParams {
+  genres?: BaseQuery;
+  tags?: BaseQuery;
+  strictMatch: boolean;
 }
 
 export interface FilterState {

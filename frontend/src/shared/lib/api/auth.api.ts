@@ -1,11 +1,13 @@
 import { JWT } from "@/shared/types";
 import { APIResponse } from "@/shared/types/api";
 import { TokenApi } from "./token.api";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 class AuthApi extends TokenApi {
   public googleLogin = (router: AppRouterInstance): void => {
+    // this.get("/api/auth/google/");
     router.push(`https://filmograf.online/api/auth/google`);
   };
 
@@ -25,8 +27,17 @@ class AuthApi extends TokenApi {
     return this.get("/api/auth/status");
   };
 
-  public logout = (): void => {
-    this.clearAccessToken();
+  public googleNative = (token: string): APIResponse<JWT> => {
+    return this.post("/api/auth/google-native", { idToken: token });
+  };
+
+  public logout = async () => {
+    try {
+      await GoogleAuth.signOut();
+      this.clearAccessToken();
+    } catch (e) {
+      console.error(e);
+    }
   };
 }
 

@@ -24,6 +24,7 @@ interface Props {
   onLoadMore?: () => void;
   hasNextPage?: boolean;
   isLoading?: boolean;
+  onClick: (id: string) => void;
 }
 
 export const CommonSearchSelector: React.FC<Props> = ({
@@ -33,6 +34,7 @@ export const CommonSearchSelector: React.FC<Props> = ({
   onLoadMore,
   hasNextPage,
   isLoading,
+  onClick,
 }) => {
   const { ref, inView } = useInView({
     threshold: 0.5,
@@ -54,7 +56,7 @@ export const CommonSearchSelector: React.FC<Props> = ({
       <CommandList className="max-h-[200px] h-50 overflow-y-auto">
         {items.map((item) => (
           <CommandItem key={item.id} value={item.name} className="flex gap-2.5">
-            <Checkbox onClick={() => console.log(item)} />
+            <Checkbox onClick={() => onClick(item.id)} />
             {item.name}
           </CommandItem>
         ))}

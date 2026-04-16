@@ -75,38 +75,13 @@ export const CreateTagModal: FC<BaseModalProps & Props> = ({
               </DialogDescription>
             </DialogHeader>
 
-            {/* <TagContent text={text} /> */}
-            <div className="space-y-2.5">
-              <FormField
-                control={tagsForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Введите название закладки"
-                        className="w-full rounded-2xl"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex gap-2.5">
-                <MessageCircleWarning size={16} />
-                <Label className="text-sm">
-                  При создании тега коллекции учтите, что они являются
-                  общедоступными и могут быть использованы другими
-                  пользователями без вашего согласия.
-                </Label>
-              </div>
-            </div>
+            <TagContent text={text} />
 
             <DialogFooter className="flex flex-row justify-end">
               <DialogClose asChild>
-                <Button variant="outline" type="button">Отмена</Button>
+                <Button variant="outline" type="button">
+                  Отмена
+                </Button>
               </DialogClose>
               <Button type="submit" disabled={tagsForm.formState.isSubmitting}>
                 {tagsForm.formState.isSubmitting ? "Создание..." : "Создать"}

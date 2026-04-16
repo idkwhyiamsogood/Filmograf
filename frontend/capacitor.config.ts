@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: "Filmograf",
   webDir: "out",
   server: {
-    url: "http://192.168.0.196:3000",
+    url: "http://192.168.0.199:3000",
     androidScheme: "http",
     cleartext: true,
   },
@@ -16,6 +16,12 @@ const config: CapacitorConfig = {
       channel: "dev",
       autoUpdateMethod: "background",
       maxVersions: 2,
+    },
+    GoogleAuth: {
+      scopes: ["profile", "email"],
+      serverClientId:
+        "341334726956-oo7rlsn0743ot821mdqoaj5e6uk442vr.apps.googleusercontent.com",
+      forceCodeForRefreshToken: true,
     },
   },
 };

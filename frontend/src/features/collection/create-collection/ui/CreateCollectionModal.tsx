@@ -31,14 +31,18 @@ import { useCollectionForm, useCreateCollection } from "entities/collection";
 import type { BaseModalProps } from "@/shared/types";
 
 export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
-  const createCollection = useCreateCollection();
-  const { collectionRedactForm, isPublic } = useCollectionForm();
+  const { mutate: createCollection } = useCreateCollection();
+  const { collectionRedactForm, isPublic, toggleTag } = useCollectionForm();
   const { closeModal } = useModals();
 
   const [step, setStep] = useState<number>(0);
 
   const handleSubmit = (data: CreateCollection) => {
-    createCollection.mutate(data);
+    // console.log(data, "raw-data");
+
+    // console.log(collectionRedactForm.getValues("tags"), "tags");
+
+    createCollection(data);
     closeModal();
   };
 
@@ -158,7 +162,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
               </div>
             ) : (
               <div className="space-y-2.5">
-                <TagsSearchSelector />
+                <TagsSearchSelector toggleTag={toggleTag} />
               </div>
             )}
 

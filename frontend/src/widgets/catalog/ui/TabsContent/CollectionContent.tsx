@@ -21,7 +21,7 @@ export const CollectionContent: FC = () => {
   useEffect(() => {
     const getTop = async () => {
       try {
-        const { data } = await collectionApi.getTop();
+        const { data } = await collectionApi.getPopular();
 
         if (data) setTop(data.ids);
       } catch (e) {
@@ -36,10 +36,10 @@ export const CollectionContent: FC = () => {
 
   return (
     <TabsContent value="Collection">
-      {isLoading || !top ? (
-        <CollectionWrapper collections={data || []} />
+      {isLoading ? (
+        <CollectionSkeletonWrapper count={10} />
       ) : (
-        <CollectionSkeletonWrapper count={9} />
+        <CollectionWrapper collections={data || []} />
       )}
     </TabsContent>
   );

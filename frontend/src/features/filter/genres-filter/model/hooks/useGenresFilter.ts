@@ -10,11 +10,11 @@ export const useGenresFilter = () => {
 
       if (!genres) return { checked: false, indeterminate: false };
 
-      if (genres.include?.includes(genreId)) {
+      if (genres.includeIds?.includes(genreId)) {
         return { checked: true, indeterminate: false }; // галочка
       }
 
-      if (genres.exclude?.includes(genreId)) {
+      if (genres.includeIds?.includes(genreId)) {
         return { checked: false, indeterminate: true }; // крестик
       }
 
@@ -28,17 +28,17 @@ export const useGenresFilter = () => {
       updateFilterOption("genres", (prev) => {
         if (!prev) {
           // Первый клик: добавляем в include
-          return { include: [id], exclude: [] };
+          return { includeIds: [id], excludeIds: [] };
         }
 
-        const isInInclude = prev.include?.includes(id);
-        const isInExclude = prev.exclude?.includes(id);
+        const isInInclude = prev.includeIds?.includes(id);
+        const isInExclude = prev.excludeIds?.includes(id);
 
         if (!isInInclude && !isInExclude) {
           // Состояние 1: unchecked → include (галочка)
           return {
             ...prev,
-            include: [...(prev.include || []), id],
+            includeIds: [...(prev.includeIds || []), id],
           };
         }
 
@@ -46,15 +46,19 @@ export const useGenresFilter = () => {
           // Состояние 2: include → exclude (крестик)
           return {
             ...prev,
-            include: (prev.include || []).filter((genreId) => genreId !== id),
-            exclude: [...(prev.exclude || []), id],
+            includeIds: (prev.includeIds || []).filter(
+              (genreId) => genreId !== id,
+            ),
+            excludeIds: [...(prev.excludeIds || []), id],
           };
         }
 
         // Состояние 3: exclude → unchecked (убираем)
         return {
           ...prev,
-          exclude: (prev.exclude || []).filter((genreId) => genreId !== id),
+          excludeIds: (prev.excludeIds || []).filter(
+            (genreId) => genreId !== id,
+          ),
         };
       });
     },
@@ -63,8 +67,8 @@ export const useGenresFilter = () => {
 
   const handleGenresReset = useCallback(() => {
     updateFilterOption("genres", () => ({
-      exclude: [],
-      include: [],
+      excludeIds: [],
+      includeIds: [],
     }));
   }, [updateFilterOption]);
 

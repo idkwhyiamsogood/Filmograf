@@ -13,7 +13,7 @@ export const CreateCollectionButton: React.FC = () => {
   const handleOpenModal = () => {
     openModal("create-bookmark");
   }
-
+  
   return (
     <Button variant={"secondary"} onClick={handleOpenModal} className='max-w-full'>
       <Plus /> Создать

@@ -1,5 +1,5 @@
 // types
-export type { FilterState, FilterOptions } from "./common/model/types/types";
+export type { FilterState, FilterOptions, MovieParams, CollectionParams } from "./common/model/types/types";
 
 
 // ui

@@ -24,6 +24,7 @@ export const CatalogTabs: FC = memo(() => {
         <TabsTrigger value="Movie" className="">
           Фильмы
         </TabsTrigger>
+        
         <TabsTrigger value="Collection">Подборки</TabsTrigger>
       </TabsList>
 

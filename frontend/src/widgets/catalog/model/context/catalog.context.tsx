@@ -8,7 +8,7 @@ import React, {
   ReactNode,
   FC,
 } from "react";
-import type { EntityType } from "@/shared/types";
+import type { EntityType, IdsEntity } from "@/shared/types";
 import { useFilter } from "@/features/filter/";
 import { useSearch } from "@/features/search";
 
@@ -28,15 +28,21 @@ export const CatalogProvider = ({ children }: { children: ReactNode }) => {
   const [query, setQuery] = useState<string>("");
   const [activeType, setActiveType] = useState<EntityType>("Movie");
 
+  const [searchedIds, setSearchedIds] = useState<IdsEntity | undefined>(undefined);
+
   const { filterState, updateFilterOption } = useFilter();
 
   useEffect(() => {
     updateFilterOption("targetType", () => activeType);
   }, [activeType, updateFilterOption]);
 
-  const { data, isLoading } = useSearch(query, filterState.filterOptions);
+  // console.log(filterState, "filter-options");
 
-  console.log(data, isLoading)
+  const { data, isLoading } = useSearch(query, filterState);
+
+  // console.log(data, isLoading)
+
+  // console.log(data, data || [], "searched-data");
 
   const value = {
     data,

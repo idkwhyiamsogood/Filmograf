@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { commentApi } from "@/entities/comment/model/api/comment.api";
 import type { Comment } from "@/entities/comment";
-import type { EntityType } from "@/shared/types";
+import { commentApi } from "@/entities/comment/model/api/comment.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toggleReaction } from "@/features/comment/common";
 
 import type { ReactionProps } from "@/features/comment/common";
+import { toast } from "sonner";
 
 export const useDislikeComment = ({
   userId,
@@ -15,7 +15,11 @@ export const useDislikeComment = ({
   const queryClient = useQueryClient();
   const queryKey = ["parentComments", entityType, entityId];
 
-  const updateRecursive = (comments: Comment[], targetId: string, uid: string): Comment[] => {
+  const updateRecursive = (
+    comments: Comment[],
+    targetId: string,
+    uid: string,
+  ): Comment[] => {
     return comments.map((comment) => {
       if (comment.id === targetId) {
         return toggleReaction(comment, uid, "dislike");
@@ -54,10 +58,16 @@ export const useDislikeComment = ({
       return { previousComments };
     },
 
+    onSuccess: () => {
+      toast.success("Лайк поставлен");
+    },
+
     onError: (err, commentId, context) => {
       if (context?.previousComments) {
         queryClient.setQueryData(queryKey, context.previousComments);
       }
+
+      toast.error("Произошла ошибка, попробуйте позже");
     },
   });
 };

@@ -34,8 +34,29 @@ export const useCollectionForm = () => {
     }
   }, [isPublic, collectionRedactForm]);
 
+  const toggleTag = (tag: string) => {
+    const currentTags = collectionRedactForm.getValues("tags");
+    const trimmedTag = tag.trim();
+
+    if (!trimmedTag) return;
+
+    if (currentTags.includes(trimmedTag)) {
+      // Если тег есть - удаляем
+      collectionRedactForm.setValue(
+        "tags",
+        currentTags.filter((t) => t !== trimmedTag),
+      );
+    } else {
+      // Если тега нет - добавляем
+      collectionRedactForm.setValue("tags", [...currentTags, trimmedTag]);
+    }
+
+    // console.log(collectionRedactForm.getValues("tags"), "tags");
+  };
+
   return {
     collectionRedactForm,
     isPublic,
+    toggleTag
   };
 };

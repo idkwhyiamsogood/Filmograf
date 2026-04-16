@@ -3,34 +3,29 @@ import { BaseHttpClient } from "@/shared/lib";
 // types
 import type { QueryParams, SearchedIds } from "@/shared/types/api";
 import type { APIResponse } from "@/shared/types/api";
-import type { FilterOptions } from "@/features/filter/";
+import type { FilterOptions, CollectionParams, MovieParams } from "@/features/filter/";
 import { HubConnection } from "@microsoft/signalr";
 
 class SearchApi extends BaseHttpClient {
   public searchMovies = (
-    options: FilterOptions,
     search: string,
-    room: HubConnection,
-
+    connection: HubConnection,
+    options: MovieParams,
     queryParam: QueryParams = { page: 0, count: 21 },
   ): APIResponse<SearchedIds> => {
-    return this.post(
-      `api/search/movies?query=${search}&roomId=${room}&Page=${queryParam.page}&Count=${queryParam.count}`,
-      options,
-    );
+    const roomId = connection.connectionId || "";
+
+    console.log(options, "api-filter-opt");
+
+    return this.post(`api/search/movies?query=${search}&roomId=${roomId}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
   };
 
   public searchCollections = (
-    options: FilterOptions,
     search: string,
-    room: HubConnection,
-
+    options: CollectionParams,
     queryParam: QueryParams = { page: 0, count: 21 },
   ): APIResponse<SearchedIds> => {
-    return this.post(
-      `api/search/collections?query=${search}&roomId=${room}&Page=${queryParam.page}&Count=${queryParam.count}`,
-      options,
-    );
+    return this.post(`api/search/collections?query=${search}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
   };
 }
 

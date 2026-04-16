@@ -6,8 +6,13 @@ import { useInfinityTags, useTagsSearch } from "@/entities/collection-tags";
 import { CommonSearchSelector, type SearchItem } from "@/shared/components";
 import { CommandEmpty } from "./CommandEmpty";
 import { useModals } from "@/shared/hooks";
+import { useCollectionForm } from "@/entities/collection";
 
-export const TagsSearchSelector: FC = () => {
+interface Props {
+  toggleTag: (id: string) => void;
+}
+
+export const TagsSearchSelector: FC<Props> = ({ toggleTag }) => {
   const { openModal } = useModals();
   const [searchValue, setSearchValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -45,6 +50,7 @@ export const TagsSearchSelector: FC = () => {
       onLoadMore={() => !debouncedValue && fetchNextPage?.()}
       hasNextPage={!debouncedValue && hasNextPage}
       isLoading={debouncedValue ? isSearchLoading : isInfiniteLoading}
+      onClick={toggleTag}
     />
   );
 };

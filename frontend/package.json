@@ -20,6 +20,7 @@
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
     "@capacitor/preferences": "^7.0.2",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@hookform/resolvers": "^5.2.2",
     "@lexical/react": "^0.42.0",
     "@lexical/rich-text": "^0.42.0",
