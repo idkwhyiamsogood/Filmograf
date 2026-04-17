@@ -45,7 +45,9 @@ export const useTagsFilter = () => {
           // Состояние 2: include → exclude (крестик)
           return {
             ...prev,
-            includeIds: (prev.includeIds || []).filter((genreId) => genreId !== id),
+            includeIds: (prev.includeIds || []).filter(
+              (genreId) => genreId !== id,
+            ),
             excludeIds: [...(prev.excludeIds || []), id],
           };
         }
@@ -53,7 +55,7 @@ export const useTagsFilter = () => {
         // Состояние 3: exclude → unchecked (убираем)
         return {
           ...prev,
-          exclude: (prev.excludeIds || []).filter((genreId) => genreId !== id),
+          excludeIds: (prev.excludeIds || []).filter((genreId) => genreId !== id),
         };
       });
     },

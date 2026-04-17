@@ -23,6 +23,9 @@ const config: CapacitorConfig = {
         "341334726956-oo7rlsn0743ot821mdqoaj5e6uk442vr.apps.googleusercontent.com",
       forceCodeForRefreshToken: true,
     },
+    CapacitorHttp: {
+      enabled: true,
+    },
   },
 };
 

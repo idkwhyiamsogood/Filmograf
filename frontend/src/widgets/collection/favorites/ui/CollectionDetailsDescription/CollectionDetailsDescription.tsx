@@ -22,12 +22,6 @@ export const CollectionDetailsDescription: React.FC<Props> = ({
       try {
         const response = await userApi.getUser(userId);
 
-        // console.log(response)
-
-        // if (response.data) {
-        //   console.log(response.data)
-        //   setUser(response.data);
-        // }
         setUser(response.data);
       } catch (e) {
         console.log(e);
@@ -37,22 +31,12 @@ export const CollectionDetailsDescription: React.FC<Props> = ({
     getUser(collection.userId);
   }, []);
 
-  useEffect(() => {
-    console.log(user);
-  }, [user])
-
-  const { data: tags, isLoading } = useTags(collection.tags);
-
-  if (isLoading) return <LoadingSplashScreen />;
-
   return (
     <CardDescription>
       <div className="flex gap-2.5 items-center justify-between">
         <UserLogo logo={user.avatarUrl} />
         <span className="text-base">{user.name}</span>
       </div>
-
-      {tags && <TagWrapper tags={tags} />}
     </CardDescription>
   );
 };

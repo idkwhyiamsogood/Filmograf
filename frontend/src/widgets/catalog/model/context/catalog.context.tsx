@@ -40,6 +40,8 @@ export const CatalogProvider = ({ children }: { children: ReactNode }) => {
 
   const { data, isLoading } = useSearch(query, filterState);
 
+  console.log(data);
+
   // console.log(data, isLoading)
 
   // console.log(data, data || [], "searched-data");

@@ -1,7 +1,7 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { UserProvider } from "@/entities/user";
 import { AuthProvider, ModalProvider } from "@/shared/context";
@@ -19,14 +19,8 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/shared/ui/sonner";
 
-
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        
-      })
-  );
+  const [queryClient] = useState(() => new QueryClient({}));
 
   return (
     <ThemeProvider

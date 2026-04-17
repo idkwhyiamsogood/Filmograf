@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -30,21 +30,36 @@ export const MovieCarousel: React.FC<MovieCarouselProps> = ({
   onFetch,
   viewAllHref,
 }) => {
-  const MovieComponent = type === "full" ? MovieFull : MovieCover;
+  const isFull = type === "full";
+  const MovieComponent = isFull ? MovieFull : MovieCover;
 
-  // const [width, setWidth] = useState<number>(window.innerWidth);
+  const renderContent = () => {
+    if (isLoading && movies.length === 0) {
+      return Array.from({ length: 4 }).map((_, idx) => (
+        <React.Fragment key={`skeleton-${idx}`}>
+          {isFull ? (
+            <MovieSkeleton />
+          ) : (
+            <CarouselItem className="basis-1/3">
+              <MovieSkeleton />
+            </CarouselItem>
+          )}
+        </React.Fragment>
+      ));
+    }
 
-  // useEffect(() => {
-  //   const handleResize = () => setWidth(window.innerWidth);
-
-  //   window.addEventListener("resize", handleResize);
-
-  //   return () => window.removeEventListener("resize", handleResize);
-  // }, []);
-
-  // const className = useMemo(() => {
-  //   return width < 380 ? "basis-1/2" : "basis-1/3";
-  // }, [width]);
+    return movies.map((movie) => (
+      <React.Fragment key={movie.id}>
+        {isFull ? (
+          <MovieComponent movie={movie} />
+        ) : (
+          <CarouselItem className="basis-1/3">
+            <MovieComponent movie={movie} />
+          </CarouselItem>
+        )}
+      </React.Fragment>
+    ));
+  };
 
   return (
     <section className="flex flex-col gap-4 py-4 px-2">
@@ -59,25 +74,26 @@ export const MovieCarousel: React.FC<MovieCarouselProps> = ({
         )}
       </div>
 
-      <Carousel
-        opts={{ align: "start", loop: movies.length > 1 }}
-        orientation={orientation}
-        className="w-full"
-      >
-        <CarouselContent>
-          {isLoading && movies.length === 0
-            ? Array.from({ length: 4 }).map((_, idx) => (
-                <CarouselItem key={`skeleton-${idx}`} className={"basis-1/3"}>
-                  <MovieSkeleton />
-                </CarouselItem>
-              ))
-            : movies.map((movie) => (
-                <CarouselItem key={movie.id} className={"basis-1/3"}>
-                  <MovieComponent movie={movie} />
-                </CarouselItem>
-              ))}
-        </CarouselContent>
-      </Carousel>
+      {isFull ? (
+        <div className="flex flex-col gap-4 w-full">
+          {renderContent()}
+        </div>
+      ) : (
+        <Carousel
+          opts={{
+            align: "start",
+            loop: movies.length > 1,
+            dragThreshold: 5,
+            dragFree: true,
+          }}
+          orientation={orientation}
+          className="w-full"
+        >
+          <CarouselContent>
+            {renderContent()}
+          </CarouselContent>
+        </Carousel>
+      )}
 
       {onFetch && !isLoading && (
         <Button variant="outline" className="w-full mt-2" onClick={onFetch}>

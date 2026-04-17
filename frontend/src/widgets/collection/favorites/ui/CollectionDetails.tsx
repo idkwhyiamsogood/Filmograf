@@ -12,6 +12,10 @@ import { CollectionActions } from "./CollectionActions/CollectionActions";
 import { CollectionComments } from "./CollectionTabs/CollectionComments";
 import { CollectionMovies } from "./CollectionTabs/CollectionMovies";
 import { useUser } from "@/entities/user";
+import { useTags } from "@/entities/collection-tags";
+import { TagWrapper } from "@/entities/collection-tags";
+import { LoadingSplashScreen } from "@/shared/components";
+import { useAuth } from "@/shared/hooks";
 
 interface Props {
   collection: Collection;
@@ -21,6 +25,8 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
   const router = useRouter();
   const { user } = useUser();
 
+  const { data: tags, isLoading: isTagsLoading } = useTags(collection.tags);
+
   const handleBack = () => {
     router.back();
   };
@@ -29,6 +35,10 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
 
   const userId = (user && user.id) || "";
 
+  if (isTagsLoading) return <LoadingSplashScreen />;
+
+  console.log(tags);
+  
   return (
     <div className="flex flex-col gap-2.5">
       <Card className="relative">
@@ -39,8 +49,17 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
             <CollectionDetailsDescription collection={collection} />
           </CardHeader>
 
-          <CardContent className="h-full px-0">
-            <Tabs defaultValue="default" className="px-2.5">
+          <CardContent className="h-full flex flex-col gap-2.5 px-6">
+            <div className="flex flex-col gap-2.5">
+              <span className="text-lg font-semibold">Теги</span>
+              {tags && tags.length > 0 ? (
+                <TagWrapper tags={tags} />
+              ) : (
+                <div className="flex text-muted-foreground text-sm">У данной коллекции нет тегов.</div>
+              )}
+            </div>
+
+            <Tabs defaultValue="default">
               <TabsList className="w-full" defaultValue={"default"}>
                 <TabsTrigger value="default" className="">
                   Фильмы

@@ -50,7 +50,12 @@ export const CollectionCarousel: React.FC<CollectionCarouselProps> = ({
       </div>
 
       <Carousel
-        opts={{ align: "start", loop: collections.length > 1 }}
+        opts={{
+          align: "start",
+          loop: collections.length > 1,
+          dragThreshold: 5,
+          dragFree: true,
+        }}
         orientation={orientation}
         className="w-full"
       >

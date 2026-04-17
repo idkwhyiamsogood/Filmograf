@@ -18,7 +18,7 @@ export { MovieFull } from "./ui/MovieFull";
 // hooks
 export { useInfiniteMovies } from "./model/hooks/useInfinityMovies";
 export { useMovie } from "./model/hooks/useMovies";
-
+export { useMyRates } from "./model/hooks/useMyRates";
 
 // api
 export { movieApi } from "./model/api/movie.api";

@@ -18,7 +18,7 @@ export const ActionsWrapper: FC = memo(() => {
     <div className="flex flex-col gap-2.5">
       <div className="flex gap-2.5">
         <FilterButton />
-        <SortingButton />
+        {/* <SortingButton /> */}
       </div>
 
       <Search onSearch={setQuery} />

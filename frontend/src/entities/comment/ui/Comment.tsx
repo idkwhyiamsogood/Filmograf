@@ -1,22 +1,20 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
+import { FC, ReactNode, useState, useEffect } from "react";
 import type { Comment as CommentType } from "../model/types";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import { ChevronDown, ChevronRight, ThumbsDown, ThumbsUp } from "lucide-react";
 import { CommentContent } from "./CommentContent";
-
-import { useState } from "react";
-
 import { INDENT_SIZE, MAX_VISIBLE_LEVEL } from "../model/constants/comments";
-import { IUser } from "@/entities/user";
+import { UserLight } from "@/entities/user";
 import { LoadingSplashScreen } from "@/shared/components";
+import { CommentSkeleton } from "./CommentSkeleton";
+import { USER_MOCK_LIGHT } from "@/entities/user";
 
 interface Props {
   comment: CommentType;
-  getUser: (userId: string) => IUser;
+  getUser: (userId: string) => Promise<UserLight>;
   onLike?: (commentId: string) => void;
   onDislike?: (commentId: string) => void;
   resetReaction?: (commentId: string) => void;
@@ -38,16 +36,46 @@ export const Comment: FC<Props> = ({
   updateWithChilds,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [user, setUser] = useState<UserLight | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+
   const hasChildren = comment.childs && comment.childs.length > 0;
   const childCount = comment.childsCount;
-
   const formattedDate = new Date(comment.createDate);
   const likesCount = comment.likes.length;
   const dislikesCount = comment.dislikes.length;
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchUser = async () => {
+      try {
+        setIsLoadingUser(true);
+        const userData = await getUser(comment.userId);
+        if (isMounted) {
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        setUser(USER_MOCK_LIGHT);
+      } finally {
+        if (isMounted) {
+          setIsLoadingUser(false);
+        }
+      }
+    };
+
+    fetchUser();
+    return () => {
+      isMounted = false;
+    };
+  }, [comment.userId, getUser]);
+
   const replyEditor = renderReplyEditor(comment.id);
 
-  const user = getUser(comment.userId);
+  if (isLoadingUser || !user) {
+    return <CommentSkeleton count={1} />;
+  }
 
   return (
     <div className="relative">
@@ -93,7 +121,8 @@ export const Comment: FC<Props> = ({
                   size="sm"
                   className="h-7 gap-1.5 text-xs pl-0!"
                   onClick={() => {
-                    comment.likes.includes(user.id)
+                    // Используем ID из загруженного пользователя
+                    user.id && comment.likes.includes(user.id)
                       ? onLike?.(comment.id)
                       : resetReaction?.(comment.id);
                   }}
@@ -107,7 +136,7 @@ export const Comment: FC<Props> = ({
                   size="sm"
                   className="h-7 gap-1.5 text-xs px-2.5"
                   onClick={() => {
-                    comment.likes.includes(user.id)
+                    user.id && comment.likes.includes(user.id)
                       ? onDislike?.(comment.id)
                       : resetReaction?.(comment.id);
                   }}
@@ -120,9 +149,7 @@ export const Comment: FC<Props> = ({
                   variant="ghost"
                   size="sm"
                   className="h-7 text-xs px-2.5"
-                  onClick={() => {
-                    onReply?.(comment.id);
-                  }}
+                  onClick={() => onReply?.(comment.id)}
                 >
                   Ответить
                 </Button>
@@ -135,9 +162,9 @@ export const Comment: FC<Props> = ({
                   className="h-7 gap-1.5 text-xs text-muted-foreground px-2.5"
                   onClick={() => {
                     setIsExpanded(!isExpanded);
-                    !isExpanded &&
-                      !comment.childs &&
+                    if (!isExpanded && !comment.childs) {
                       updateWithChilds(comment.id);
+                    }
                   }}
                 >
                   {isExpanded ? (
@@ -146,7 +173,7 @@ export const Comment: FC<Props> = ({
                     <ChevronRight className="size-3.5" />
                   )}
                   <span>
-                    {isExpanded ? "Спрятать" : "Показать"}({childCount})
+                    {isExpanded ? "Спрятать" : "Показать"} ({childCount})
                   </span>
                 </Button>
               )}
@@ -167,10 +194,7 @@ export const Comment: FC<Props> = ({
                 key={child.id}
                 comment={child}
                 getUser={getUser}
-                onLike={() => {
-                  console.log("clicked");
-                  onLike && onLike(child.id);
-                }}
+                onLike={onLike}
                 onDislike={onDislike}
                 onReply={onReply}
                 level={level + 1}

@@ -12,7 +12,7 @@ import { connection } from "../constants/connections";
 
 export const useSearch = (value: string, filterOptions: FilterState) => {
   return useQuery({
-    queryKey: ["search", filterOptions.filterOptions.targetType, value],
+    queryKey: ["search", filterOptions, value],
     queryFn: async () => {
       if (!value) return { entityIds: [] };
 

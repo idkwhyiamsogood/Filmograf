@@ -1,9 +1,10 @@
 import { BaseModel } from "@/shared/types";
 
 export enum Review {
-  IMDB,
-  Kinopoisk,
-  Film,
+  IMDb = "IMDb",
+  Kinopoisk = "Kinopoisk",
+  Film = "Film",
+  ByUser = "ByUser",
 }
 
 export interface IMovie extends BaseModel {
@@ -19,3 +20,9 @@ export interface IMovie extends BaseModel {
 
   rates: Record<Review, number>
 };
+
+
+export interface MoviesRates extends Omit<BaseModel, "id"> {
+  movieId: string;
+  rate: number;
+}

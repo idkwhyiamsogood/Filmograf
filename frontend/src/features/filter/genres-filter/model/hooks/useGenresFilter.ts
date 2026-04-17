@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useFilter } from "@/features/filter/common";
 
 export const useGenresFilter = () => {
@@ -14,7 +14,7 @@ export const useGenresFilter = () => {
         return { checked: true, indeterminate: false }; // галочка
       }
 
-      if (genres.includeIds?.includes(genreId)) {
+      if (genres.excludeIds?.includes(genreId)) {
         return { checked: false, indeterminate: true }; // крестик
       }
 
@@ -64,6 +64,10 @@ export const useGenresFilter = () => {
     },
     [updateFilterOption],
   );
+
+  useEffect(() => {
+    console.log(filterState.filterOptions.genres);
+  }, [filterState.filterOptions.genres]);
 
   const handleGenresReset = useCallback(() => {
     updateFilterOption("genres", () => ({

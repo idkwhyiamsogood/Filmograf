@@ -13,6 +13,7 @@ import { useDislikeComment } from "@/features/comment/dislike-comment";
 import { useLikeComment } from "@/features/comment/like-comment";
 import { useChildsComment } from "@/entities/comment";
 import { useResetReaction } from "@/features/comment/common";
+import { userApi } from "@/entities/user";
 
 export const CommentWrapper: React.FC = () => {
   const entity = useSearchEntity();
@@ -50,18 +51,7 @@ export const CommentWrapper: React.FC = () => {
 
         <CommentList
           comments={parentComments}
-          getUser={(userId: string) => {
-            return {
-              avatarUrl: "",
-              name: "",
-              userType: "Member",
-              email: "",
-              googleId: "",
-              createDate: new Date(),
-              updateDate: new Date(),
-              id: "",
-            };
-          }}
+          getUser={async (userId: string) => (await userApi.getUser(userId)).data}
           onDislike={dislikeComment}
           onLike={likeComment}
           resetReaction={resetReaction}

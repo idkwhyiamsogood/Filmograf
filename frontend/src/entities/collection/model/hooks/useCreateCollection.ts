@@ -20,7 +20,7 @@ export const useCreateCollection = () => {
           exact: false,
         });
       } finally {
-        // window.location.reload();
+        window.location.reload();
       }
     },
     onError: () => {

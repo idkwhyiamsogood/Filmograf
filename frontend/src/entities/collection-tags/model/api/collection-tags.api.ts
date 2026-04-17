@@ -18,7 +18,7 @@ class CollecionTagsApi extends BaseHttpClient {
   };
 
   public batchMany = async (ids: string[]): APIResponse<Tag[]> => {
-    return this.post("api/collections/tags", ids);
+    return this.post("api/collections/tags/batch-many", { ids: ids });
   };
 
   public updateTag = async (

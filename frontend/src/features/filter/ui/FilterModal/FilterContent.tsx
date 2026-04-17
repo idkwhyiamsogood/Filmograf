@@ -97,7 +97,7 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
 
       <Separator />
 
-      <div className="space-y-2.5">
+      {/* <div className="space-y-2.5">
         <WrapperSheetContent>
           <div className="py-1 flex flex-col gap-1">
             <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
@@ -167,7 +167,7 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
             ))}
           </div>
         </WrapperSheetContent>
-      </div>
+      </div> */}
     </div>
   );
 };

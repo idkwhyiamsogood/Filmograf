@@ -1,3 +1,5 @@
+"use client";
+
 import * as signalR from "@microsoft/signalr";
 
 // 1. Создаем объект подключения, указывая тот самый адрес с бека

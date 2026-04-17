@@ -20,6 +20,7 @@ import {
 import { useCallback, useEffect } from "react";
 import { useModals, useSwipe } from "@/shared/hooks";
 import { useFilter } from "./common";
+import { useSearch } from "../search";
 
 export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();
@@ -33,6 +34,7 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
 
   const handleSubmit = useCallback(() => {
     try {
+
       closeModal();
     } catch (e) {
       console.log();

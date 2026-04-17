@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { Review, useMovie } from "@/entities/movie";
+import { Review, useMovie, useMyRates } from "@/entities/movie";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState, type FC } from "react";
+import { useState, useEffect, type FC } from "react";
 
 import { LoadingSplashScreen } from "@/shared/components";
 import { Button } from "@/shared/ui/button";
@@ -13,10 +13,9 @@ import { ArrowLeft, Star } from "lucide-react";
 
 import { useGenres } from "@/entities/genres";
 import { CommentWrapper } from "@/widgets/comments/CommentWrapper";
-
 import { GenreWrapper } from "@/entities/genres";
-
 import { MovieToCollection } from "@/features/movie/movie-to-collection";
+import { useRateMovie } from "@/features/movie/movie-rate";
 
 interface Props {
   label: string;
@@ -46,32 +45,41 @@ const TagsItem: FC<Props> = ({ label, item, colorClass }) => {
 
 const MovieClientPage = () => {
   const params = useParams();
-  
-  console.log(params);
-
   const router = useRouter();
-  const [userRating, setUserRating] = useState(0);
-  const [value, setValue] = useState<string>("default");
 
   const { data } = useMovie(params.id as string);
   const { data: genres } = useGenres();
+  const { mutate: rateMovie } = useRateMovie();
+  // const { data: myRates, isLoading: isMyRatesLoading } = useMyRates();
 
   const movie = data?.[0];
 
-  const handleBack = () => router.back();
+  const [userRating, setUserRating] = useState(0);
+  const [value, setValue] = useState<string>("default");
 
+  const handleBack = () => router.back();
 
   const handleSubmitRating = () => {
     if (userRating > 0) {
-      console.log("Отправка оценки:", userRating);
+      rateMovie({ rate: userRating, id: params.id as string });
     }
   };
+
+  // console.log(myRates);
+
+  const rates = movie?.rates;
+
+  useEffect(() => {
+    if (rates?.ByUser) {
+      setUserRating(rates?.ByUser);
+    }
+  }, [movie]);
 
   if (!movie) {
     return <LoadingSplashScreen />;
   }
 
-  console.log(movie);
+  // console.log(movie);
 
   return (
     <div className="relative w-full">
@@ -86,7 +94,7 @@ const MovieClientPage = () => {
       <div className="fixed inset-0 -z-10">
         <Image
           src={movie.imageUrl}
-          alt="фоновое изображение"
+          alt="background"
           fill
           className="object-cover opacity-50 blur-sm"
           priority
@@ -98,14 +106,14 @@ const MovieClientPage = () => {
         <div className="mt-16 mx-auto mb-0 max-w-[200px]">
           <Image
             src={movie.imageUrl}
-            alt={"обложка"}
+            alt="cover"
             width={200}
             height={300}
             className="w-full h-auto rounded-lg shadow-lg"
           />
         </div>
         <h3 className="text-xl font-bold text-center px-4">
-          {movie.name} <span className="font-normal">({movie.ageLimit}+)</span>
+          {movie.name} <span className="font-normal">({16}+)</span>
         </h3>
         <div className="">
           <div className="w-full bg-background/95 backdrop-blur-sm rounded-t-xl shadow-lg">
@@ -124,12 +132,6 @@ const MovieClientPage = () => {
                   >
                     Комментарии
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="collections"
-                    className="px-6 py-3 text-sm font-medium"
-                  >
-                    Коллекции
-                  </TabsTrigger>
                 </TabsList>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
@@ -138,35 +140,17 @@ const MovieClientPage = () => {
                 <div className="px-4 py-4">
                   <div className="flex flex-wrap gap-2 justify-center">
                     <TagsItem label="Год" item={movie.year} />
-                    <TagsItem label="Возраст" item={`${movie.ageLimit}+`} />
+                    <TagsItem label="Возраст" item={`${16}+`} />
                     <TagsItem label="Длительность" item={movie.time} />
-                    <TagsItem
-                      label="Наш рейтинг"
-                      item={
-                        movie.rates?.[Review.Film]
-                          ? `${movie.rates[Review.Film]}/10`
-                          : "N/A"
-                      }
-                      colorClass={getRatingColor(movie.rates?.[Review.Film])}
-                    />
                     <TagsItem
                       label="IMDb"
                       item={
-                        movie.rates?.[Review.IMDB]
-                          ? `${movie.rates[Review.IMDB]}/10`
-                          : "N/A"
-                      }
-                      colorClass={getRatingColor(movie.rates?.[Review.IMDB])}
-                    />
-                    <TagsItem
-                      label="Кинопоиск"
-                      item={
-                        movie.rates?.[Review.Kinopoisk]
-                          ? `${movie.rates[Review.Kinopoisk]}/10`
+                        rates?.IMDb
+                          ? `${rates.IMDb}/10`
                           : "N/A"
                       }
                       colorClass={getRatingColor(
-                        movie.rates?.[Review.Kinopoisk],
+                        movie.rates?.[Review.IMDb],
                       )}
                     />
                   </div>
@@ -175,13 +159,11 @@ const MovieClientPage = () => {
                 <div className="px-4 py-4 border-t">
                   <h4 className="text-lg font-semibold mb-4">Жанры</h4>
                   <div className="flex flex-wrap gap-2">
-                    {movie.genreIds ? (
+                    {movie.genreIds && genres ? (
                       <GenreWrapper
-                        genres={genres.filter((genre) => {
-                          return movie.genreIds.includes(
-                            genre.id,
-                          );
-                        })}
+                        genres={genres.filter((genre) =>
+                          movie.genreIds.includes(genre.id),
+                        )}
                       />
                     ) : (
                       <span className="text-muted-foreground">
@@ -237,21 +219,14 @@ const MovieClientPage = () => {
               <TabsContent value="comments">
                 <CommentWrapper />
               </TabsContent>
-              <TabsContent value="collections">
-                <div className="px-4 py-8 text-center text-muted-foreground">
-                  <p>Информация о коллекциях скоро будет доступна...</p>
-                </div>
-              </TabsContent>
             </Tabs>
           </div>
         </div>
       </div>
 
-      {value === "default" && (
-        <MovieToCollection filmId={movie.id} />
-      )}
+      {value === "default" && <MovieToCollection filmId={movie.id} />}
     </div>
   );
-}
+};
 
 export default MovieClientPage;

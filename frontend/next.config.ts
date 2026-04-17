@@ -5,6 +5,7 @@ const path = require('path');
 const nextConfig: NextConfig = {
   // outputFileTracingRoot: path.join(__dirname),
   // output: 'export',
+  devIndicators: false,
   images: {
     remotePatterns: [
       {

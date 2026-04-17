@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import type { Comment as CommentType } from "../model/types";
 import { Comment } from "./Comment";
-import type { IUser } from "@/entities/user";
+import type { IUser, UserLight } from "@/entities/user";
 
 interface Props {
   comments: CommentType[];
-  getUser: (userId: string) => IUser;
+  getUser: (userId: string) => Promise<UserLight>;
   onLike?: (commentId: string) => void;
   onDislike?: (commentId: string) => void;
   onReply?: (commentId: string) => void;

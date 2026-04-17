@@ -12,11 +12,14 @@ import { useInfiniteMovies, useMovie } from "@/entities/movie";
 import { useCatalog } from "../../model/hooks/useCatalog";
 import { useMemo, useEffect, memo } from "react";
 import { useInView } from "react-intersection-observer";
+import { IdsEntity } from "@/shared/types";
 
 export const MovieContent: FC = memo(() => {
   const { data: searchData, activeType, query } = useCatalog();
 
-  const { data: searchMovie } = useMovie(searchData);
+  // console.log(searchData, "movie-content");
+
+  const { data: searchMovie } = useMovie(searchData.entityIds || []);
 
   const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteMovies({
@@ -30,12 +33,12 @@ export const MovieContent: FC = memo(() => {
   });
 
   const moviesToDisplay = useMemo(() => {
-    if (
-      activeType === "Movie" &&
-      query.trim() !== "" &&
-      searchData?.entityIds?.length > 0
-    ) {
-      return searchMovie ?? [];
+    if (query.trim() !== "") {
+      if (activeType === "Movie" && searchData?.entityIds?.length > 0) {
+        return searchMovie ?? [];
+      }
+
+      return [];
     }
 
     return movies ?? [];
@@ -47,15 +50,19 @@ export const MovieContent: FC = memo(() => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query]);
 
-  if (isLoading && moviesToDisplay.length === 0) {
+  if (isLoading && moviesToDisplay.length === 0 && query.trim() === "") {
     return <MovieSkeletonWrapper count={9} />;
   }
 
-  if (!moviesToDisplay) return (
-    <div className="flex">
-      Фильмы не найдены 
-    </div>
-  )
+  if (query.trim() !== "" && moviesToDisplay.length === 0 && !isLoading) {
+    return (
+      <TabsContent value="Movie">
+        <div className="text-center py-8">
+          <p className="text-gray-500">Не найдено фильмов "{query}"</p>
+        </div>
+      </TabsContent>
+    );
+  }
 
   return (
     <TabsContent value="Movie">
@@ -67,7 +74,7 @@ export const MovieContent: FC = memo(() => {
         </div>
       )}
 
-      <div ref={ref} className="py-4" />
+      {query.trim() === "" && <div ref={ref} className="py-4" />}
     </TabsContent>
   );
 });

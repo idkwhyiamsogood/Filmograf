@@ -1,13 +1,43 @@
+"use client";
+
 // types
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 // ui
 import { MoviesSection } from "@/widgets/MovieSection";
 import { CollectionsSection } from "@/widgets/CollectionSection";
+import { Capacitor } from "@capacitor/core";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
+import { LoadingSplashScreen } from "@/shared/components";
 
-export const dynamicParams = true;
+// export const dynamicParams = true;
 
 const Page: FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const initAndCheck = async () => {
+      try {
+        if (Capacitor.isNativePlatform()) {
+          GoogleAuth.initialize({
+            clientId:
+              "341334726956-oo7rlsn0743ot821mdqoaj5e6uk442vr.apps.googleusercontent.com",
+            scopes: ["profile", "email"],
+            grantOfflineAccess: true,
+          });
+        }
+      } catch (err) {
+        console.error("Initialization error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAndCheck();
+  }, []);
+
+  if (isLoading) return <LoadingSplashScreen />;
+
   return (
     <div className="flex flex-col gap-1">
       <MoviesSection title="Топ" type="top" viewAllHref="/top" />

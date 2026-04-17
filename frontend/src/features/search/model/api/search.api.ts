@@ -15,8 +15,6 @@ class SearchApi extends BaseHttpClient {
   ): APIResponse<SearchedIds> => {
     const roomId = connection.connectionId || "";
 
-    console.log(options, "api-filter-opt");
-
     return this.post(`api/search/movies?query=${search}&roomId=${roomId}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
   };
 

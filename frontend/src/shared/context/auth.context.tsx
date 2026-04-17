@@ -8,17 +8,17 @@ import {
   useRef,
   useState,
 } from "react";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { authApi } from "../lib";
 import type { JWT } from "../types";
-
 import { toast } from "sonner";
 
 interface AuthContextType {
   token: JWT;
   isTemporaryLogged: boolean;
-
   temporaryToken: () => Promise<JWT | undefined>;
   verifyToken: (idempotence: string) => Promise<void>;
+  loginWithNativeGoogle: () => Promise<void>;
   logout: () => void;
   callAuthError: () => void;
 }
@@ -49,6 +49,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [callAuthError]);
 
+  const loginWithNativeGoogle = useCallback(async () => {
+    try {
+      const googleUser = await GoogleAuth.signIn();
+      const idToken = googleUser?.authentication?.idToken;
+
+      console.log(idToken);
+
+      if (!idToken) {
+        throw new Error("No ID Token received from Google");
+      }
+
+      const response = await authApi.googleNative(idToken);
+      const jwt = response.data.jwt;
+
+      authApi.setAccessToken(jwt);
+      setToken({ jwt });
+      setIsTemporaryLogged(false);
+    } catch (e) {
+      console.error("Native Google Login Error:", JSON.stringify(e));
+      callAuthError();
+      throw e;
+    }
+  }, [callAuthError]);
+
   const verifyToken = useCallback(
     async (idempotence: string) => {
       try {
@@ -58,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (e) {
         console.error("Verify token error:", e);
         callAuthError();
-        throw e; // Пробрасываем ошибку дальше, чтобы вызывающий код мог обработать
+        throw e;
       }
     },
     [callAuthError],
@@ -126,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, [token, logout, callAuthError]); 
+  }, [token.jwt, logout, callAuthError]);
 
   return (
     <AuthContext.Provider
@@ -135,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isTemporaryLogged,
         verifyToken,
         temporaryToken,
+        loginWithNativeGoogle,
         logout,
         callAuthError,
       }}
