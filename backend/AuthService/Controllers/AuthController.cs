@@ -1,11 +1,9 @@
 ﻿using Filmograf.BaseLibrary.Models.Context;
 using Filmograf.BaseLibrary.Models.Entities;
-using Filmograf.BaseLibrary.Models.HttpExceptions;
-using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.MoviesService.Models.Dto;
 using Filmograf.MoviesService.Services;
-
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -32,7 +30,7 @@ public class AuthController : CustomControllerBase
     }
     
     [HttpGet("google")]
-    public IActionResult GoogleLogin()
+    public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
     {
         // путь к методу, который продолжит авторизацию (перекидываем на 2ой этап)
         var redirectUrl = Url.Action(nameof(GoogleResponse), "Auth", null, Request.Scheme);
@@ -40,6 +38,9 @@ public class AuthController : CustomControllerBase
 
         var properties = new AuthenticationProperties
         { RedirectUri = redirectUrl };
+        
+        var origin = returnUrl ?? Request.Headers[HeaderNames.Referer].ToString();
+        properties.Items.Add("returnUrl", origin);
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
@@ -62,6 +63,11 @@ public class AuthController : CustomControllerBase
         var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        
+        if (!result.Properties.Items.TryGetValue("returnUrl", out var frontendOrigin) || string.IsNullOrEmpty(frontendOrigin))
+        {
+            frontendOrigin = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin.Split(";")[0];
+        }
 
         var idempotence = await _googleO2AuthService.ProcessingGoogleResponseAsync(result, userAgent, ip);
             
@@ -69,8 +75,7 @@ public class AuthController : CustomControllerBase
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             
         // Редиректим на фронт с idempotence кодом
-        var frontendUrl = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin;
-        return Redirect($"{frontendUrl}/auth-success?idempotence={idempotence}");
+        return Redirect($"{frontendOrigin}/auth-success?idempotence={idempotence}");
     }
 
     [HttpPost("verify-idempotence-code")]
@@ -121,5 +126,38 @@ public class AuthController : CustomControllerBase
         {
             IsAuthenticated = true
         });
+    }
+    
+    [HttpPost("google-native")]
+    public async Task<ActionResult<AuthResponseDto>> GoogleNativeLoginAsync([FromBody] GoogleNativeTokenDto data)
+    {
+        var userAgent = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        try
+        {
+            // Настройки валидации (сюда нужно передать ClientId из Google Console, который ты делал для Android/iOS)
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>
+                {
+                    AppSettingsUtil.AppSettings.GoogleO2AuthSettings.AndroidClientId,
+                    AppSettingsUtil.AppSettings.GoogleO2AuthSettings.ClientId,
+                }
+            };
+
+            // валидируем токен, который прислала мобилка. 
+            // если токен фейковый или протух, метод выкинет Exception.
+            var payload = await GoogleJsonWebSignature.ValidateAsync(data.IdToken, settings);
+
+            // Здесь мы получили данные юзера (payload.Email, payload.Name, payload.Subject - это GoogleId)
+            var jwt = await _googleO2AuthService.ProcessNativeGoogleUserAsync(payload, userAgent, ip);
+
+            return Ok(new AuthResponseDto { Jwt = jwt });
+        }
+        catch (InvalidJwtException)
+        {
+            return Unauthorized("Invalid Google Token");
+        }
     }
 }

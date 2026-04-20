@@ -38,7 +38,7 @@ public class CollectionsController : CustomControllerBase
     }
 
     [HttpGet("my")]
-    [UserTypePolicy(Guest = false)]
+    [UserTypePolicy]
     public async Task<ActionResult<CollectionsBatchDto>> GetMyCollectionsAsync(
         [FromQuery] PaginationQueryDto pagination, [FromServices] AuthContext authContext)
     {

@@ -20,6 +20,23 @@ public class CollectionsClicksAnalyticRepository : RepositoryBase<CollectionClic
         return await _collection.Find(filter)
             .ToListAsync(ct);
     }
+
+    public async Task<long> CountClicksByCollectionAsync(string collectionId, CancellationToken ct = default)
+    {
+        // фильтруем документы по MovieId
+        var filter = Builders<CollectionClicksAnalyticRepo>.Filter
+            .Eq(x => x.CollectionId, collectionId);
+
+        // группируем и суммируем поле Count
+        var result = await _collection.Aggregate()
+            .Match(filter) // Эквивалент WHERE
+            .Group(x => x.CollectionId, g => 
+                new { Total = g.Sum(x => x.Count) }) // Суммируем
+            .FirstOrDefaultAsync(ct);
+
+        // Если документов по фильтру нет, result будет null, возвращаем 0
+        return result?.Total ?? 0;
+    }
     
     public async Task<CollectionClicksAnalyticRepo?> GetByCollectionAndDateAsync(string collectionId, DateOnly date, CancellationToken ct = default)
     {

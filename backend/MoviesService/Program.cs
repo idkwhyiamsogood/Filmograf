@@ -118,7 +118,9 @@ public class Program
             options.AddPolicy("AllowFrontend",
                 policy => 
                 {
-                    policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
+                    policy.WithOrigins(
+                            AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin.Split(";")
+                        )
                         .AllowAnyHeader()
                         .AllowAnyMethod().AllowCredentials();
                 });

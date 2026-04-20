@@ -4,6 +4,7 @@ using Filmograf.BaseLibrary.Models.Entities;
 using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Services;
 using Microsoft.AspNetCore.Authentication;
+using Google.Apis.Auth;
 
 namespace Filmograf.MoviesService.Services;
 
@@ -153,6 +154,33 @@ public class GoogleO2AuthService
         // генерим jwt
         var jwt = _jwtService.GenerateToken(user);
         await HandleAddAuthAsync(jwt, user.Id, userAgent, ip);
+        return jwt;
+    }
+    
+    public async Task<string> ProcessNativeGoogleUserAsync(GoogleJsonWebSignature.Payload payload, string? userAgent, string? ip)
+    {
+        // 1. Извлекаем данные из payload (это то, что прислала мобилка и мы провалидировали в контроллере)
+        var email = payload.Email;
+        var googleId = payload.Subject; // Subject в Google JWT — это уникальный ID пользователя
+        var name = payload.Name;
+        var avatarUrl = payload.Picture;
+
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(googleId))
+            throw new UnauthorizedHttpException("Incomplete profile data from Google");
+
+        // 2. Ищем или создаем пользователя (используем твою логику)
+        var user = await _userService.GetByGoogleIdAsync(googleId);
+        user ??= await CreateUserAsync(email, googleId, name, avatarUrl);
+
+        // 3. Актуализируем данные (аватарку, имя)
+        await ProcessInvalidClaimsAsync(user, name, avatarUrl);
+
+        // 4. Генерируем сразу полноценный JWT
+        var jwt = _jwtService.GenerateToken(user);
+    
+        // 5. Сохраняем сессию в базу (HandleAddAuthAsync)
+        await HandleAddAuthAsync(jwt, user.Id, userAgent, ip);
+
         return jwt;
     }
 }

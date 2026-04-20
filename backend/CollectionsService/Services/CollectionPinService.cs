@@ -77,6 +77,9 @@ public class CollectionPinService
 
         // обновляем
         await _collectionPinRepository.UpdateAsync(userPins.Id, userPins);
+
+        // удаляем кеш
+        await _collectionPinsCaching.RemoveCachingByUserAsync(userId);
         
         // возвращаем
         return _mapper.Map<CollectionPinsResponseDto>(userPins);
@@ -97,6 +100,9 @@ public class CollectionPinService
 
         // обновляем
         await _collectionPinRepository.UpdateAsync(userPins.Id, userPins);
+
+        // удаляем кеш
+        await _collectionPinsCaching.RemoveCachingByUserAsync(userId);
         
         // возвращаем
         return _mapper.Map<CollectionPinsResponseDto>(userPins);

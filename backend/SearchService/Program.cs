@@ -119,7 +119,9 @@ public class Program
             options.AddPolicy("AllowFrontend",
                 policy => 
                 {
-                    policy.WithOrigins(AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin)
+                    policy.WithOrigins(
+                            AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin.Split(";")
+                        )
                         .AllowAnyHeader()
                         .AllowAnyMethod().AllowCredentials();
                 });
@@ -180,7 +182,10 @@ public class Program
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<AuthValidationService>();
         builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<Services.SearchService>();
+        builder.Services.AddScoped<Services.SearchMovieService>();
+        builder.Services.AddScoped<Services.SearchCollectionService>();
+        builder.Services.AddScoped<Services.SearchTagService>();
+        builder.Services.AddScoped<Services.SearchGenreService>();
         builder.Services.AddScoped<SearchParsingReceiverService>();
         builder.Services.AddScoped<SearchParsingService>();
         

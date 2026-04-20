@@ -120,16 +120,16 @@ public class Program
             //     policy =>
             //     {
             //         policy.AllowAnyOrigin()
-            //             .AllowCredentials()
             //             .AllowAnyMethod()
             //             .AllowAnyHeader();
             //     });
 
             options.AddPolicy("AllowFrontend",
-                policy => 
+                policy =>
                 {
+                    var kek = AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin.Split(";");
                     policy.WithOrigins(
-                            AppSettingsUtil.AppSettings.OriginSettings.FrontendOrigin
+                            kek
                         )
                         .AllowCredentials()              // Разрешаем куки
                         .AllowAnyHeader()                // Разрешаем любые заголовки

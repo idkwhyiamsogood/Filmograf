@@ -42,7 +42,7 @@ public class MoviesParserService
     public async Task CheckLastParsingAsync(string chartType)
     {
         // проверяем, не настало ли время чекнуть еще раз imdb и кинопоиск
-        var parsingLast = await _missionPlannerService.CheckLastMissionAsync(chartType);
+        var parsingLast = await _missionPlannerService.CheckLastMissionOrTaskAsync(chartType);
         if (!parsingLast) return;
 
         // создаем запрос на парсинг
@@ -69,6 +69,7 @@ public class MoviesParserService
         await _rabbitMqService.SendNoReplyAsync("parse_one_details", "movies_to_parser", request);
     }
 
+    // todo: костыть ебанутый, в проде убрать и забыть как страшный сон ибо это пиздец ребзеее
     public async Task<int> FixParsingBugsAsync()
     {
         var count = 0;

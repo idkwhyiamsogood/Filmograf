@@ -13,6 +13,7 @@ using Filmograf.AnalyticsService.Services.Charts;
 using Filmograf.AnalyticsService.Services.Integrations;
 using Filmograf.AnalyticsService.Services.Middlewares;
 using Filmograf.AnalyticsService.Services.Personalized;
+using Filmograf.AnalyticsService.Services.ViewsCounting;
 using Filmograf.AnalyticsService.Util;
 using Filmograf.BaseLibrary.Caching;
 using Filmograf.BaseLibrary.DataAccess.Serializers;
@@ -127,6 +128,9 @@ public class Program
         builder.Services.AddScoped<MoviesPersonalizedService>();
         builder.Services.AddScoped<CollectionsChartService>();
         builder.Services.AddScoped<CollectionsPersonalizedService>();
+        builder.Services.AddScoped<CollectionViewsCountingService>();
+        builder.Services.AddScoped<MovieViewsCountingService>();
+        builder.Services.AddScoped<MissionPlannerService>();
         
         // providers
         // ...
@@ -145,5 +149,6 @@ public class Program
         builder.Services.AddScoped<MoviesCaching>();
         builder.Services.AddScoped<CollectionsCaching>();
         builder.Services.AddScoped<TopPickCaching>();
+        builder.Services.AddScoped<MissionPlannerCache>();
     }
 }

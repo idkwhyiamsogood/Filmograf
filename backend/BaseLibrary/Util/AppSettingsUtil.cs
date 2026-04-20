@@ -75,6 +75,7 @@ public class GoogleO2AuthSettings
 {
     public string ClientId { get; set; }
     public string ClientSecret { get; set; }
+    public string AndroidClientId { get; set; }
     public string LoginRedirect { get; set; }
 }
 

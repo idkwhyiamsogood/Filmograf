@@ -1,0 +1,73 @@
+2026-04-12 22:01:38.034  6925-7070  libc                    com.spark                            W  Access denied finding property "sys.perf.boostopt"
+2026-04-12 22:01:45.774  6925-7333  com.spark               com.spark                            W  Accessing hidden method Ldalvik/system/VMStack;->getStackClass2()Ljava/lang/Class; (unsupported, reflection, allowed)
+2026-04-12 22:01:45.781  6925-7333  FilePhenotypeFlags      com.spark                            E  Config package com.google.android.gms.clearcut_client#com.spark cannot use FILE backing without declarative registration. See go/phenotype-android-integration#phenotype for more information. This will lead to stale flags.
+2026-04-12 22:01:45.846  6925-7333  FilePhenotypeFlags      com.spark                            E  Config package com.google.android.gms.clearcut_client#com.spark cannot use FILE backing without declarative registration. See go/phenotype-android-integration#phenotype for more information. This will lead to stale flags.
+2026-04-12 22:01:45.847  6925-7333  FilePhenotypeFlags      com.spark                            E  Config package com.google.android.gms.clearcut_client#com.spark cannot use FILE backing without declarative registration. See go/phenotype-android-integration#phenotype for more information. This will lead to stale flags.
+2026-04-12 22:01:47.600  6925-6925  Compatibil...geReporter com.spark                            D  Compat change id reported: 78294732; UID 11032; state: ENABLED
+2026-04-12 22:01:47.613  6925-6925  ViewRootIm...bActivity] com.spark                            I  stopped(false) old = false
+2026-04-12 22:01:47.614  6925-6925  DecorView               com.spark                            I  notifyKeepScreenOnChanged: keepScreenOn=false
+2026-04-12 22:01:47.614  6925-6925  MSHandlerLifeCycle      com.spark                            I  removeMultiSplitHandler: no exist. decor=DecorView@5ee59e6[SignInHubActivity]
+2026-04-12 22:01:47.620  6925-6925  ViewRootIm...bActivity] com.spark                            I  performTraversals params={(0,0)(fillxfill) sim={adjust=pan forwardNavigation} ty=BASE_APPLICATION fmt=TRANSPARENT wanim=0x1030000
+                                                                                                      fl=1810100
+                                                                                                      pfl=12020040
+                                                                                                      bhv=DEFAULT
+                                                                                                      fitSides= naviIconColor=0}
+2026-04-12 22:01:47.622  6925-6925  ViewRootIm...bActivity] com.spark                            I  performTraversals mFirst=false windowShouldResize=false viewVisibilityChanged=false mForceNextWindowRelayout=false params={(0,0)(fillxfill) sim={adjust=pan forwardNavigation} ty=BASE_APPLICATION fmt=TRANSPARENT wanim=0x1030000
+                                                                                                      fl=1810100
+                                                                                                      pfl=12020040
+                                                                                                      bhv=DEFAULT
+                                                                                                      fitSides= naviIconColor=0}
+2026-04-12 22:01:47.625  6925-6925  ViewRootIm...bActivity] com.spark                            I  updateBlastSurfaceIfNeeded mBlastBufferQueue=0xb400007283d3e5f0 isSameSurfaceControl=true
+2026-04-12 22:01:47.625  6925-6925  BLASTBufferQueue        com.spark                            I  update, w= 1080 h= 2340 mName = ViewRootImpl@855b81f[SignInHubActivity] mNativeObject= 0xb400007283d3e5f0 sc.mNativeObject= 0xb400007213d74560 format= -2 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:2898 android.view.ViewRootImpl.relayoutWindow:9847 android.view.ViewRootImpl.performTraversals:3884 android.view.ViewRootImpl.doTraversal:3116 android.view.ViewRootImpl$TraversalRunnable.run:10885 android.view.Choreographer$CallbackRecord.run:1301 
+2026-04-12 22:01:47.626  6925-6925  ViewRootIm...bActivity] com.spark                            I  Relayout returned: old=(0,0,1080,2340) new=(0,0,1080,2340) req=(1080,2340)0 dur=3 res=0x0 s={true 0xb400007313da4200} ch=false seqId=0
+2026-04-12 22:01:47.637  6925-6925  ViewRootIm...bActivity] com.spark                            I  MSG_WINDOW_FOCUS_CHANGED 0 0
+2026-04-12 22:01:47.638  6925-6925  Capacitor               com.spark                            D  Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins 581821752
+2026-04-12 22:01:47.639  6925-6925  ViewRootIm...nActivity] com.spark                            I  stopped(false) old = false
+2026-04-12 22:01:47.640  6925-6925  Capacitor               com.spark                            D  App resumed
+2026-04-12 22:01:47.641  6925-6925  DecorView               com.spark                            I  notifyKeepScreenOnChanged: keepScreenOn=false
+2026-04-12 22:01:47.641  6925-6925  MSHandlerLifeCycle      com.spark                            I  removeMultiSplitHandler: no exist. decor=DecorView@e21eac0[MainActivity]
+2026-04-12 22:01:47.642  6925-6925  ViewRootIm...bActivity] com.spark                            I  MSG_WINDOW_FOCUS_CHANGED 0 0
+2026-04-12 22:01:47.653  6925-6925  ViewRootIm...nActivity] com.spark                            I  performTraversals params={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} layoutInDisplayCutoutMode=shortEdges ty=BASE_APPLICATION wanim=0x1030309
+                                                                                                      fl=81810100
+                                                                                                      pfl=12020040
+                                                                                                      bhv=DEFAULT
+                                                                                                      fitSides= naviIconColor=0}
+2026-04-12 22:01:47.655  6925-6925  ViewRootIm...nActivity] com.spark                            I  performTraversals mFirst=false windowShouldResize=false viewVisibilityChanged=false mForceNextWindowRelayout=false params={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} layoutInDisplayCutoutMode=shortEdges ty=BASE_APPLICATION wanim=0x1030309
+                                                                                                      fl=81810100
+                                                                                                      pfl=12020040
+                                                                                                      bhv=DEFAULT
+                                                                                                      fitSides= naviIconColor=0}
+2026-04-12 22:01:47.661  6925-6925  ViewRootIm...nActivity] com.spark                            I  updateBlastSurfaceIfNeeded mBlastBufferQueue=0xb400007283d37ed0 isSameSurfaceControl=true
+2026-04-12 22:01:47.662  6925-6925  BLASTBufferQueue        com.spark                            I  update, w= 1080 h= 2340 mName = ViewRootImpl@e267031[MainActivity] mNativeObject= 0xb400007283d37ed0 sc.mNativeObject= 0xb400007213d71070 format= -1 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:2898 android.view.ViewRootImpl.relayoutWindow:9847 android.view.ViewRootImpl.performTraversals:3884 android.view.ViewRootImpl.doTraversal:3116 android.view.ViewRootImpl$TraversalRunnable.run:10885 android.view.Choreographer$CallbackRecord.run:1301 
+2026-04-12 22:01:47.662  6925-6925  ViewRootIm...nActivity] com.spark                            I  Relayout returned: old=(0,0,1080,2340) new=(0,0,1080,2340) req=(1080,2340)0 dur=6 res=0x0 s={true 0xb400007313d6ee70} ch=false seqId=0
+2026-04-12 22:01:47.662  6925-6925  ViewRootIm...nActivity] com.spark                            I  MSG_WINDOW_FOCUS_CHANGED 1 0
+2026-04-12 22:01:47.663  6925-6925  ViewRootIm...nActivity] com.spark                            I  mThreadedRenderer.initializeIfNeeded()#2 mSurface={isValid=true 0xb400007313d6ee70}
+2026-04-12 22:01:47.665  6925-6925  InputMethodManager      com.spark                            D  startInputInner - Id : 0
+2026-04-12 22:01:47.665  6925-6925  InputMethodManager      com.spark                            I  startInputInner - mService.startInputOrWindowGainedFocus
+2026-04-12 22:01:47.670  6925-7353  CapacitorCookies        com.spark                            I  Getting cookies at: 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=ya29.a0Aa7MYiqc8inoQKDaT322Yj_Ht_YD03zXrlfJqKPOxpfxzkj7Rfhi9TV7nhgDoklfpdqw6n9R1ucn4ihTsdprib9NJYWAkbLWziMOEuN3WK81R7ftRJtuewzvoLY4-EocZTkTVmpk8Sr1JiZoF4s-v06Ahu0Wrk5SlMLvbdtDaH8ijgEw_fawUXjc40G2TNc2nIkQH3MS3nL0APWw1QD6TKvjF_t9VJ3_1mknuRgIQ1EwouX2NVoPY4MpFtJUcdkk63_frkIJ3cNT7QaCgYKARASARESFQHGX2MiNYreJUWBqEII-jSoavsKrA0277'
+2026-04-12 22:01:47.674  6925-6950  libc                    com.spark                            W  Access denied finding property "sys.perf.boostopt"
+2026-04-12 22:01:47.675   875-875   audit                   auditd                               E  type=1327 audit(1776020507.669:25183): proctitle="com.spark"
+2026-04-12 22:01:47.675  6925-6925  ViewRootIm...bActivity] com.spark                            I  stopped(true) old = false
+2026-04-12 22:01:47.675  6925-6925  ViewRootIm...bActivity] com.spark                            I  WindowStopped on com.spark/com.google.android.gms.auth.api.signin.internal.SignInHubActivity set to true
+2026-04-12 22:01:47.676  6925-6925  MSHandlerLifeCycle      com.spark                            I  removeMultiSplitHandler: no exist. decor=DecorView@5ee59e6[SignInHubActivity]
+2026-04-12 22:01:47.682  6925-6925  MSHandlerLifeCycle      com.spark                            I  removeMultiSplitHandler: no exist. decor=DecorView@5ee59e6[SignInHubActivity]
+2026-04-12 22:01:47.682  6925-6969  OpenGLRenderer          com.spark                            D  setSurface called with nullptr
+2026-04-12 22:01:47.682  6925-6969  OpenGLRenderer          com.spark                            D  setSurface() destroyed EGLSurface
+2026-04-12 22:01:47.682  6925-6969  OpenGLRenderer          com.spark                            D  destroyEglSurface
+2026-04-12 22:01:47.683  6925-6925  ViewRootIm...bActivity] com.spark                            I  dispatchDetachedFromWindow
+2026-04-12 22:01:47.686  6925-6925  InputTransport          com.spark                            D  Input channel destroyed: 'a79feae', fd=245
+2026-04-12 22:01:47.705  6925-7353  TrafficStats            com.spark                            D  tagSocket(6) with statsTag=0xffffffff, statsUid=-1
+2026-04-12 22:01:47.735  1365-1471  WindowManager           system_server                        E  win=Window{a79feae u0 com.spark/com.google.android.gms.auth.api.signin.internal.SignInHubActivity EXITING} destroySurfaces: appStopped=false cleanupOnResume=false win.mWindowRemovalAllowed=true win.mRemoveOnExit=true win.mViewVisibility=0 caller=com.android.server.wm.ActivityRecord.destroySurfaces:6529 com.android.server.wm.ActivityRecord.destroySurfaces:6510 com.android.server.wm.WindowState.onExitAnimationDone:5965 com.android.server.wm.ActivityRecord$$ExternalSyntheticLambda10.accept:2 java.util.ArrayList.forEach:1528 com.android.server.wm.ActivityRecord.onAnimationFinished:8569 com.android.server.wm.WindowContainer$$ExternalSyntheticLambda4.onAnimationFinished:2 
+2026-04-12 22:01:47.736  6925-6925  ViewRootIm...bActivity] com.spark                            I  handleAppVisibility mAppVisible = true visible = false
+2026-04-12 22:01:48.215  6925-7353  AuthenticatedBackend    com.spark                            D  token: ya29.a0Aa7MYiqc8inoQKDaT322Yj_Ht_YD03zXrlfJqKPOxpfxzkj7Rfhi9TV7nhgDoklfpdqw6n9R1ucn4ihTsdprib9NJYWAkbLWziMOEuN3WK81R7ftRJtuewzvoLY4-EocZTkTVmpk8Sr1JiZoF4s-v06Ahu0Wrk5SlMLvbdtDaH8ijgEw_fawUXjc40G2TNc2nIkQH3MS3nL0APWw1QD6TKvjF_t9VJ3_1mknuRgIQ1EwouX2NVoPY4MpFtJUcdkk63_frkIJ3cNT7QaCgYKARASARESFQHGX2MiNYreJUWBqEII-jSoavsKrA0277, verification: {
+                                                                                                      "issued_to": "341334726956-7ihrjc0rva3shavd8qk6edle91mg2r12.apps.googleusercontent.com",
+                                                                                                      "audience": "341334726956-7ihrjc0rva3shavd8qk6edle91mg2r12.apps.googleusercontent.com",
+                                                                                                      "user_id": "109879507273418640703",
+                                                                                                      "scope": "email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid",
+                                                                                                      "expires_in": 3204,
+                                                                                                      "email": "aleksandrresetnikov093@gmail.com",
+                                                                                                      "verified_email": true,
+                                                                                                      "access_type": "online"
+                                                                                                    }
+2026-04-12 22:01:48.374  6925-6925  Capacitor/Console       com.spark                            E  File: http://localhost/ - Line 0 - Msg: Access to XMLHttpRequest at 'http://192.168.162.222:5090/api/auth/google-native' from origin 'http://localhost' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+2026-04-12 22:01:48.374  6925-6925  Capacitor/Console       com.spark                            E  File: http://localhost/_next/static/chunks/8d5546e9a1f0da41.js - Line 1 - Msg: Login failed: [object Object]
