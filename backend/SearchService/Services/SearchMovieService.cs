@@ -47,7 +47,9 @@ public class SearchMovieService
             movies = await _movieRepository.GetByNameAsync(query);
         }
 
-        var sortedMovies = movies.SortByQuery(query, m => m.Name, m => m.Id);
+        var sortedMovies = !string.IsNullOrWhiteSpace(query)
+            ? movies.SortByQuery(query, m => m.Name, m => m.Id)
+            : movies.Select(i => i.Id);
         
         var pagedIds = sortedMovies
             .Skip(pagination.Page * pagination.Count)

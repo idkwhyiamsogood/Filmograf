@@ -117,12 +117,19 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     public async Task<List<CollectionRepo>> GetByNameWithFiltersAsync(string name, IEnumerable<Guid>? includeGenreIds, IEnumerable<Guid>? excludeGenreIds, 
         IEnumerable<Guid>? includeTagsIds, IEnumerable<Guid>? excludeTagsIds, bool strictMatch, CancellationToken ct = default)
     {
-        var escapedName = Regex.Escape(name);
-        var filters = new List<FilterDefinition<CollectionRepo>>
-        {
-            Builders<CollectionRepo>.Filter.Regex(x => x.Name, new BsonRegularExpression(escapedName, "i"))
-        };
+        var filters = new List<FilterDefinition<CollectionRepo>>();
 
+        // 1. Учитываем мягкое удаление (базовая логика твоего репозитория)
+        filters.Add(Builders<CollectionRepo>.Filter.Eq(x => x.IsDeleted, false));
+
+        // 2. Поиск по имени только если оно не пустое
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            var escapedName = Regex.Escape(name);
+            filters.Add(Builders<CollectionRepo>.Filter.Regex(x => x.Name, new BsonRegularExpression(escapedName, "i")));
+        }
+
+        // 3. Жанры
         if (includeGenreIds?.Any() == true)
         {
             filters.Add(strictMatch
@@ -134,7 +141,9 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
         {
             filters.Add(Builders<CollectionRepo>.Filter.Not(
                 Builders<CollectionRepo>.Filter.AnyIn(x => x.GenreIds, excludeGenreIds)));
-        } 
+        }
+
+        // 4. Теги
         if (includeTagsIds?.Any() == true)
         {
             filters.Add(strictMatch
@@ -148,6 +157,9 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
                 Builders<CollectionRepo>.Filter.AnyIn(x => x.Tags, excludeTagsIds)));
         }
 
-        return await _collection.Find(Builders<CollectionRepo>.Filter.And(filters)).ToListAsync(ct);
+        // Собираем всё через AND
+        var finalFilter = Builders<CollectionRepo>.Filter.And(filters);
+
+        return await _collection.Find(finalFilter).ToListAsync(ct);
     }
 }

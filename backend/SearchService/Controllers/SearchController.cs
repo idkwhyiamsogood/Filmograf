@@ -25,19 +25,19 @@ public class SearchController : CustomControllerBase
 
     [HttpPost("movies")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
+    public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string? query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId, [FromBody] MovieSearchRequestDto? data)
     {
-        var response = await _searchMovieService.SearchFilmAsync(query, pagination, roomId,data);
+        var response = await _searchMovieService.SearchFilmAsync(query ?? "", pagination, roomId, data);
         return Ok(response);
     }
     
     [HttpPost("collections")]
     [Authorize]
-    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
+    public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string? query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId, [FromBody] CollectionSearchRequestDto data)
     {
-        var response = await _searchCollectionService.SearchCollectionAsync(query, pagination, roomId, data);
+        var response = await _searchCollectionService.SearchCollectionAsync(query ?? "", pagination, roomId, data);
         return Ok(response);
     }
     

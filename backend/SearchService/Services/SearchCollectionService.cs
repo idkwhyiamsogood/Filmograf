@@ -47,7 +47,9 @@ public class SearchCollectionService
             collections = await _collectionRepository.GetByNameAsync(query);
         }
 
-        var sortedCollections = collections.SortByQuery(query, c => c.Name, c => c.Id);
+        var sortedCollections = !string.IsNullOrWhiteSpace(query)
+            ? collections.SortByQuery(query, c => c.Name, c => c.Id)
+            : collections.Select(i => i.Id);
 
         var pagedIds = sortedCollections
             .Skip(pagination.Page * pagination.Count)
