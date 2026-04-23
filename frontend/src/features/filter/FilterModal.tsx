@@ -21,11 +21,15 @@ import { useModals, useSwipe } from "@/shared/hooks";
 import { useCatalog } from "@/widgets/catalog/model/hooks/useCatalog";
 import { useCallback, useEffect } from "react";
 import { useFilter } from "./common";
+import { validateFilters } from "./common/model/lib/validateFilters";
+import { hasActiveFilters } from "./common/model/lib/validateFilters";
 
 export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();
   const { filterState, globalReset } = useFilter();
   const { handleSearch } = useCatalog();
+  const validation = validateFilters(filterState);
+  const canApply = validation.isValid;
 
   const { translateY, isDragging, handlers } = useSwipe({
     onClose: closeModal,
@@ -34,7 +38,7 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
   });
 
   const handleSubmit = () => {
-    console.log("searched");
+    if (!canApply) return;
     handleSearch();
   };
 
@@ -79,6 +83,11 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
           <FilterFooter
             handleResetFilter={globalReset}
             handleSubmit={handleSubmit}
+            disabled={!canApply}
+            errorText={
+              validation.errors.fromYearTo ??
+              validation.errors.fromGradeTo
+            }
           />
         </SheetContent>
       </Sheet>

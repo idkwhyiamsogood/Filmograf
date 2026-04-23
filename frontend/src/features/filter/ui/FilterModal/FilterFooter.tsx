@@ -7,17 +7,29 @@ import { Separator } from "@/shared/ui/separator";
 interface Props {
   handleResetFilter: () => void;
   handleSubmit: () => void;
+  disabled?: boolean;
+  errorText?: string;
 }
 
 export const FilterFooter: React.FC<Props> = ({
   handleResetFilter,
   handleSubmit,
+  disabled,
+  errorText,
 }) => {
   return (
     <div className="fixed bottom-0 w-full">
       <Separator />
 
       <div className="flex gap-2.5 items-center justify-center mx-auto p-5">
+        {errorText && (
+          <div className="absolute bottom-[72px] left-0 right-0 px-5">
+            <div className="text-[12px] text-red-600 text-center">
+              {errorText}
+            </div>
+          </div>
+        )}
+
         <Button
           onClick={handleResetFilter}
           variant="destructive"
@@ -29,6 +41,7 @@ export const FilterFooter: React.FC<Props> = ({
         <Button
           onClick={handleSubmit}
           variant="default"
+          disabled={disabled}
           className="p-2.5! bg-emerald-600 hover:bg-emerald-700 text-accent-foreground"
         >
           Применить <Search size={16} />

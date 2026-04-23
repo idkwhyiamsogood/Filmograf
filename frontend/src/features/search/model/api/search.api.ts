@@ -12,7 +12,12 @@ class SearchApi extends BaseHttpClient {
     options: MovieParams,
     queryParam: QueryParams = { page: 0, count: 21 },
   ): APIResponse<SearchedIds> => {
-    return this.post(`api/search/movies?query=${search}&roomId=${"wqe"}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
+    const trimmed = search?.trim?.() ?? "";
+    const queryPart = trimmed ? `query=${encodeURIComponent(trimmed)}&` : "";
+    return this.post(
+      `api/search/movies?${queryPart}roomId=${"wqe"}&Page=${queryParam.page}&Count=${queryParam.count}`,
+      options,
+    );
   };
 
   public searchCollections = (
@@ -20,7 +25,12 @@ class SearchApi extends BaseHttpClient {
     options: CollectionParams,
     queryParam: QueryParams = { page: 0, count: 21 },
   ): APIResponse<SearchedIds> => {
-    return this.post(`api/search/collections?query=${search}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
+    const trimmed = search?.trim?.() ?? "";
+    const queryPart = trimmed ? `query=${encodeURIComponent(trimmed)}&` : "";
+    return this.post(
+      `api/search/collections?${queryPart}Page=${queryParam.page}&Count=${queryParam.count}`,
+      options,
+    );
   };
 }
 

@@ -21,9 +21,9 @@ interface Props {
 }
 
 export const MovieContent: FC<Props> = memo(({ type }) => {
-  const { data: searchData, isFetching: isSearchLoading, activeType, query } = useCatalog();
+  const { data: searchData, isFetching: isSearchLoading, activeType, query, hasActiveFilters } = useCatalog();
 
-  const { data: searchMovie } = useMovie(searchData.entityIds || []);
+  const { data: searchMovie } = useMovie(searchData?.entityIds ?? []);
 
   const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteMovies({
@@ -37,7 +37,7 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
   });
 
   const moviesToDisplay = useMemo(() => {
-    if (query.trim() !== "") {
+    if (query.trim() !== "" || hasActiveFilters) {
       if (activeType === "Movie" && searchData?.entityIds?.length > 0) {
         return searchMovie ?? [];
       }
@@ -46,22 +46,32 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     }
 
     return movies ?? [];
-  }, [activeType, query, searchData, searchMovie, movies]);
+  }, [activeType, query, hasActiveFilters, searchData, searchMovie, movies]);
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage && query.trim() === "") {
+    if (
+      inView &&
+      hasNextPage &&
+      !isFetchingNextPage &&
+      query.trim() === "" &&
+      !hasActiveFilters
+    ) {
       fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query]);
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query, hasActiveFilters]);
 
   if (isLoading || isSearchLoading) return 
     <LoadingSplashScreen />
 
-  if (query.trim() !== "" && moviesToDisplay.length === 0) {
+  if ((query.trim() !== "" || hasActiveFilters) && moviesToDisplay.length === 0) {
     return (
       <TabsContent value="Movie">
         <div className="text-center py-8">
-          <p className="text-gray-500">Не найдено фильмов "{query}"</p>
+          <p className="text-gray-500">
+            {query.trim() !== ""
+              ? `Не найдено фильмов "${query}"`
+              : "По заданным фильтрам ничего не найдено"}
+          </p>
         </div>
       </TabsContent>
     );
@@ -71,13 +81,13 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     <TabsContent value="Movie">
       <MovieWrapper movies={moviesToDisplay} />
 
-      {query.trim() === "" && (
+      {query.trim() === "" && !hasActiveFilters && (
         <div className="py-8">
           {isFetchingNextPage && <MovieSkeletonWrapper count={9} />}
         </div>
       )}
 
-      {query.trim() === "" && <div ref={ref} className="py-4" />}
+      {query.trim() === "" && !hasActiveFilters && <div ref={ref} className="py-4" />}
     </TabsContent>
   );
 });

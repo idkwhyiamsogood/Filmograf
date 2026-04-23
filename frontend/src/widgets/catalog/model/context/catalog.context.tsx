@@ -10,6 +10,7 @@ import React, {
 import type { EntityType } from "@/shared/types";
 import { useFilter } from "@/features/filter/";
 import { useSearch } from "@/features/search";
+import { hasActiveFilters } from "@/features/filter/common/model/lib/validateFilters";
 
 interface CatalogContextType {
   data: any;
@@ -17,6 +18,7 @@ interface CatalogContextType {
   isFetching: boolean;
   query: string;
   activeType: EntityType;
+  hasActiveFilters: boolean;
   setQuery: (query: string) => void;
   setActiveType: (type: EntityType) => void;
   handleSearch: () => void;
@@ -31,6 +33,7 @@ export const CatalogProvider = ({ children }: { children: ReactNode }) => {
   const [activeType, setActiveType] = useState<EntityType>("Movie");
 
   const { filterState, updateFilterOption } = useFilter();
+  const filtersActive = hasActiveFilters(filterState);
 
   useEffect(() => {
     updateFilterOption("targetType", () => activeType);
@@ -46,11 +49,12 @@ export const CatalogProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const value = {
-    data,
+    data: data ?? { entityIds: [] },
     isLoading,
     isFetching,
     query,
     activeType,
+    hasActiveFilters: filtersActive,
     setQuery,
     setActiveType,
     handleSearch,

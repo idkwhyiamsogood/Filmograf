@@ -18,6 +18,7 @@ import { ratings } from "../../model/constants/ageRatings";
 import { useModals } from "@/shared/hooks";
 import { useFilter } from "../../common/model/hooks/useFilter";
 import { cn } from "@/shared/lib/utils";
+import { validateFilters } from "../../common/model/lib/validateFilters";
 
 interface Props {
   targetType: EntityType;
@@ -26,6 +27,7 @@ interface Props {
 export const FilterContent: FC<Props> = ({ targetType }) => {
   const { openModal } = useModals();
   const { toggleStrictMatch, filterState, updateFilterOption } = useFilter();
+  const validation = validateFilters(filterState);
 
   const selectedGenresCount =
     (filterState.filterOptions.genres?.includeIds?.length || 0) +
@@ -45,7 +47,7 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
     updateFilterOption(key, (prev) => {
       const newRange = [...(prev || ["", ""])];
       newRange[index] = value;
-      return newRange as any; 
+      return newRange as any;
     });
   };
 
@@ -144,6 +146,11 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
                   className="w-full h-7.5 px-[6px] py-[2px] text-[13px] rounded-[5px]"
                 />
               </div>
+              {validation.errors.fromYearTo && (
+                <div className="text-[12px] text-red-600">
+                  {validation.errors.fromYearTo}
+                </div>
+              )}
             </div>
           </WrapperSheetContent>
 
@@ -169,6 +176,11 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
                   className="w-full h-7.5 px-[6px] py-[2px] text-[13px] rounded-[5px]"
                 />
               </div>
+              {validation.errors.fromGradeTo && (
+                <div className="text-[12px] text-red-600">
+                  {validation.errors.fromGradeTo}
+                </div>
+              )}
             </div>
           </WrapperSheetContent>
 

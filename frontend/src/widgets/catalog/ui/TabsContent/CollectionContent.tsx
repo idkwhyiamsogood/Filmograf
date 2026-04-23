@@ -21,9 +21,9 @@ interface Props {
 export const CollectionContent: FC<Props> = memo(({ type }) => {
   console.log(type);
 
-  const { data: searchData, isFetching: isSearchLoading, activeType, query } = useCatalog();
+  const { data: searchData, isFetching: isSearchLoading, activeType, query, hasActiveFilters } = useCatalog();
 
-  const { data: searchCollections } = useCollections(searchData.entityIds || []);
+  const { data: searchCollections } = useCollections(searchData?.entityIds ?? []);
 
   const { 
     collections, 
@@ -42,7 +42,7 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
   });
 
   const collectionsToDisplay = useMemo(() => {
-    if (query.trim() !== "") {
+    if (query.trim() !== "" || hasActiveFilters) {
       if (activeType === "Collection" && searchData?.entityIds?.length > 0) {
         return searchCollections ?? [];
       }
@@ -50,22 +50,32 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
       return [];
     }
     return collections ?? [];
-  }, [activeType, query, searchData, searchCollections, collections]);
+  }, [activeType, query, hasActiveFilters, searchData, searchCollections, collections]);
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage && query.trim() === "") {
+    if (
+      inView &&
+      hasNextPage &&
+      !isFetchingNextPage &&
+      query.trim() === "" &&
+      !hasActiveFilters
+    ) {
       fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query]);
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query, hasActiveFilters]);
 
   if (isLoading || isSearchLoading) return 
     <LoadingSplashScreen />
 
-  if (query.trim() !== "" && collectionsToDisplay.length === 0) {
+  if ((query.trim() !== "" || hasActiveFilters) && collectionsToDisplay.length === 0) {
     return (
       <TabsContent value="Collection">
         <div className="text-center py-8">
-          <p className="text-gray-500">Не найдено подборок "{query}"</p>
+          <p className="text-gray-500">
+            {query.trim() !== ""
+              ? `Не найдено подборок "${query}"`
+              : "По заданным фильтрам ничего не найдено"}
+          </p>
         </div>
       </TabsContent>
     );
@@ -75,13 +85,13 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
     <TabsContent value="Collection">
       <CollectionWrapper collections={collectionsToDisplay} />
 
-      {query.trim() === "" && (
+      {query.trim() === "" && !hasActiveFilters && (
         <div className="py-8">
           {isFetchingNextPage && <CollectionSkeletonWrapper count={10} />}
         </div>
       )}
 
-      {query.trim() === "" && <div ref={ref} className="py-4" />}
+      {query.trim() === "" && !hasActiveFilters && <div ref={ref} className="py-4" />}
     </TabsContent>
   );
 });
