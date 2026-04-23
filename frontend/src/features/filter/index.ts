@@ -10,3 +10,4 @@ export { FilterButton } from "./ui/FilterButton";
 
 // hooks
 export { useFilter } from "./common"
+export { useGenresFilter } from "./genres-filter/model/hooks/useGenresFilter";

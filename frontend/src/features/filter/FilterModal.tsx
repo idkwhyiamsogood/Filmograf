@@ -39,6 +39,7 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
 
   const handleSubmit = () => {
     if (!canApply) return;
+    closeModal();
     handleSearch();
   };
 

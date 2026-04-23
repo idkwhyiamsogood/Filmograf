@@ -25,9 +25,9 @@ export function hasActiveFilters(filterState: FilterState): boolean {
   const fo = filterState.filterOptions;
 
   const genresActive =
-    (fo.genres?.includeIds?.length ?? 0) > 0 || (fo.genres?.excludeIds?.length ?? 0) > 0;
+    (fo.genres?.include?.length ?? 0) > 0 || (fo.genres?.exclude?.length ?? 0) > 0;
   const tagsActive =
-    (fo.tags?.includeIds?.length ?? 0) > 0 || (fo.tags?.excludeIds?.length ?? 0) > 0;
+    (fo.tags?.include?.length ?? 0) > 0 || (fo.tags?.exclude?.length ?? 0) > 0;
 
   const strictActive = Boolean(filterState.strictMatch);
 

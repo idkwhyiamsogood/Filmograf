@@ -3,7 +3,7 @@
 export { Search } from "./ui/Search";
 
 // hooks
-export { useSearch } from "./model/hooks/useSearch";
+export { useInfiniteSearch } from "./model/hooks/useSearch";
 
 // api
 export { searchApi } from "./model/api/search.api";

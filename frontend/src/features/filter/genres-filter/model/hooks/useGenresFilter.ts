@@ -10,11 +10,11 @@ export const useGenresFilter = () => {
 
       if (!genres) return { checked: false, indeterminate: false };
 
-      if (genres.includeIds?.includes(genreId)) {
+      if (genres.include?.includes(genreId)) {
         return { checked: true, indeterminate: false }; // галочка
       }
 
-      if (genres.excludeIds?.includes(genreId)) {
+      if (genres.exclude?.includes(genreId)) {
         return { checked: false, indeterminate: true }; // крестик
       }
 
@@ -28,17 +28,17 @@ export const useGenresFilter = () => {
       updateFilterOption("genres", (prev) => {
         if (!prev) {
           // Первый клик: добавляем в include
-          return { includeIds: [id], excludeIds: [] };
+          return { include: [id], exclude: [] };
         }
 
-        const isInInclude = prev.includeIds?.includes(id);
-        const isInExclude = prev.excludeIds?.includes(id);
+        const isInInclude = prev.include?.includes(id);
+        const isInExclude = prev.exclude?.includes(id);
 
         if (!isInInclude && !isInExclude) {
           // Состояние 1: unchecked → include (галочка)
           return {
             ...prev,
-            includeIds: [...(prev.includeIds || []), id],
+            include: [...(prev.include || []), id],
           };
         }
 
@@ -46,17 +46,17 @@ export const useGenresFilter = () => {
           // Состояние 2: include → exclude (крестик)
           return {
             ...prev,
-            includeIds: (prev.includeIds || []).filter(
+            include: (prev.include || []).filter(
               (genreId) => genreId !== id,
             ),
-            excludeIds: [...(prev.excludeIds || []), id],
+            exclude: [...(prev.exclude || []), id],
           };
         }
 
         // Состояние 3: exclude → unchecked (убираем)
         return {
           ...prev,
-          excludeIds: (prev.excludeIds || []).filter(
+          exclude: (prev.exclude || []).filter(
             (genreId) => genreId !== id,
           ),
         };
@@ -71,8 +71,8 @@ export const useGenresFilter = () => {
 
   const handleGenresReset = useCallback(() => {
     updateFilterOption("genres", () => ({
-      excludeIds: [],
-      includeIds: [],
+      exclude: [],
+      include: [],
     }));
   }, [updateFilterOption]);
 

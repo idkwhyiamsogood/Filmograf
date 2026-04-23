@@ -30,12 +30,12 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
   const validation = validateFilters(filterState);
 
   const selectedGenresCount =
-    (filterState.filterOptions.genres?.includeIds?.length || 0) +
-    (filterState.filterOptions.genres?.excludeIds?.length || 0);
+    (filterState.filterOptions.genres?.include?.length || 0) +
+    (filterState.filterOptions.genres?.exclude?.length || 0);
 
   const selectedTagsCount =
-    (filterState.filterOptions.tags?.includeIds?.length || 0) +
-    (filterState.filterOptions.tags?.excludeIds?.length || 0);
+    (filterState.filterOptions.tags?.include?.length || 0) +
+    (filterState.filterOptions.tags?.exclude?.length || 0);
 
   const isCollection = filterState.filterOptions.targetType === "Collection";
 

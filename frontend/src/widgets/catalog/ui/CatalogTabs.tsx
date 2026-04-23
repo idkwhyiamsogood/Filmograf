@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, type FC } from "react";
+import { memo, useEffect, type FC } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 
 // types
@@ -17,13 +17,24 @@ import { MovieContent } from "./TabsContent/MovieContent";
 
 // hooks
 import { useCatalog } from "../model/hooks/useCatalog";
+import { useGenresFilter } from "@/features/filter";
 
 export const CatalogTabs: FC = memo(() => {
   const { activeType, setActiveType } = useCatalog();
+  const { toggleGenre } = useGenresFilter();
   const params = useSearchParams();
 
   const searchTypeParams = params.get("searchType");
   const typeParams = params.get("type");
+  const genre = params.get("genres");
+
+  useEffect(() => {
+    if (genre) {
+      console.log(genre);
+      toggleGenre(genre);
+      toggleGenre(genre);
+    }
+  }, []);
 
   const currentTab = (typeParams as EntityType) || activeType;
 

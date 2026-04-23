@@ -10,11 +10,11 @@ export const useTagsFilter = () => {
 
       if (!tags) return { checked: false, indeterminate: false };
 
-      if (tags.includeIds?.includes(tagId)) {
+      if (tags.include?.includes(tagId)) {
         return { checked: true, indeterminate: false };
       }
 
-      if (tags.excludeIds?.includes(tagId)) {
+      if (tags.exclude?.includes(tagId)) {
         return { checked: false, indeterminate: true };
       }
 
@@ -27,17 +27,17 @@ export const useTagsFilter = () => {
     (id: string) => {
       updateFilterOption("tags", (prev) => {
         if (!prev) {
-          return { includeIds: [id], excludeIds: [] };
+          return { include: [id], exclude: [] };
         }
 
-        const isInInclude = prev.includeIds?.includes(id);
-        const isInExclude = prev.excludeIds?.includes(id);
+        const isInInclude = prev.include?.includes(id);
+        const isInExclude = prev.exclude?.includes(id);
 
         if (!isInInclude && !isInExclude) {
           // Состояние 1: unchecked → include (галочка)
           return {
             ...prev,
-            includeIds: [...(prev.includeIds || []), id],
+            include: [...(prev.include || []), id],
           };
         }
 
@@ -45,17 +45,17 @@ export const useTagsFilter = () => {
           // Состояние 2: include → exclude (крестик)
           return {
             ...prev,
-            includeIds: (prev.includeIds || []).filter(
+            include: (prev.include || []).filter(
               (genreId) => genreId !== id,
             ),
-            excludeIds: [...(prev.excludeIds || []), id],
+            exclude: [...(prev.exclude || []), id],
           };
         }
 
         // Состояние 3: exclude → unchecked (убираем)
         return {
           ...prev,
-          excludeIds: (prev.excludeIds || []).filter((genreId) => genreId !== id),
+          exclude: (prev.exclude || []).filter((genreId) => genreId !== id),
         };
       });
     },
@@ -64,8 +64,8 @@ export const useTagsFilter = () => {
 
   const handleTagReset = useCallback(() => {
     updateFilterOption("tags", () => ({
-      excludeIds: [],
-      includeIds: [],
+      exclude: [],
+      include: [],
     }));
 
     // dev only

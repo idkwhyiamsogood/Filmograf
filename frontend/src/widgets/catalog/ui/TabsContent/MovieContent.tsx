@@ -1,35 +1,47 @@
 "use client";
 
-// types
 import type { FC } from "react";
-
-// ui
-import { MovieSkeletonWrapper, MovieWrapper } from "@/entities/movie";
-import { TabsContent } from "@/shared/ui/tabs";
-
-// hooks
-import { useInfiniteMovies, useMovie } from "@/entities/movie";
-import { useCatalog } from "../../model/hooks/useCatalog";
 import { useMemo, useEffect, memo } from "react";
 import { useInView } from "react-intersection-observer";
-import { IdsEntity } from "@/shared/types";
-import type { SearchTypeMovie } from "@/shared/types";
+
+import { MovieSkeletonWrapper, MovieWrapper } from "@/entities/movie";
+import { TabsContent } from "@/shared/ui/tabs";
+import { useInfiniteMovies, useMovie } from "@/entities/movie";
 import { LoadingSplashScreen } from "@/shared/components";
+import type { SearchTypeMovie } from "@/shared/types";
+
+import { useCatalog } from "../../model/hooks/useCatalog";
 
 interface Props {
   type: SearchTypeMovie;
 }
 
 export const MovieContent: FC<Props> = memo(({ type }) => {
-  const { data: searchData, isFetching: isSearchLoading, activeType, query, hasActiveFilters } = useCatalog();
+  const {
+    entityIds: searchData,
+    isLoading: isSearchLoading,
+    isFetchingNextPage: isSearchFetchingNext,
+    hasNextPage: searchHasNext,
+    fetchNextPage: fetchSearchNext,
+    activeType,
+    query,
+    hasActiveFilters,
+  } = useCatalog();
 
-  const { data: searchMovie } = useMovie(searchData?.entityIds ?? []);
+  const isSearchMode = query.trim() !== "" || hasActiveFilters;
 
-  const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteMovies({
-      pageSize: 21,
-      type: type,
-    });
+  const { data: searchMoviesBatch } = useMovie(searchData ?? []);
+
+  const {
+    movies: catalogMovies,
+    fetchNextPage: fetchCatalogNext,
+    hasNextPage: catalogHasNext,
+    isFetchingNextPage: isCatalogFetchingNext,
+    isLoading: isCatalogLoading,
+  } = useInfiniteMovies({
+    pageSize: 21,
+    type: type,
+  });
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -37,33 +49,31 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
   });
 
   const moviesToDisplay = useMemo(() => {
-    if (query.trim() !== "" || hasActiveFilters) {
-      if (activeType === "Movie" && searchData?.entityIds?.length > 0) {
-        return searchMovie ?? [];
-      }
-
-      return [];
+    if (isSearchMode) {
+      return activeType === "Movie" ? (searchMoviesBatch ?? []) : [];
     }
-
-    return movies ?? [];
-  }, [activeType, query, hasActiveFilters, searchData, searchMovie, movies]);
+    return catalogMovies ?? [];
+  }, [isSearchMode, activeType, searchMoviesBatch, catalogMovies]);
 
   useEffect(() => {
-    if (
-      inView &&
-      hasNextPage &&
-      !isFetchingNextPage &&
-      query.trim() === "" &&
-      !hasActiveFilters
-    ) {
-      fetchNextPage();
+    if (!inView) return;
+
+    if (isSearchMode) {
+      if (searchHasNext && !isSearchFetchingNext && activeType === "Movie") {
+        fetchSearchNext();
+      }
+    } else {
+      if (catalogHasNext && !isCatalogFetchingNext) {
+        fetchCatalogNext();
+      }
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query, hasActiveFilters]);
+  }, [inView]);
 
-  if (isLoading || isSearchLoading) return 
-    <LoadingSplashScreen />
+  if (isCatalogLoading || (isSearchLoading && !isSearchFetchingNext)) {
+    return <LoadingSplashScreen />;
+  }
 
-  if ((query.trim() !== "" || hasActiveFilters) && moviesToDisplay.length === 0) {
+  if (isSearchMode && moviesToDisplay.length === 0 && !isSearchLoading) {
     return (
       <TabsContent value="Movie">
         <div className="text-center py-8">
@@ -77,17 +87,18 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     );
   }
 
+  const isFetchingNext = isSearchMode
+    ? isSearchFetchingNext
+    : isCatalogFetchingNext;
+
   return (
     <TabsContent value="Movie">
       <MovieWrapper movies={moviesToDisplay} />
 
-      {query.trim() === "" && !hasActiveFilters && (
-        <div className="py-8">
-          {isFetchingNextPage && <MovieSkeletonWrapper count={9} />}
-        </div>
-      )}
-
-      {query.trim() === "" && !hasActiveFilters && <div ref={ref} className="py-4" />}
+      <div className="py-8">
+        {isFetchingNext && <MovieSkeletonWrapper count={9} />}
+        <div ref={ref} className="h-10" />
+      </div>
     </TabsContent>
   );
 });

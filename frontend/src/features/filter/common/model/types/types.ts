@@ -13,8 +13,8 @@ export interface FilterOptions {
 }
 
 interface BaseQuery {
-  excludeIds: string[];
-  includeIds: string[];
+  exclude: string[];
+  include: string[];
 }
 
 export interface MovieParams {
