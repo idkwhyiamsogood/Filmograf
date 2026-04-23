@@ -20,6 +20,9 @@ interface BaseQuery {
 export interface MovieParams {
   genres?: BaseQuery;
   strictMatch: boolean;
+  fromYearTo?: string[]; // 1980 - 2000 => 1980 year[0], 2000[1]
+  fromGradeTo?: number[];
+  ageRating?: number[];
 }
 
 export interface CollectionParams {

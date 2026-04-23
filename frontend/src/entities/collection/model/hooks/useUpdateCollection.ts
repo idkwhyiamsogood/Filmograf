@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { collectionApi } from "../api/collection.api";
 import { UpdateCollection } from "../types";
+import { toast } from "sonner";
 
 export const useUpdateCollection = () => {
   const queryClient = useQueryClient();
@@ -15,6 +16,8 @@ export const useUpdateCollection = () => {
 
       queryClient.setQueryData(["collection", id], updatedCollection);
       queryClient.invalidateQueries({ queryKey: ["collections"] });
+
+      toast.success("Коллекция успешно обновлена")
     },
     onError: (error) => {
       console.error("Collection update failed:", error);

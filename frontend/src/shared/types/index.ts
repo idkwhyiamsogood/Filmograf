@@ -3,5 +3,5 @@ export type { ModalType, ModalContextType, ModalOptions, ModalState, BaseModalPr
 export type { JWT } from "./user";
 export type { APIResponse, APIError, QueryParams, IdsEntity, SearchedIds } from "./api";
 
-export type { BaseModel, BaseID, EntityType, Entity } from "./base";
+export type { BaseModel, BaseID, EntityType, Entity, SearchTypeMovie, SearchTypeCollection } from "./base";
 export type { ErrorHandler } from "./error-handler";

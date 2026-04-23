@@ -37,7 +37,7 @@ export const CollectionActionsDropdown: React.FC<Props> = ({
   const { mutate: pinCollection, isSuccess: isPinSuccess } = usePinCollection();
 
   const copyToCollection: CreateCollection = {
-    name: collection.name + "( Копия)",
+    name: collection.name + " (Копия)",
     tags: collection.tags,
     isPublic: collection.isPublic,
     isCommentable: collection.isCommentable,
@@ -66,7 +66,7 @@ export const CollectionActionsDropdown: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (isCopySuccess || isUnpinSuccess || isPinSuccess) {
+    if (isUnpinSuccess || isPinSuccess) {
       router.push("/favorites");
     }
   }, [isCopySuccess, isUnpinSuccess, router]);

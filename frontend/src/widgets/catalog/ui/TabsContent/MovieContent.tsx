@@ -13,18 +13,22 @@ import { useCatalog } from "../../model/hooks/useCatalog";
 import { useMemo, useEffect, memo } from "react";
 import { useInView } from "react-intersection-observer";
 import { IdsEntity } from "@/shared/types";
+import type { SearchTypeMovie } from "@/shared/types";
+import { LoadingSplashScreen } from "@/shared/components";
 
-export const MovieContent: FC = memo(() => {
-  const { data: searchData, activeType, query } = useCatalog();
+interface Props {
+  type: SearchTypeMovie;
+}
 
-  // console.log(searchData, "movie-content");
+export const MovieContent: FC<Props> = memo(({ type }) => {
+  const { data: searchData, isFetching: isSearchLoading, activeType, query } = useCatalog();
 
   const { data: searchMovie } = useMovie(searchData.entityIds || []);
 
   const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteMovies({
       pageSize: 21,
-      type: "top",
+      type: type,
     });
 
   const { ref, inView } = useInView({
@@ -50,11 +54,10 @@ export const MovieContent: FC = memo(() => {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query]);
 
-  if (isLoading && moviesToDisplay.length === 0 && query.trim() === "") {
-    return <MovieSkeletonWrapper count={9} />;
-  }
+  if (isLoading || isSearchLoading) return 
+    <LoadingSplashScreen />
 
-  if (query.trim() !== "" && moviesToDisplay.length === 0 && !isLoading) {
+  if (query.trim() !== "" && moviesToDisplay.length === 0) {
     return (
       <TabsContent value="Movie">
         <div className="text-center py-8">

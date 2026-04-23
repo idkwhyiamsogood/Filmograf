@@ -25,7 +25,7 @@ interface Props {
 
 export const FilterContent: FC<Props> = ({ targetType }) => {
   const { openModal } = useModals();
-  const { toggleStrictMatch, filterState } = useFilter();
+  const { toggleStrictMatch, filterState, updateFilterOption } = useFilter();
 
   const selectedGenresCount =
     (filterState.filterOptions.genres?.includeIds?.length || 0) +
@@ -36,6 +36,29 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
     (filterState.filterOptions.tags?.excludeIds?.length || 0);
 
   const isCollection = filterState.filterOptions.targetType === "Collection";
+
+  const handleRangeChange = (
+    key: "fromYearTo" | "fromGradeTo",
+    index: 0 | 1,
+    value: string
+  ) => {
+    updateFilterOption(key, (prev) => {
+      const newRange = [...(prev || ["", ""])];
+      newRange[index] = value;
+      return newRange as any; 
+    });
+  };
+
+  const handleAgeRatingToggle = (id: number) => {
+    updateFilterOption("ageRating", (prev) => {
+      const current = prev || [];
+      return current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id];
+    });
+  };
+
+  console.log(filterState);
 
   return (
     <div className="my-11 h-max">
@@ -97,77 +120,78 @@ export const FilterContent: FC<Props> = ({ targetType }) => {
 
       <Separator />
 
-      {/* <div className="space-y-2.5">
-        <WrapperSheetContent>
-          <div className="py-1 flex flex-col gap-1">
-            <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
-              Год релиза
-            </span>
-            <div className="flex justify-between items-center">
-              <Input
-                placeholder="От"
-                className="w-full h-7.5 px-[6px] py-[2px] 
-                 text-[13px] leading-[20px] text-[#212529] 
-                 bg-[#ffffff] border-1 rounded-[5px]
-                 placeholder:text-[#8a8a8e]"
-              />
-              <span className="w-4 h-[1px] bg-[#8a8a8e] shrink-0 mx-2"></span>
-              <Input
-                placeholder="До"
-                className="w-full h-7.5 px-[6px] py-[2px] 
-                 text-[13px] leading-[20px] text-[#212529] 
-                 bg-[#ffffff] border-1 rounded-[5px]
-                 placeholder:text-[#8a8a8e]"
-              />
-            </div>
-          </div>
-        </WrapperSheetContent>
-
-        <WrapperSheetContent>
-          <div className="py-1 flex flex-col gap-1">
-            <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
-              Оценка
-            </span>
-            <div className="flex justify-between items-center">
-              <Input
-                placeholder="От"
-                className="w-full h-7.5 px-[6px] py-[2px] 
-                 text-[13px] leading-[20px] text-[#212529] 
-                 bg-[#ffffff] border-1 rounded-[5px]
-                 placeholder:text-[#8a8a8e]"
-              />
-              <span className="w-4 h-[1px] bg-[#8a8a8e] shrink-0 mx-2"></span>
-              <Input
-                placeholder="До"
-                className="w-full h-7.5 px-[6px] py-[2px] 
-                 text-[13px] leading-[20px] text-[#212529] 
-                 bg-[#ffffff] border-1 rounded-[5px]
-                 placeholder:text-[#8a8a8e]"
-              />
-            </div>
-          </div>
-        </WrapperSheetContent>
-
-        <Separator />
-
-        <WrapperSheetContent>
-          <span className="text-[14px] leading-[20px] font-sans text-accent-foreground">
-            Возрастные ограничения
-          </span>
-          <div className="flex flex-wrap gap-2.5">
-            {ratings.map((rate) => (
-              <div className="w-[calc(50vw-20px)]">
-                <CommonCheckboxField
-                  label={String(rate.value) + "+"}
-                  key={"rating-" + String(rate.id)}
-                  checked={false}
-                  handleToggle={() => {}}
+      {filterState.filterOptions.targetType === "Movie" && (
+        <div className="space-y-2.5">
+          <WrapperSheetContent>
+            <div className="py-1 flex flex-col gap-1">
+              <span className="text-[14px] font-sans text-accent-foreground">
+                Год релиза
+              </span>
+              <div className="flex justify-between items-center">
+                <Input
+                  placeholder="От"
+                  type="number"
+                  value={filterState.filterOptions.fromYearTo?.[0] || ""}
+                  onChange={(e) => handleRangeChange("fromYearTo", 0, e.target.value)}
+                  className="w-full h-7.5 px-[6px] py-[2px] text-[13px] rounded-[5px]"
+                />
+                <span className="w-4 h-[1px] bg-[#8a8a8e] shrink-0 mx-2"></span>
+                <Input
+                  placeholder="До"
+                  type="number"
+                  value={filterState.filterOptions.fromYearTo?.[1] || ""}
+                  onChange={(e) => handleRangeChange("fromYearTo", 1, e.target.value)}
+                  className="w-full h-7.5 px-[6px] py-[2px] text-[13px] rounded-[5px]"
                 />
               </div>
-            ))}
-          </div>
-        </WrapperSheetContent>
-      </div> */}
+            </div>
+          </WrapperSheetContent>
+
+          <WrapperSheetContent>
+            <div className="py-1 flex flex-col gap-1">
+              <span className="text-[14px] font-sans text-accent-foreground">
+                Оценка
+              </span>
+              <div className="flex justify-between items-center">
+                <Input
+                  placeholder="От"
+                  type="number"
+                  value={filterState.filterOptions.fromGradeTo?.[0] || ""}
+                  onChange={(e) => handleRangeChange("fromGradeTo", 0, e.target.value)}
+                  className="w-full h-7.5 px-[6px] py-[2px] text-[13px] rounded-[5px]"
+                />
+                <span className="w-4 h-[1px] bg-[#8a8a8e] shrink-0 mx-2"></span>
+                <Input
+                  placeholder="До"
+                  type="number"
+                  value={filterState.filterOptions.fromGradeTo?.[1] || ""}
+                  onChange={(e) => handleRangeChange("fromGradeTo", 1, e.target.value)}
+                  className="w-full h-7.5 px-[6px] py-[2px] text-[13px] rounded-[5px]"
+                />
+              </div>
+            </div>
+          </WrapperSheetContent>
+
+          <Separator />
+
+          <WrapperSheetContent>
+            <span className="text-[14px] mb-2 block font-sans text-accent-foreground">
+              Возрастные ограничения
+            </span>
+            <div className="flex flex-wrap gap-2.5">
+              {ratings.map((rate) => (
+                <div key={"rating-" + rate.id} className="w-[calc(50vw-20px)]">
+                  <CommonCheckboxField
+                    label={String(rate.value) + "+"}
+                    checked={filterState.filterOptions.ageRating?.includes(rate.id) || false}
+                    handleToggle={() => handleAgeRatingToggle(rate.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          </WrapperSheetContent>
+        </div>
+      )}
     </div>
   );
 };

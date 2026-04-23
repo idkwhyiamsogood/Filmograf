@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: "Filmograf",
   webDir: "out",
   server: {
-    url: "http://192.168.0.199:3000",
+    url: "http://172.20.10.4:3000",
     androidScheme: "http",
     cleartext: true,
   },

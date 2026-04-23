@@ -6,16 +6,17 @@ import { Button } from "@/shared/ui/button";
 import { Settings } from "lucide-react";
 
 import { useModals } from "@/shared/hooks";
+import { Collection } from "@/entities/collection";
 
 interface Props {
-  collectionId: string;
+  collection: Collection;
 }
 
-export const EditCollectionButton: React.FC<Props> = ({ collectionId }) => {
+export const EditCollectionButton: React.FC<Props> = ({ collection }) => {
   const { openModal } = useModals();
 
   const handleOpenModal = () => {
-    openModal("update-bookmark", { data: { id: collectionId } });
+    openModal("update-bookmark", { collection: collection });
   };
 
   return (

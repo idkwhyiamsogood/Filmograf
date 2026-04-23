@@ -79,7 +79,7 @@ const MovieClientPage = () => {
     return <LoadingSplashScreen />;
   }
 
-  // console.log(movie);
+  // console.log(movie.rates.ByUser);
 
   return (
     <div className="relative w-full">

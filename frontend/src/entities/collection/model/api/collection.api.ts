@@ -32,9 +32,7 @@ class CollecionApi extends BaseHttpClient {
   public getMy = async (
     params: QueryParams = { page: 0, count: 21 },
   ): APIResponse<IdsEntity> => {
-    return this.get(
-      `/api/collections/my?Page=${params.page}&Count=${params.count}`,
-    );
+    return this.get(`/api/collections/my?Page=${params.page}&Count=${params.count}`);
   };
 
   public getPopular = async (

@@ -18,6 +18,7 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/shared/ui/sonner";
+import { CatalogProvider } from "@/widgets/catalog";
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   const [queryClient] = useState(() => new QueryClient({}));
@@ -35,13 +36,15 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
             <UserProvider>
               <FilterProvider>
                 <TooltipProvider>
-                  <div className="flex flex-col h-screen">
-                    <div className="flex-1 overflow-y-auto">{children}</div>
-                    <Navigation />
-                  </div>
-                  <Toaster position="top-center" />
-                  {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" /> */}
-                  <ModalRenderer />
+                  <CatalogProvider>
+                    <div className="flex flex-col h-screen">
+                      <div className="flex-1 overflow-y-auto">{children}</div>
+                      <Navigation />
+                    </div>
+                    <Toaster position="top-center" />
+                    {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" position="bottom" /> */}
+                    <ModalRenderer />
+                  </CatalogProvider>
                 </TooltipProvider>
               </FilterProvider>
             </UserProvider>

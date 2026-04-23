@@ -1,6 +1,6 @@
 "use client";
 
-import { collectionApi, useCollections } from "@/entities/collection/";
+import { Collection, collectionApi, useCollections } from "@/entities/collection/";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -19,6 +19,8 @@ export const FavoriteClientPage: React.FC = () => {
   const getMy = useCallback(async () => {
     try {
       const { data: collectionsIds } = await collectionApi.getMy();
+
+      console.log(collectionsIds);
 
       if (collectionsIds) {
         setCollectionsIds(collectionsIds.ids);
@@ -44,7 +46,9 @@ export const FavoriteClientPage: React.FC = () => {
       <div className="flex gap-2.5 w-full justify-between items-center">
         <div className="flex gap-2.5 w-full items-center">
           <CreateCollectionButton />
-          <EditCollectionButton collectionId={selected} />
+          <EditCollectionButton
+            collection={collections?.find((item) => item.id === selected) || {} as Collection}
+          />
         </div>
         <CollectionActions collectionId={selected} onSuccess={getMy} />
       </div>

@@ -1,8 +1,14 @@
 "use client";
 
-// types
-import type { EntityType } from "@/shared/types";
 import { memo, type FC } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+
+// types
+import type {
+  EntityType,
+  SearchTypeMovie,
+  SearchTypeCollection,
+} from "@/shared/types";
 
 // ui
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
@@ -14,23 +20,36 @@ import { useCatalog } from "../model/hooks/useCatalog";
 
 export const CatalogTabs: FC = memo(() => {
   const { activeType, setActiveType } = useCatalog();
+  const params = useSearchParams();
+
+  const searchTypeParams = params.get("searchType");
+  const typeParams = params.get("type");
+
+  const currentTab = (typeParams as EntityType) || activeType;
+
+  const contentType = searchTypeParams;
 
   return (
     <Tabs
-      defaultValue={activeType}
+      value={currentTab}
       onValueChange={(value) => setActiveType(value as EntityType)}
     >
       <TabsList className="w-full border-0">
-        <TabsTrigger value="Movie" className="">
-          Фильмы
-        </TabsTrigger>
-        
+        <TabsTrigger value="Movie">Фильмы</TabsTrigger>
         <TabsTrigger value="Collection">Подборки</TabsTrigger>
       </TabsList>
 
-      <MovieContent />
+      {currentTab === "Movie" && (
+        <MovieContent
+          type={contentType ? (contentType as SearchTypeMovie) : "top"}
+        />
+      )}
 
-      <CollectionContent />
+      {currentTab === "Collection" && (
+        <CollectionContent
+          type={contentType ? (contentType as SearchTypeCollection) : "popular"}
+        />
+      )}
     </Tabs>
   );
 });

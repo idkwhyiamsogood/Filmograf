@@ -9,13 +9,10 @@ import { HubConnection } from "@microsoft/signalr";
 class SearchApi extends BaseHttpClient {
   public searchMovies = (
     search: string,
-    connection: HubConnection,
     options: MovieParams,
     queryParam: QueryParams = { page: 0, count: 21 },
   ): APIResponse<SearchedIds> => {
-    const roomId = connection.connectionId || "";
-
-    return this.post(`api/search/movies?query=${search}&roomId=${roomId}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
+    return this.post(`api/search/movies?query=${search}&roomId=${"wqe"}&Page=${queryParam.page}&Count=${queryParam.count}`, options);
   };
 
   public searchCollections = (

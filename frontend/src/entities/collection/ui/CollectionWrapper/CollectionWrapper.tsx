@@ -12,10 +12,10 @@ interface Props {
 export const CollectionWrapper: FC<Props> = ({ collections }) => {
   return (
     <div className="grid grid-cols-2 gap-[5px]">
-      {collections.map((collection) => (
+      {collections.map((collection, idx) => (
         <CollectionCover
           collection={collection}
-          key={"collection-cover-" + String(collection.id)}
+          key={"collection-cover-" + String(collection.id) + idx}
         />
       ))}
     </div>

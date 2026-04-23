@@ -1,26 +1,22 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { searchApi } from "@/features/search/";
 
 import type {
-  FilterOptions,
-  FilterState,
-  MovieParams,
+  FilterState
 } from "@/features/filter";
-
-import { connection } from "../constants/connections";
 
 export const useSearch = (value: string, filterOptions: FilterState) => {
   return useQuery({
-    queryKey: ["search", filterOptions, value],
+    queryKey: ["search", filterOptions.filterOptions],
     queryFn: async () => {
       if (!value) return { entityIds: [] };
 
-      console.log(filterOptions, "searched-filter-opt");
-
       if (filterOptions.filterOptions.targetType === "Movie") {
-        const response = await searchApi.searchMovies(value, connection, {
-          genres: filterOptions.filterOptions.genres,
+        const { tags, targetType, ...rest } = filterOptions.filterOptions;
+
+        const response = await searchApi.searchMovies(value, {
+          ...rest,
           strictMatch: filterOptions.strictMatch,
         });
         return response.data;
@@ -33,6 +29,5 @@ export const useSearch = (value: string, filterOptions: FilterState) => {
         return response.data;
       }
     },
-    placeholderData: keepPreviousData,
   });
 };

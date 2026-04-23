@@ -29,7 +29,7 @@ export const FilterFooter: React.FC<Props> = ({
         <Button
           onClick={handleSubmit}
           variant="default"
-          className="p-2.5! bg-emerald-600 hover:bg-emerald-700"
+          className="p-2.5! bg-emerald-600 hover:bg-emerald-700 text-accent-foreground"
         >
           Применить <Search size={16} />
         </Button>

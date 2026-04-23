@@ -1,4 +1,6 @@
 import { lazy } from "react";
+import { FilterGenresModal, FilterTagsModal } from "@/features/filter/";
+import { FilterModal } from "@/features/filter/";
 
 export const MODALS = {
   "create-bookmark": lazy(() =>
@@ -31,21 +33,9 @@ export const MODALS = {
       default: module.RightMenu,
     })),
   ),
-  "search-filter": lazy(() =>
-    import("@/features/filter/").then((module) => ({
-      default: module.FilterModal,
-    })),
-  ),
-  "search-genres-filter": lazy(() =>
-    import("@/features/filter/").then((module) => ({
-      default: module.FilterGenresModal,
-    })),
-  ),
-  "search-tags-filter": lazy(() =>
-    import("@/features/filter/").then((module) => ({
-      default: module.FilterTagsModal,
-    })),
-  ),
+  "search-filter": FilterModal,
+  "search-genres-filter": FilterGenresModal,
+  "search-tags-filter": FilterTagsModal,
   "select-sorting": lazy(() =>
     import("@/features/sort/").then((module) => ({
       default: module.SortingModal,

@@ -7,6 +7,8 @@ export type BaseModel = {
 export type BaseID = Pick<BaseModel, "id">;
 
 export type EntityType = "Movie" | "Collection";
+export type SearchTypeMovie = "top" | "recommended" | "popular";
+export type SearchTypeCollection = "popular" | "recommended" | "my";
 
 export type Entity = {
   entityId: string

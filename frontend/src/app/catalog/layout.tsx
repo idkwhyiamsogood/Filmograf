@@ -7,12 +7,15 @@ import type { FC, PropsWithChildren } from "react";
 import { CommonWrapper } from "@/shared/components";
 import { SortingProvider } from "@/features/sort/";
 import { CatalogProvider } from "@/widgets/catalog";
+import { AuthProvider } from "@/shared/context";
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <CatalogProvider>
       <SortingProvider>
-        <CommonWrapper>{children}</CommonWrapper>
+        <AuthProvider>
+          <CommonWrapper>{children}</CommonWrapper>
+        </AuthProvider>
       </SortingProvider>
     </CatalogProvider>
   );

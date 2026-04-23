@@ -1,11 +1,12 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { collectionApi } from "../api/collection.api";
 import type { Collection } from "../types";
+import { SearchTypeCollection } from "@/shared/types";
 
 interface UseInfiniteCollectionsParams {
   pageSize?: number;
   initialPage?: number;
-  type?: "popular" | "recommended" | "my";
+  type?: SearchTypeCollection;
 }
 
 export const useInfiniteCollections = (

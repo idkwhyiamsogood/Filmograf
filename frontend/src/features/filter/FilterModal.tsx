@@ -1,13 +1,10 @@
 "use client";
 
 // types
-import type { FC } from "react";
 import type { BaseModalProps } from "@/shared/types";
+import type { FC } from "react";
 
 // ui
-import { FilterCommonHeader } from "./common/ui/FilterCommonHeader";
-import { FilterContent } from "./ui/FilterModal/FilterContent";
-import { FilterFooter } from "./ui/FilterModal/FilterFooter";
 import {
   Sheet,
   SheetContent,
@@ -15,16 +12,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/shared/ui/sheet";
+import { FilterCommonHeader } from "./common/ui/FilterCommonHeader";
+import { FilterContent } from "./ui/FilterModal/FilterContent";
+import { FilterFooter } from "./ui/FilterModal/FilterFooter";
 
 // hooks
-import { useCallback, useEffect } from "react";
 import { useModals, useSwipe } from "@/shared/hooks";
+import { useCatalog } from "@/widgets/catalog/model/hooks/useCatalog";
+import { useCallback, useEffect } from "react";
 import { useFilter } from "./common";
-import { useSearch } from "../search";
 
 export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();
   const { filterState, globalReset } = useFilter();
+  const { handleSearch } = useCatalog();
 
   const { translateY, isDragging, handlers } = useSwipe({
     onClose: closeModal,
@@ -32,16 +33,12 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
     maxDrag: 200,
   });
 
-  const handleSubmit = useCallback(() => {
-    try {
+  const handleSubmit = () => {
+    console.log("searched");
+    handleSearch();
+  };
 
-      closeModal();
-    } catch (e) {
-      console.log();
-    }
-  }, []);
-
-  useEffect(() => console.log(filterState), [filterState]);
+  // useEffect(() => console.log(filterState), [filterState]);
 
   return (
     <div className="bg-background border-accent">
