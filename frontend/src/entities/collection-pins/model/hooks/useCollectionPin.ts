@@ -13,27 +13,15 @@ export const usePinCollection = () => {
 
       const previousPins = queryClient.getQueryData<string[]>(["pins"]) || [];
 
-      // queryClient.setQueryData(["pins"], (oldData: string[] = []) => [
-      //   id,
-      //   ...oldData,
-      // ]);
-
       return { previousPins };
     },
     onSuccess: (data, variables, context) => {
-      // queryClient.setQueryData(["pins"], (oldData: string[] = []) => [
-      //   data,
-      //   ...oldData.filter((item) => item !== variables),
-      // ]);
-
       toast.success("Коллекция добавлена в избранное");
     },
     onError: (error, variables, context) => {
       if (context?.previousPins) {
         queryClient.setQueryData(["pins"], context.previousPins);
       }
-
-      console.error(error);
 
       toast.error("При добавлении коллекции в избранное произошла ошибка");
     },

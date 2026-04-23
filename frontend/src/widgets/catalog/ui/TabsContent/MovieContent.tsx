@@ -1,12 +1,12 @@
 "use client";
 
 import type { FC } from "react";
-import { useMemo, useEffect, memo } from "react";
+import { useEffect, memo, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { MovieSkeletonWrapper, MovieWrapper } from "@/entities/movie";
+import { MovieSkeletonWrapper, MovieWrapper, type IMovie } from "@/entities/movie";
 import { TabsContent } from "@/shared/ui/tabs";
-import { useInfiniteMovies, useMovie } from "@/entities/movie";
+import { useInfiniteMovies } from "@/entities/movie";
 import { LoadingSplashScreen } from "@/shared/components";
 import type { SearchTypeMovie } from "@/shared/types";
 
@@ -18,7 +18,7 @@ interface Props {
 
 export const MovieContent: FC<Props> = memo(({ type }) => {
   const {
-    entityIds: searchData,
+    items, 
     isLoading: isSearchLoading,
     isFetchingNextPage: isSearchFetchingNext,
     hasNextPage: searchHasNext,
@@ -30,7 +30,10 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
 
   const isSearchMode = query.trim() !== "" || hasActiveFilters;
 
-  const { data: searchMoviesBatch } = useMovie(searchData ?? []);
+  const searchMovies = useMemo(() => {
+    if (activeType !== "Movie") return [];
+    return items.filter((item): item is IMovie => "year" in item);
+  }, [items, activeType]);
 
   const {
     movies: catalogMovies,
@@ -48,38 +51,33 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     rootMargin: "200px",
   });
 
-  const moviesToDisplay = useMemo(() => {
-    if (isSearchMode) {
-      return activeType === "Movie" ? (searchMoviesBatch ?? []) : [];
-    }
-    return catalogMovies ?? [];
-  }, [isSearchMode, activeType, searchMoviesBatch, catalogMovies]);
+  const moviesToDisplay = isSearchMode ? searchMovies : (catalogMovies ?? []);
 
   useEffect(() => {
     if (!inView) return;
 
     if (isSearchMode) {
-      if (searchHasNext && !isSearchFetchingNext && activeType === "Movie") {
-        fetchSearchNext();
-      }
+      if (searchHasNext) fetchSearchNext();
     } else {
-      if (catalogHasNext && !isCatalogFetchingNext) {
-        fetchCatalogNext();
-      }
+      if (catalogHasNext) fetchCatalogNext();
     }
-  }, [inView]);
+  }, [inView, isSearchMode, searchHasNext, catalogHasNext, fetchSearchNext, fetchCatalogNext]);
 
-  if (isCatalogLoading || (isSearchLoading && !isSearchFetchingNext)) {
+  const showInitialLoader = isSearchMode
+    ? isSearchLoading && !isSearchFetchingNext && moviesToDisplay.length === 0
+    : isCatalogLoading && !isCatalogFetchingNext && moviesToDisplay.length === 0;
+
+  if (showInitialLoader) {
     return <LoadingSplashScreen />;
   }
 
   if (isSearchMode && moviesToDisplay.length === 0 && !isSearchLoading) {
     return (
       <TabsContent value="Movie">
-        <div className="text-center py-8">
-          <p className="text-gray-500">
+        <div className="text-center py-10">
+          <p className="text-zinc-500">
             {query.trim() !== ""
-              ? `Не найдено фильмов "${query}"`
+              ? `Не найдено фильмов по запросу "${query}"`
               : "По заданным фильтрам ничего не найдено"}
           </p>
         </div>
@@ -87,18 +85,20 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     );
   }
 
-  const isFetchingNext = isSearchMode
-    ? isSearchFetchingNext
-    : isCatalogFetchingNext;
+  const isFetchingNext = isSearchMode ? isSearchFetchingNext : isCatalogFetchingNext;
 
   return (
     <TabsContent value="Movie">
       <MovieWrapper movies={moviesToDisplay} />
 
-      <div className="py-8">
-        {isFetchingNext && <MovieSkeletonWrapper count={9} />}
-        <div ref={ref} className="h-10" />
+      <div className="py-8 min-h-[100px]">
+        {isFetchingNext && <MovieSkeletonWrapper count={6} />}
+        {(isSearchMode ? searchHasNext : catalogHasNext) && (
+          <div ref={ref} className="h-4" />
+        )}
       </div>
     </TabsContent>
   );
 });
+
+MovieContent.displayName = "MovieContent";

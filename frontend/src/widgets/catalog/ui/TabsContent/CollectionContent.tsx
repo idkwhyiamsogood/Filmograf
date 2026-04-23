@@ -1,36 +1,50 @@
 "use client";
 
 import type { FC } from "react";
-import type { SearchTypeCollection } from "@/shared/types";
+import { useEffect, memo, useMemo } from "react";
+import { useInView } from "react-intersection-observer";
+
 import { TabsContent } from "@/shared/ui/tabs";
 import { 
   CollectionWrapper, 
   CollectionSkeletonWrapper, 
-  useInfiniteCollections, 
-  useCollections 
+  useInfiniteCollections,
+  type Collection 
 } from "@/entities/collection";
-import { useMemo, useEffect, memo } from "react";
-import { useInView } from "react-intersection-observer";
-import { useCatalog } from "../../model/hooks/useCatalog";
 import { LoadingSplashScreen } from "@/shared/components";
+import type { SearchTypeCollection } from "@/shared/types";
+
+import { useCatalog } from "../../model/hooks/useCatalog";
 
 interface Props {
   type: SearchTypeCollection;
 }
 
 export const CollectionContent: FC<Props> = memo(({ type }) => {
-  console.log(type);
+  const {
+    items, 
+    isLoading: isSearchLoading,
+    isFetchingNextPage: isSearchFetchingNext,
+    hasNextPage: searchHasNext,
+    fetchNextPage: fetchSearchNext,
+    activeType,
+    query,
+    hasActiveFilters,
+  } = useCatalog();
 
-  const { data: searchData, isFetching: isSearchLoading, activeType, query, hasActiveFilters } = useCatalog();
+  const isSearchMode = query.trim() !== "" || hasActiveFilters;
 
-  const { data: searchCollections } = useCollections(searchData?.entityIds ?? []);
+  const searchCollections = useMemo(() => {
+    if (activeType !== "Collection") return [];
+    return items.filter((item): item is Collection => !("year" in item));
+  }, [items, activeType]);
 
   const { 
-    collections, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage, 
-    isLoading 
+    collections: catalogCollections, 
+    fetchNextPage: fetchCatalogNext, 
+    hasNextPage: catalogHasNext, 
+    isFetchingNextPage: isCatalogFetchingNext, 
+    isLoading: isCatalogLoading 
   } = useInfiniteCollections({ 
     pageSize: 20, 
     type: type
@@ -41,57 +55,55 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
     rootMargin: "200px",
   });
 
-  const collectionsToDisplay = useMemo(() => {
-    if (query.trim() !== "" || hasActiveFilters) {
-      if (activeType === "Collection" && searchData?.entityIds?.length > 0) {
-        return searchCollections ?? [];
-      }
-
-      return [];
-    }
-    return collections ?? [];
-  }, [activeType, query, hasActiveFilters, searchData, searchCollections, collections]);
+  const collectionsToDisplay = isSearchMode 
+    ? searchCollections 
+    : (catalogCollections ?? []);
 
   useEffect(() => {
-    if (
-      inView &&
-      hasNextPage &&
-      !isFetchingNextPage &&
-      query.trim() === "" &&
-      !hasActiveFilters
-    ) {
-      fetchNextPage();
+    if (!inView) return;
+
+    if (isSearchMode) {
+      if (searchHasNext) fetchSearchNext();
+    } else {
+      if (catalogHasNext) fetchCatalogNext();
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, query, hasActiveFilters]);
+  }, [inView, isSearchMode, searchHasNext, catalogHasNext, fetchSearchNext, fetchCatalogNext]);
 
-  if (isLoading || isSearchLoading) return 
-    <LoadingSplashScreen />
+  const showInitialLoader = isSearchMode
+    ? isSearchLoading && !isSearchFetchingNext && collectionsToDisplay.length === 0
+    : isCatalogLoading && !isCatalogFetchingNext && collectionsToDisplay.length === 0;
 
-  if ((query.trim() !== "" || hasActiveFilters) && collectionsToDisplay.length === 0) {
+  if (showInitialLoader) {
+    return <LoadingSplashScreen />;
+  }
+
+  if (isSearchMode && collectionsToDisplay.length === 0 && !isSearchLoading) {
     return (
       <TabsContent value="Collection">
-        <div className="text-center py-8">
-          <p className="text-gray-500">
+        <div className="text-center py-10">
+          <p className="text-zinc-500">
             {query.trim() !== ""
-              ? `Не найдено подборок "${query}"`
-              : "По заданным фильтрам ничего не найдено"}
+              ? `Не найдено подборок по запросу "${query}"`
+              : "По заданным фильтрам подборок не найдено"}
           </p>
         </div>
       </TabsContent>
     );
   }
 
+  const isFetchingNext = isSearchMode ? isSearchFetchingNext : isCatalogFetchingNext;
+  const hasMore = isSearchMode ? searchHasNext : catalogHasNext;
+
   return (
     <TabsContent value="Collection">
       <CollectionWrapper collections={collectionsToDisplay} />
 
-      {query.trim() === "" && !hasActiveFilters && (
-        <div className="py-8">
-          {isFetchingNextPage && <CollectionSkeletonWrapper count={10} />}
-        </div>
-      )}
-
-      {query.trim() === "" && !hasActiveFilters && <div ref={ref} className="py-4" />}
+      <div className="py-8 min-h-[100px]">
+        {isFetchingNext && <CollectionSkeletonWrapper count={6} />}
+        {hasMore && <div ref={ref} className="h-4" />}
+      </div>
     </TabsContent>
   );
 });
+
+CollectionContent.displayName = "CollectionContent";

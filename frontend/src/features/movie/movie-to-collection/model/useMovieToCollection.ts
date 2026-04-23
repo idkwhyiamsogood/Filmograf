@@ -3,6 +3,7 @@ import { collectionApi } from "@/entities/collection/";
 import type { Collection } from "@/entities/collection/";
 
 import type { MutationPayload, MutationContext } from "./types";
+import { toast } from "sonner";
 
 export const useMovieToCollection = () => {
   const queryClient = useQueryClient();
@@ -81,6 +82,9 @@ export const useMovieToCollection = () => {
 
       return { previousCollection, previousCollectionsLists };
     },
+    onSuccess: () => {
+      toast.success("Фильм успешно добавлен в коллекцию");
+    },
     onError: (_error, variables, context) => {
       if (!context) {
         return;
@@ -96,12 +100,17 @@ export const useMovieToCollection = () => {
       for (const [queryKey, data] of context.previousCollectionsLists) {
         queryClient.setQueryData(queryKey, data);
       }
+
+      toast.error("При добавлении фильма в коллекцию произошла ошибка");
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["collection", variables.collectionId],
       });
-      queryClient.invalidateQueries({ queryKey: ["collections"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["collections"],
+        exact: false,
+      });
     },
   });
 };
