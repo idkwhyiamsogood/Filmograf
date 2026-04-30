@@ -1,4 +1,3 @@
-using Filmograf.BaseLibrary.DataAccess.Providers;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Repo;
@@ -14,7 +13,6 @@ public class SearchMovieService
     private readonly SearchParsingService _searchParsingService;
     private readonly SearchCaching _searchCaching;
 
-    
     public SearchMovieService(MovieRepository movieRepository, SearchParsingService searchParsingService, SearchCaching searchCaching)
     {
         _movieRepository = movieRepository;
@@ -29,36 +27,53 @@ public class SearchMovieService
 
     private async Task<SearchPartResponseDto> CreateCacheForSearchFilmAsync(string query, PaginationQueryDto pagination, MovieSearchRequestDto? filters = null)
     {
-        if (string.IsNullOrWhiteSpace(query))
+        // 1. Выходим ТОЛЬКО если и строка пустая, и фильтров нет
+        if (string.IsNullOrWhiteSpace(query) && filters == null)
             return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = Array.Empty<string>() };
 
         List<MovieRepo> movies;
 
-        if (filters?.Genres != null)
+        if (filters != null)
         {
+            // 2. Передаем ВСЕ поля из MovieSearchRequestDto в репозиторий
             movies = await _movieRepository.GetByNameWithFiltersAsync(
                 query,
-                filters.Genres.Include,
-                filters.Genres.Exclude,
-                filters.StrictMatch);
+                filters.Genres?.Include,
+                filters.Genres?.Exclude,
+                filters.StrictMatch,
+                filters.FromYearTo,   // Передаем года
+                filters.FromGradeTo,  // Передаем оценки
+                filters.AgeRating     // Передаем возрастной рейтинг
+            );
         }
         else
         {
             movies = await _movieRepository.GetByNameAsync(query);
         }
 
-        var sortedMovies = !string.IsNullOrWhiteSpace(query)
-            ? movies.SortByQuery(query, m => m.Name, m => m.Id)
-            : movies.Select(i => i.Id);
-        
-        var pagedIds = sortedMovies
+        // 3. Исправляем логику: работаем сразу с ID (строками)
+        IEnumerable<string> entityIds;
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            // Раз SortByQuery возвращает string[], просто сохраняем их
+            entityIds = movies.SortByQuery(query, m => m.Name, m => m.Id);
+        }
+        else
+        {
+            // Если запроса нет, просто берем ID из того, что нашел репозиторий
+            entityIds = movies.Select(m => m.Id.ToString());
+        }
+
+        // 4. Пагинация теперь идет по списку строк
+        var pagedIds = entityIds
             .Skip(pagination.Page * pagination.Count)
             .Take(pagination.Count)
             .ToArray();
-        
-        if (!pagedIds.Any()) return new SearchPartResponseDto();
 
-        
+        if (!pagedIds.Any()) 
+            return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = Array.Empty<string>() };
+
         return new SearchPartResponseDto { Type = SearchPartType.Movie, EntityIds = pagedIds };
     }
     
@@ -69,7 +84,4 @@ public class SearchMovieService
         var method = async () => await CreateCacheForSearchFilmAsync(query, pagination, filters);
         return await _searchCaching.CachingSearchingMoviesAsync(query, pagination, filters, method);
     }
-
-    
-    
 }

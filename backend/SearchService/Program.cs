@@ -20,6 +20,7 @@ using Filmograf.SearchService.Services.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace Filmograf.SearchService;
@@ -144,7 +145,6 @@ public class Program
         // mongoDB из коробки не понимает что надо хранить Guid в стандартном формате (Standard UUID)
         var serializer = new MongoDB.Bson.Serialization.Serializers.GuidSerializer(GuidRepresentation.Standard);
         MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(serializer);
-
         builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
         {
             var client = new MongoClient(mongoDbSettings.ConnectionString);

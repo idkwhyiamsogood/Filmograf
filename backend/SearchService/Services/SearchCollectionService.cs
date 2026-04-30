@@ -27,11 +27,13 @@ public class SearchCollectionService
 
     private async Task<SearchPartResponseDto> CreateCacheForSearchCollectionAsync(string query, PaginationQueryDto pagination, CollectionSearchRequestDto? filters = null)
     {
-        if (string.IsNullOrWhiteSpace(query))
+        // 1. Выходим только если нет ни запроса, ни фильтров
+        if (string.IsNullOrWhiteSpace(query) && filters == null)
             return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = Array.Empty<string>() };
 
         List<CollectionRepo> collections;
 
+        // 2. Ищем с фильтрами или без
         if (filters != null)
         {
             collections = await _collectionRepository.GetByNameWithFiltersAsync(
@@ -47,16 +49,29 @@ public class SearchCollectionService
             collections = await _collectionRepository.GetByNameAsync(query);
         }
 
-        var sortedCollections = !string.IsNullOrWhiteSpace(query)
-            ? collections.SortByQuery(query, c => c.Name, c => c.Id)
-            : collections.Select(i => i.Id);
+        // 3. Исправляем логику сортировки: работаем только со строковыми ID
+        IEnumerable<string> entityIds;
 
-        var pagedIds = sortedCollections
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            // SortByQuery возвращает string[] (массив ID)
+            entityIds = collections.SortByQuery(query, c => c.Name, c => c.Id);
+        }
+        else
+        {
+            // Иначе просто достаем ID и приводим их к строке
+            entityIds = collections.Select(c => c.Id.ToString());
+        }
+
+        // 4. Пагинация по строковым ID
+        var pagedIds = entityIds
             .Skip(pagination.Page * pagination.Count)
             .Take(pagination.Count)
             .ToArray();
 
-        if (!pagedIds.Any()) return new SearchPartResponseDto();
+        // 5. Возвращаем корректный пустой массив, а не null
+        if (!pagedIds.Any()) 
+            return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = Array.Empty<string>() };
 
         return new SearchPartResponseDto { Type = SearchPartType.Collection, EntityIds = pagedIds };
     }

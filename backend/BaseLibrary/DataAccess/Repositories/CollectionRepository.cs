@@ -24,26 +24,25 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     
     public Task<List<CollectionRepo>> GetByNameAsync(string name, bool showDeleted = false, CancellationToken ct = default)
     {
+        // Если имя пустое, возвращаем все (с учетом showDeleted)
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return _collection.Find(BuildBaseFilter(showDeleted)).ToListAsync(ct);
+        }
+
         var escapedName = Regex.Escape(name);
-        
         var baseFilter = BuildBaseFilter(showDeleted);
-        var nameFilter = Builders<CollectionRepo>.Filter.Regex(x => x.Name, 
-            new BsonRegularExpression(escapedName, "i"));
-        
+        var nameFilter = Builders<CollectionRepo>.Filter.Regex(x => x.Name, new BsonRegularExpression(escapedName, "i"));
         var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, nameFilter);
     
-        return _collection.Find(combinedFilter)
-            .ToListAsync(ct);
+        return _collection.Find(combinedFilter).ToListAsync(ct);
     }
     
     public Task<List<CollectionRepo>> GetByUserAsync(Guid userId, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
     {
         var baseFilter = BuildBaseFilter(showDeleted);
-        var userFilter = Builders<CollectionRepo>.Filter
-            .Eq(x => x.UserId, userId);
-        
-        var combinedFilter = Builders<CollectionRepo>.Filter
-            .And(baseFilter, userFilter);
+        var userFilter = Builders<CollectionRepo>.Filter.Eq(x => x.UserId, userId);
+        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, userFilter);
     
         return _collection.Find(combinedFilter)
             .SortByDescending(i => i.CreateDate)
@@ -55,11 +54,8 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     public Task<List<CollectionRepo>> GetByTagAsync(Guid tagId, int skip, int limit, bool showDeleted = false, CancellationToken ct = default)
     {
         var baseFilter = BuildBaseFilter(showDeleted);
-        var tagFilter = Builders<CollectionRepo>.Filter
-            .AnyEq(x => x.Tags, tagId);
-        
-        var combinedFilter = Builders<CollectionRepo>.Filter
-            .And(baseFilter, tagFilter);
+        var tagFilter = Builders<CollectionRepo>.Filter.AnyEq(x => x.Tags, tagId);
+        var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, tagFilter);
 
         return _collection.Find(combinedFilter)
             .SortByDescending(i => i.CreateDate)
@@ -72,7 +68,6 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     {
         var baseFilter = BuildBaseFilter(showDeleted);
         var tagsFilter = Builders<CollectionRepo>.Filter.All(x => x.Tags, tagIds);
-        
         var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, tagsFilter);
 
         return _collection.Find(combinedFilter)
@@ -86,7 +81,6 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     {
         var baseFilter = BuildBaseFilter(showDeleted);
         var tagsFilter = Builders<CollectionRepo>.Filter.AnyIn(x => x.Tags, tagIds);
-        
         var combinedFilter = Builders<CollectionRepo>.Filter.And(baseFilter, tagsFilter);
 
         return _collection.Find(combinedFilter)
@@ -119,7 +113,7 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
     {
         var filters = new List<FilterDefinition<CollectionRepo>>();
 
-        // 1. Учитываем мягкое удаление (базовая логика твоего репозитория)
+        // 1. Учитываем мягкое удаление (базовая логика)
         filters.Add(Builders<CollectionRepo>.Filter.Eq(x => x.IsDeleted, false));
 
         // 2. Поиск по имени только если оно не пустое
@@ -157,7 +151,7 @@ public class CollectionRepository : RepositoryBase<CollectionRepo>
                 Builders<CollectionRepo>.Filter.AnyIn(x => x.Tags, excludeTagsIds)));
         }
 
-        // Собираем всё через AND
+        // Собираем всё через AND. Так как мы всегда добавляем фильтр IsDeleted, массив фильтров никогда не будет пустым.
         var finalFilter = Builders<CollectionRepo>.Filter.And(filters);
 
         return await _collection.Find(finalFilter).ToListAsync(ct);
