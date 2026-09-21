@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Spark</string>
-    <string name="title_activity_main">Spark</string>
-    <string name="package_name">com.spark</string>
-    <string name="custom_url_scheme">com.spark</string>
-    <string name="server_client_id">341334726956-oo7rlsn0743ot821mdqoaj5e6uk442vr.apps.googleusercontent.com</string>
-</resources>
