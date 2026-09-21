@@ -1,0 +1,76 @@
+services:
+  film-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: film-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=film_admin
+      - RABBITMQ_DEFAULT_PASS=mwEjflvu4ZHRDGVG
+      - RABBITMQ_DEFAULT_VHOST=/
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  film-redis:
+    image: redis:latest
+    restart: unless-stopped
+    container_name: film-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --protected-mode no
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  film-mongodb:
+    image: mongo:latest
+    restart: unless-stopped
+    container_name: film-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo_admin
+      - MONGO_INITDB_ROOT_PASSWORD=xjd8H7ybmMZk12eZ
+      - MONGO_INITDB_DATABASE=Filmograf
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+      - ./shared/mongod.docker.conf:/etc/mongod.conf  # монтируем конфиг
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh -u mongo_admin -p xjd8H7ybmMZk12eZ --authenticationDatabase admin localhost:27017/Filmograf --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    command: mongod --config /etc/mongod.conf --auth
+
+  film-auth-service:
+    build:
+      context: .
+      dockerfile: AuthService/Dockerfile
+    container_name: film-auth-service
+    restart: unless-stopped
+    ports:
+      - "5090:8080"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-mongodb:
+        condition: service_healthy
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json
+    user: root
+
+volumes:
+  mongodb_data:
+  mongodb_config:
