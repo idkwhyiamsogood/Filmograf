@@ -1,0 +1,19 @@
+.FilmWrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  align-items: start;
+}
+
+.cardContainer {
+  width: 100%;
+  min-width: 0; 
+}
+
+/* Фиксируем минимальную и максимальную ширину карточек */
+@media (min-width: 640px) {
+  .FilmWrapper {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}

@@ -1,0 +1,1 @@
+export { MovieToCollection } from "./ui/MovieToCollection";

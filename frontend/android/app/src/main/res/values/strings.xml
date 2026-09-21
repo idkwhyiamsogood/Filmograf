@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Filmograf</string>
+    <string name="title_activity_main">Filmograf</string>
+    <string name="package_name">com.filmograf</string>
+    <string name="custom_url_scheme">com.filmograf</string>
+    <string name="server_client_id">341334726956-oo7rlsn0743ot821mdqoaj5e6uk442vr.apps.googleusercontent.com</string>
+</resources>

@@ -1,0 +1,78 @@
+import { Comment } from "../types";
+
+export const mockCommentsWithReplies: Comment[] = [
+  {
+    id: "1",
+    userId: "user_001",
+    text: "Отличная статья! Очень помогла разобраться в теме.",
+    isDeleted: false,
+    likes: ["user_002", "user_003", "user_004"],
+    dislikes: [],
+    childsCount: 5,
+    childs: [
+      {
+        id: "1-1",
+        userId: "user_002",
+        text: "Полностью поддерживаю! Особенно понравилась часть про архитектуру.",
+        isDeleted: false,
+        likes: ["user_001"],
+        dislikes: [],
+        childs: null,
+        createDate: new Date("2024-01-15T10:45:00"),
+        updateDate: new Date("2024-01-15T10:45:00"),
+        childsCount: 5,
+      },
+      {
+        id: "1-2",
+        userId: "user_005",
+        text: "А можно поподробнее про второй пункт?",
+        isDeleted: false,
+        likes: [],
+        dislikes: [],
+        childsCount: 5,
+        childs: [
+          {
+            id: "1-2-1",
+            userId: "user_001",
+            text: "Конечно! Во втором пункте речь идет о...",
+            isDeleted: false,
+            likes: ["user_005"],
+            dislikes: [],
+            childs: null,
+            createDate: new Date("2024-01-15T11:30:00"),
+            updateDate: new Date("2024-01-15T11:30:00"),
+            childsCount: 5,
+          },
+        ],
+        createDate: new Date("2024-01-15T11:00:00"),
+        updateDate: new Date("2024-01-15T11:00:00"),
+      },
+    ],
+    createDate: new Date("2024-01-15T10:30:00"),
+    updateDate: new Date("2024-01-15T10:30:00"),
+  },
+  {
+    id: "2",
+    userId: "user_003",
+    text: "Этот комментарий был удален пользователем",
+    isDeleted: true,
+    likes: [],
+    dislikes: [],
+    childs: null,
+    createDate: new Date("2024-01-15T09:00:00"),
+    updateDate: new Date("2024-01-15T13:00:00"),
+    childsCount: 5
+  },
+  {
+    id: "3",
+    userId: "user_004",
+    text: "Интересная дискуссия получается!",
+    isDeleted: false,
+    likes: ["user_001", "user_002", "user_003"],
+    dislikes: [],
+    childs: null,
+    createDate: new Date("2024-01-15T14:20:00"),
+    updateDate: new Date("2024-01-15T14:20:00"),
+    childsCount: 5
+  },
+];
