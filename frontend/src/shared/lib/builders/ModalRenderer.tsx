@@ -1,5 +1,3 @@
-"use client";
-
 import { useModals } from "@/shared/hooks/useModals";
 import { MODALS } from "@/shared/configs";
 import { modalService } from "@/shared/services";

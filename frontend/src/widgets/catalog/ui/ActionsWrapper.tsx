@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import { memo, type FC } from "react";
 

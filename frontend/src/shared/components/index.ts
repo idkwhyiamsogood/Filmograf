@@ -16,6 +16,7 @@ export { ConfirmationModal } from "./modals/ConfirmationModal";
 // fallback
 export { LoadingSplashScreen } from "./fallback/LoadingSplashScreen";
 export { LoadingSplashScreenModal } from "./fallback/LoadingSplashScreenModal";
+export { NotFound } from "./fallback/NotFound";
 
 // lexical
 export { Editor } from "./lexical/blocks/editor-00/editor";

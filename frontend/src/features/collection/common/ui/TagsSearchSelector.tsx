@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, type FC, useMemo } from "react";
 import { useDebounce } from "react-use";
 import { useInfinityTags, useTagsSearch } from "@/entities/collection-tags";

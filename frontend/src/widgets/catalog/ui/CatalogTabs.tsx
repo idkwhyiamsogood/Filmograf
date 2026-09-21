@@ -1,7 +1,5 @@
-"use client";
-
 import { memo, useEffect, type FC } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "@/shared/lib/router-compat";
 
 // types
 import type {

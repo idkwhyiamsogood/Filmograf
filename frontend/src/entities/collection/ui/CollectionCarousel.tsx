@@ -1,7 +1,5 @@
-"use client";
-
 import React from "react";
-import Link from "next/link";
+import Link from "@/shared/ui/link";
 import { ArrowRight } from "lucide-react";
 
 import type { Collection } from "../model/types";

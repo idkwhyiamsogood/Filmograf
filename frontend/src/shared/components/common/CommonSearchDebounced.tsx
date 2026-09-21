@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useCallback } from "react";
 import { Input } from "@/shared/ui/input";
 import { useDebounce } from "react-use";

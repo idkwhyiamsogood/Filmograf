@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/shared/ui/card";
-import Image from "next/image";
-import Link from "next/link";
+import Image from "@/shared/ui/image";
+import Link from "@/shared/ui/link";
 import React from "react";
 import { Collection } from "../model/types";
 

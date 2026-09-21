@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useUser } from "@/entities/user";
@@ -15,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/shared/lib/router-compat";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { Capacitor } from "@capacitor/core";
 

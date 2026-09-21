@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import type { BaseModalProps } from "@/shared/types";
 import type { FC } from "react";

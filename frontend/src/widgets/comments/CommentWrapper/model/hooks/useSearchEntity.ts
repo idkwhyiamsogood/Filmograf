@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/shared/lib/router-compat";
 import type { Entity } from "@/shared/types";
 
 export const useSearchEntity = () => {

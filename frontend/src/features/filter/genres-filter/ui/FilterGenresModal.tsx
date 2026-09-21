@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback, useEffect, useState } from "react";
 
 import { GenreType, useGenres } from "@/entities/genres";

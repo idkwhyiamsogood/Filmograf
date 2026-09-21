@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useModals, useSwipe } from "@/shared/hooks";
 

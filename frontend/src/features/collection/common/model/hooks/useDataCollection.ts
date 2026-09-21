@@ -1,5 +1,3 @@
-"use client";
-
 // hooks
 import { useState, useCallback } from "react";
 

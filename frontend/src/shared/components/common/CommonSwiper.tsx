@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
 
 import { Carousel, CarouselContent, CarouselItem } from "@/shared/ui/carousel";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/shared/lib/router-compat";
 import type { ReactNode } from "react";
 
 interface Props {

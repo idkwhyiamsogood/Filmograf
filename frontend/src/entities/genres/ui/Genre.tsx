@@ -4,7 +4,7 @@ import type { FC } from "react";
 
 // ui
 import { Badge } from "@/shared/ui/badge";
-import Link from "next/link";
+import Link from "@/shared/ui/link";
 
 interface Props {
   genre: GenreType;

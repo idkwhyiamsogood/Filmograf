@@ -1,8 +1,6 @@
-"use client";
-
 import { Button } from "@/shared/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/shared/lib/router-compat";
 import React from "react";
 
 import { Collection } from "@/entities/collection";

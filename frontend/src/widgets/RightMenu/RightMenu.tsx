@@ -1,5 +1,3 @@
-"use client";
-
 import React, { memo, useEffect, useState } from "react";
 
 import { useUser } from "@/entities/user";

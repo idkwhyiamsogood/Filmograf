@@ -1,4 +1,4 @@
-import { BaseHttpClient } from "@/shared/lib";
+import { BaseHttpClient } from "@/shared/lib/http/axios";
 
 // types
 import type { QueryParams, SearchedIds } from "@/shared/types/api";

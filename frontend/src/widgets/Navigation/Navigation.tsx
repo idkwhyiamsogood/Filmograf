@@ -1,11 +1,9 @@
-"use client";
-
 import type { INavigationItem } from "@/shared/types";
 import type { FC } from "react";
 
 import { NavigationItem } from "./ui/NavigationItem";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/shared/lib/router-compat";
 import { useEffect, useState } from "react";
 
 import { navigationMenu } from "@/shared/configs";

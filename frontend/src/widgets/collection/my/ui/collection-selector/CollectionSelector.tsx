@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import type { Collection } from "@/entities/collection";
 import { memo, type FC } from "react";

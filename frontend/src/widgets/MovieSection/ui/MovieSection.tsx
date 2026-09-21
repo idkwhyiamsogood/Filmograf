@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback } from "react";
 import { MovieCarousel, useInfiniteMovies } from "@/entities/movie";
 

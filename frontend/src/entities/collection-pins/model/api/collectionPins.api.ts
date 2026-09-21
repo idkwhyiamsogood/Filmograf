@@ -1,4 +1,4 @@
-import { BaseHttpClient } from "@/shared/lib";
+import { BaseHttpClient } from "@/shared/lib/http/axios";
 import { APIResponse } from "@/shared/types/api";
 
 interface CollectionResponse {

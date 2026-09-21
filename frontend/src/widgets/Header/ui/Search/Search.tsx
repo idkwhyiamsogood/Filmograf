@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import type { FC } from "react";
 
@@ -15,7 +13,7 @@ import { useClickAway, useDebounce } from "react-use";
 // fn
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/shared/lib/router-compat";
 
 export const Search: FC = () => {
   const [query, setQuery] = useState("");

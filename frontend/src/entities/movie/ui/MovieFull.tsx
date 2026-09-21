@@ -1,7 +1,7 @@
 import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
-import Image from "next/image";
-import Link from "next/link";
+import Image from "@/shared/ui/image";
+import Link from "@/shared/ui/link";
 import React, { memo, useCallback } from "react";
 import type { IMovie } from "../model/types/types";
 

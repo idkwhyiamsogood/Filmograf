@@ -1,5 +1,3 @@
-"use client";
-
 import React, { type FormEvent } from "react";
 import { useModals } from "@/shared/hooks";
 import { toast } from "sonner";

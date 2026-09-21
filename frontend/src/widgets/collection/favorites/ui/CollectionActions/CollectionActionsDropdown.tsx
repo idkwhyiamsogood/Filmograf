@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/shared/lib/router-compat";
 import { Collection, CreateCollection } from "@/entities/collection";
 import { Button } from "@/shared/ui/button";
 import {

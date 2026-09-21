@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import type { INavigationItem } from "@/shared/types";
 import { ChevronDown, ChevronUp } from "lucide-react";

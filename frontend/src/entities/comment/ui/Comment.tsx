@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, ReactNode, useState, useEffect } from "react";
 import type { Comment as CommentType } from "../model/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";

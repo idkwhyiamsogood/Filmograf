@@ -1,9 +1,9 @@
-import Link from "next/link";
+import Link from "@/shared/ui/link";
 import React, { memo } from "react";
 
 import type { IMovie } from "../model/types/types";
 
-import Image from "next/image";
+import Image from "@/shared/ui/image";
 
 import { Badge } from "@/shared/ui/badge";
 

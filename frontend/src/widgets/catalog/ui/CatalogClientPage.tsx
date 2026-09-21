@@ -1,31 +1,23 @@
-"use client";
-
-import React from "react";
-import dynamic from "next/dynamic";
+import React, { lazy, Suspense } from "react";
 import { LoadingSplashScreen } from "@/shared/components";
 
 interface Props {
   className?: string;
 }
 
-const ActionsWrapper = dynamic(
-  () => import("@/widgets/catalog").then((mod) => mod.ActionsWrapper),
-  { ssr: false },
+const ActionsWrapper = lazy(() =>
+  import("@/widgets/catalog").then((mod) => ({ default: mod.ActionsWrapper })),
 );
 
-const CatalogTabs = dynamic(
-  () => import("@/widgets/catalog").then((mod) => mod.CatalogTabs),
-  {
-    ssr: false,
-    loading: () => <LoadingSplashScreen />,
-  },
+const CatalogTabs = lazy(() =>
+  import("@/widgets/catalog").then((mod) => ({ default: mod.CatalogTabs })),
 );
 
 export const CatalogClientPage: React.FC<Props> = ({ className }) => {
   return (
-    <>
+    <Suspense fallback={<LoadingSplashScreen />}>
       <ActionsWrapper />
       <CatalogTabs />
-    </>
+    </Suspense>
   );
 };

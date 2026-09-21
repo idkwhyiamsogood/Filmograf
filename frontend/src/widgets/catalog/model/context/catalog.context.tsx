@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, ReactNode, useEffect, useMemo, useState } from "react";
 import { useFilter } from "@/features/filter/";
 import { hasActiveFilters as checkFilters } from "@/features/filter/common/model/lib/validateFilters";

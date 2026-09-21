@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 
 import { Button } from "@/shared/ui/button";
@@ -25,11 +23,11 @@ import { Input } from "@/shared/ui/input";
 import { TagsSearchSelector } from "../../common/";
 
 import { useModals } from "@/shared/hooks";
-import { Collection, useUpdateCollection } from "entities/collection";
+import { Collection, useUpdateCollection } from "@/entities/collection";
 import {
   useCollectionForm,
   type CollectionRedactSchema,
-} from "entities/collection";
+} from "@/entities/collection";
 
 interface Props {
   collection: Collection;

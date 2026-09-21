@@ -1,5 +1,3 @@
-"use client";
-
 import type { Collection } from "@/entities/collection";
 import { MovieSkeletonWrapper, MovieWrapper, useMovie } from "@/entities/movie";
 import { TabsContent } from "@/shared/ui/tabs";

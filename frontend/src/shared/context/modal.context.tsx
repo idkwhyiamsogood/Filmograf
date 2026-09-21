@@ -1,5 +1,3 @@
-"use client";
-
 import { modalService } from "@/shared/services/ModalService";
 import { ModalContextType, ModalType } from "@/shared/types/modals";
 import { createContext, ReactNode, useEffect, useMemo, useState } from "react";

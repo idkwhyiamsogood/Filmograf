@@ -1,10 +1,8 @@
-"use client";
-
 import React, { useMemo } from "react";
 
 import { fullNavigation } from "@/shared/configs";
 import { useModals } from "@/shared/hooks";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/shared/lib/router-compat";
 
 import { NavigationItem } from "./NavigationItem";
 import { INavigationItem } from "@/shared/types";

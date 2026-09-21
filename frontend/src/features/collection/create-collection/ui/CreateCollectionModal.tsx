@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 
 import { useModals } from "@/shared/hooks";
@@ -25,8 +23,8 @@ import {
 import { Input } from "@/shared/ui/input";
 import { TagsSearchSelector } from "../../common/";
 
-import type { CreateCollection } from "entities/collection";
-import { useCollectionForm, useCreateCollection } from "entities/collection";
+import type { CreateCollection } from "@/entities/collection";
+import { useCollectionForm, useCreateCollection } from "@/entities/collection";
 
 import type { BaseModalProps } from "@/shared/types";
 

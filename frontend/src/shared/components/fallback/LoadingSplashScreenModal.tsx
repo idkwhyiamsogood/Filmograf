@@ -1,5 +1,3 @@
-"use client";
-
 import { FC } from "react";
 import { Spinner } from "@/shared/ui/spinner";
 import {

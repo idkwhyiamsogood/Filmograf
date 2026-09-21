@@ -1,12 +1,10 @@
-"use client";
-
 // types
 import { type FC } from "react";
 
 import { Collection } from "@/entities/collection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/shared/lib/router-compat";
 import { CollectionDetailsDescription } from "../ui/CollectionDetailsDescription/CollectionDetailsDescription";
 import { CollectionActions } from "./CollectionActions/CollectionActions";
 import { CollectionComments } from "./CollectionTabs/CollectionComments";

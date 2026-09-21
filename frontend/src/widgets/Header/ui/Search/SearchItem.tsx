@@ -1,10 +1,8 @@
-"use client";
-
 // types
 import type { FC } from "react";
 
 // components
-import Image from "next/image";
+import Image from "@/shared/ui/image";
 
 // fn
 import { memo } from "react";

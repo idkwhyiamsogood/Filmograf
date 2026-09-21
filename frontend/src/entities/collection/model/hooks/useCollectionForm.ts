@@ -1,11 +1,9 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import {
   type CollectionRedactSchema,
   collectionRedactSchema,
-} from "entities/collection";
+} from "@/entities/collection";
 
 import { useEffect } from "react";
 

@@ -3,10 +3,12 @@ import { APIResponse } from "@/shared/types/api";
 import { TokenApi } from "./token.api";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+interface RouterLike {
+  push: (href: string) => void;
+}
 
 class AuthApi extends TokenApi {
-  public googleLogin = (router: AppRouterInstance): void => {
+  public googleLogin = (router: RouterLike): void => {
     // this.get("/api/auth/google/");
     router.push(`https://filmograf.online/api/auth/google`);
   };

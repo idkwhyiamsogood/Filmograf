@@ -1,5 +1,3 @@
-"use client";
-
 import React, { type ReactNode, useEffect, useRef, useState } from "react";
 
 import {

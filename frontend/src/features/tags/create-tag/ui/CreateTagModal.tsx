@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import type { FC } from "react";
 import type { TagSchema } from "../model/types/tag.type";

@@ -1,5 +1,3 @@
-"use client";
-
 // types
 import type { FC } from "react";
 import type { ChangeEvent } from "react";
