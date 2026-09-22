@@ -3,6 +3,7 @@ import {
   CollectionCarousel,
   useInfiniteCollections,
 } from "@/entities/collection/";
+import { QueryErrorState } from "@/shared/components";
 
 interface CollectionsSectionProps {
   title: string;
@@ -23,11 +24,18 @@ export const CollectionsSection: React.FC<CollectionsSectionProps> = ({
   hasFetch = false,
   viewAllHref,
 }) => {
-  const { collections, isLoading, isError, fetchNextPage, hasNextPage } =
-    useInfiniteCollections({
-      pageSize,
-      type,
-    });
+  const {
+    collections,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useInfiniteCollections({
+    pageSize,
+    type,
+  });
 
   const handleFetch = useCallback(() => {
     if (hasFetch && hasNextPage) {
@@ -36,7 +44,19 @@ export const CollectionsSection: React.FC<CollectionsSectionProps> = ({
   }, [hasFetch, hasNextPage, fetchNextPage]);
 
   if (isError) {
-    return null;
+    return (
+      <div className="px-2">
+        <h2 className="text-xl font-semibold tracking-tight px-1 mb-2">
+          {title}
+        </h2>
+        <QueryErrorState
+          compact
+          error={error}
+          onRetry={() => refetch()}
+          serverErrorMessage="Не удалось загрузить подборки"
+        />
+      </div>
+    );
   }
 
   if (!isLoading && collections.length === 0) {

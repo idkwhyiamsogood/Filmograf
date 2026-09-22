@@ -10,6 +10,8 @@ interface Props {
   notFoundMessage?: string;
   serverErrorMessage?: string;
   className?: string;
+  /** Меньший, встраиваемый вид — для карточек/секций внутри страницы, а не на всю страницу */
+  compact?: boolean;
 }
 
 export const QueryErrorState: FC<Props> = ({
@@ -18,17 +20,24 @@ export const QueryErrorState: FC<Props> = ({
   notFoundMessage = "Ничего не найдено",
   serverErrorMessage = "Не удалось загрузить данные. Попробуйте ещё раз.",
   className = "",
+  compact = false,
 }) => {
   const isNotFound = getApiErrorStatus(error) === 404;
   const Icon = isNotFound ? SearchX : ServerCrash;
 
   return (
     <div
-      className={`flex w-full h-[calc(100vh-15rem)] flex-col items-center justify-center gap-4 text-center px-6 ${className}`}
+      className={`flex w-full flex-col items-center justify-center text-center px-6 ${
+        compact ? "h-40 gap-2" : "h-[calc(100vh-15rem)] gap-4"
+      } ${className}`}
     >
-      <Icon className="h-10 w-10 text-muted-foreground opacity-65" />
+      <Icon
+        className={`text-muted-foreground opacity-65 ${compact ? "h-6 w-6" : "h-10 w-10"}`}
+      />
 
-      <p className="text-sm text-muted-foreground max-w-xs">
+      <p
+        className={`text-muted-foreground max-w-xs ${compact ? "text-xs" : "text-sm"}`}
+      >
         {isNotFound ? notFoundMessage : serverErrorMessage}
       </p>
 
