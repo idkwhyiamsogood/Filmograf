@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/shared/ui/button';
 import { Plus } from 'lucide-react';
 
-import { useModals } from '@/shared/hooks';
+import { useModals } from '@/shared/contexts/modal-context';
 
 export const CreateCollectionButton: React.FC = () => {
   const { openModal } = useModals();

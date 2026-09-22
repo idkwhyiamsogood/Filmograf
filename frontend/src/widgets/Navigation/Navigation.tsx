@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "@/shared/lib/router-compat";
 import { useEffect, useState } from "react";
 
 import { navigationMenu } from "@/shared/configs";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 
 export const Navigation: FC = () => {
   const [current, setCurrent] = useState<number | undefined>(undefined);

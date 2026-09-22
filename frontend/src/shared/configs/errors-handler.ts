@@ -1,4 +1,4 @@
-import { ModalType } from "@/shared/types/modals";
+import type { ModalType } from "@/shared/contexts/modal-context/modals.type";
 import type { APIError } from "../types";
 
 export const ERROR_HANDLERS: Record<
@@ -10,9 +10,6 @@ export const ERROR_HANDLERS: Record<
 > = {
   401: {
     type: "authorization-menu",
-    getProps: (error) => ({
-      deskription: "Сессия истекла. Пожалуйста, войдите снова.",
-    }),
   },
 
   // 500: {

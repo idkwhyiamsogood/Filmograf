@@ -1,17 +1,34 @@
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { UserProvider } from "@/entities/user";
-import { AuthProvider, ModalProvider } from "@/shared/context";
-import { ModalRenderer } from "@/shared/lib";
-import { NotFound, ServerError } from "@/shared/components";
+import { AuthProvider } from "@/shared/context";
+import { ModalProvider, ModalRenderer, useModals } from "@/shared/contexts/modal-context";
+import { modalBridge } from "@/shared/services/modalBridge";
+import { NotFound, ServerError, LoadingSplashScreen } from "@/shared/components";
 import { Navigation } from "@/widgets/Navigation/";
 import { FilterProvider } from "@/features/filter/common";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { Toaster } from "@/shared/ui/sonner";
 import { CatalogProvider } from "@/widgets/catalog/model/context/catalog.context";
+
+// Регистрирует живой openModal/closeModal/activeModals модуля modal-context
+// в modalBridge — чтобы код вне React (ErrorService, дёргается из
+// axios-интерцептора) тоже мог открывать модалки.
+const ModalBridgeRegistrar = () => {
+  const { openModal, closeModal, activeModals } = useModals();
+
+  useEffect(() => {
+    // openModal — дженерик `<K extends ModalType>(...args: OpenModalArgs<K>)`,
+    // структурно не сводится к упрощённой (type, props?) сигнатуре моста —
+    // это ожидаемо, мост намеренно слабо типизирован (см. modalBridge.ts).
+    modalBridge.register(openModal as never, closeModal, activeModals);
+  });
+
+  return null;
+};
 
 const RootComponent = () => {
   const [queryClient] = useState(() => new QueryClient({}));
@@ -25,6 +42,7 @@ const RootComponent = () => {
     >
       <AuthProvider>
         <ModalProvider>
+          <ModalBridgeRegistrar />
           <QueryClientProvider client={queryClient}>
             <UserProvider>
               <FilterProvider>
@@ -37,7 +55,9 @@ const RootComponent = () => {
                       <Navigation />
                     </div>
                     <Toaster position="top-center" />
-                    <ModalRenderer />
+                    <Suspense fallback={<LoadingSplashScreen />}>
+                      <ModalRenderer />
+                    </Suspense>
                   </CatalogProvider>
                 </TooltipProvider>
               </FilterProvider>

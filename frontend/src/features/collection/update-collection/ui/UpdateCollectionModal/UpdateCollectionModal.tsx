@@ -20,22 +20,19 @@ import {
   FormMessage,
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
-import { TagsSearchSelector } from "../../common/";
+import { TagsSearchSelector } from "../../../common/";
 
-import { useModals } from "@/shared/hooks";
-import { Collection, useUpdateCollection } from "@/entities/collection";
+import { useModals } from "@/shared/contexts/modal-context";
+import { useUpdateCollection } from "@/entities/collection";
 import {
   useCollectionForm,
   type CollectionRedactSchema,
 } from "@/entities/collection";
 
-interface Props {
-  collection: Collection;
-}
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
+import type { UpdateCollectionModalProps } from "./props";
 
-import type { BaseModalProps } from "@/shared/types";
-
-export const UpdateCollectionModal: React.FC<BaseModalProps & Props> = ({
+export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionModalProps> = ({
   isOpen,
   collection,
 }) => {

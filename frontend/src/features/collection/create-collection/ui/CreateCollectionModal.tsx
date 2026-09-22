@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import {
@@ -26,7 +26,7 @@ import { TagsSearchSelector } from "../../common/";
 import type { CreateCollection } from "@/entities/collection";
 import { useCollectionForm, useCreateCollection } from "@/entities/collection";
 
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 
 export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
   const { mutate: createCollection } = useCreateCollection();
@@ -53,7 +53,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeModal}>
+    <Dialog open={isOpen} onOpenChange={() => closeModal()}>
       <DialogContent
         showCloseButton={false}
         onCloseAutoFocus={(e) => e.preventDefault()}

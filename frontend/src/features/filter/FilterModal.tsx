@@ -1,5 +1,5 @@
 // types
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 import type { FC } from "react";
 
 // ui
@@ -15,7 +15,8 @@ import { FilterContent } from "./ui/FilterModal/FilterContent";
 import { FilterFooter } from "./ui/FilterModal/FilterFooter";
 
 // hooks
-import { useModals, useSwipe } from "@/shared/hooks";
+import { useSwipe } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { useCatalog } from "@/widgets/catalog/model/hooks/useCatalog";
 import { useCallback, useEffect } from "react";
 import { useFilter } from "./common";
@@ -45,7 +46,7 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
 
   return (
     <div className="bg-background border-accent">
-      <Sheet open={isOpen} onOpenChange={closeModal}>
+      <Sheet open={isOpen} onOpenChange={() => closeModal()}>
         <SheetHeader>
           <SheetTitle hidden>Фильтры</SheetTitle>
           <SheetDescription hidden>

@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/shared/ui/button";
 import { Settings } from "lucide-react";
 
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { Collection } from "@/entities/collection";
 
 interface Props {

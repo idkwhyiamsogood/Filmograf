@@ -6,7 +6,7 @@ import { Button } from "@/shared/ui/button";
 import { FunnelPlus } from "lucide-react";
 
 // hooks
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 
 export const FilterButton: FC = () => {
   const { openModal } = useModals();

@@ -13,7 +13,7 @@ import { Input } from "@/shared/ui/input";
 import { ratings } from "../../model/constants/ageRatings";
 
 // hooks
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { useFilter } from "../../common/model/hooks/useFilter";
 import { cn } from "@/shared/lib/utils";
 import { validateFilters } from "../../common/model/lib/validateFilters";

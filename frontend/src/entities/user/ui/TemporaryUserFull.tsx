@@ -7,7 +7,7 @@ import { getValidURL } from "@/shared/lib";
 import type { IUser } from "../model/types";
 import { UserLogo } from "./UserLogo";
 
-import { ModalType } from "@/shared/types";
+import type { ModalType } from "@/shared/contexts/modal-context/modals.type";
 
 
 interface Props {

@@ -1,5 +1,5 @@
 import React, { type FormEvent } from "react";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui/button";
 import {
@@ -10,16 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
+import type { ConfirmationModalProps } from "./props";
 
-interface Props {
-  title?: string;
-  description?: string;
-  confirmText?: string;
-  onConfirm?: () => Promise<void> | void;
-}
-
-export const ConfirmationModal: React.FC<BaseModalProps & Props> = ({
+export const ConfirmationModal: React.FC<BaseModalProps & ConfirmationModalProps> = ({
   isOpen,
   title,
   description,
@@ -46,7 +40,7 @@ export const ConfirmationModal: React.FC<BaseModalProps & Props> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeModal}>
+    <Dialog open={isOpen} onOpenChange={() => closeModal()}>
       <DialogContent
         showCloseButton={false}
         onCloseAutoFocus={(e) => e.preventDefault()}
@@ -61,7 +55,7 @@ export const ConfirmationModal: React.FC<BaseModalProps & Props> = ({
 
           <DialogFooter className="flex flex-row justify-end gap-2">
             {/* Используем closeModal напрямую для отмены */}
-            <Button type="button" variant="outline" onClick={closeModal}>
+            <Button type="button" variant="outline" onClick={() => closeModal()}>
               Отмена
             </Button>
             <Button type="submit">{confirmText ?? "Подтвердить"}</Button>

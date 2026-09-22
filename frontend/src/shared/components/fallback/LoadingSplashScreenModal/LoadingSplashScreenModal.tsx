@@ -6,16 +6,11 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/shared/ui/dialog";
-import { useModals } from "@/shared/hooks";
 
-interface Props {
-  message?: string;
-  showMessage?: boolean;
-}
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
+import type { LoadingSplashScreenModalProps } from "./props";
 
-import type { BaseModalProps } from "@/shared/types";
-
-export const LoadingSplashScreenModal: FC<BaseModalProps & Props> = ({
+export const LoadingSplashScreenModal: FC<BaseModalProps & LoadingSplashScreenModalProps> = ({
   isOpen,
   message,
   showMessage,

@@ -9,7 +9,7 @@ import { EllipsisVertical } from "lucide-react";
 import React from "react";
 
 import { useDeleteCollection } from "@/entities/collection";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 
 interface Props {
   collectionId: string;

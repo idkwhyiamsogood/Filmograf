@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { GenreType, useGenres } from "@/entities/genres";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { useGenresFilter } from "../model/hooks/useGenresFilter";
 
 import {
@@ -17,7 +17,7 @@ import { FilterCommonFooter } from "../../common/ui/FIlterCommonFooter";
 import { FilterCommonHeader } from "../../common/ui/FilterCommonHeader";
 import { LoadingSplashScreen } from "@/shared/components";
 
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 
 export const FilterGenresModal: React.FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();

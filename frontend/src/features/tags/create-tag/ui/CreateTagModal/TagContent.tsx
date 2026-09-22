@@ -10,11 +10,11 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { MessageCircleWarning } from "lucide-react";
 
-import { useTagsForm } from "../model/hooks/useTagsForm";
+import { useTagsForm } from "../../model/hooks/useTagsForm";
 
 interface Props {
   text: string;
-} 
+}
 
 export const TagContent: FC<Props> = ({ text }) => {
   const { tagsForm } = useTagsForm(text);

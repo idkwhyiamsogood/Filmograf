@@ -1,7 +1,8 @@
 // types
 import type { FC } from "react";
-import type { TagSchema } from "../model/types/tag.type";
-import type { BaseModalProps } from "@/shared/types";
+import type { TagSchema } from "../../model/types/tag.type";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
+import type { CreateTagModalProps } from "./props";
 
 // ui
 import { Button } from "@/shared/ui/button";
@@ -16,26 +17,13 @@ import {
 } from "@/shared/ui/dialog";
 import { Form } from "@/shared/ui/form";
 import { TagContent } from "./TagContent";
-import {
-  FormField,
-  FormItem,
-  FormMessage,
-  FormControl,
-} from "@/shared/ui/form";
-import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
-import { MessageCircleWarning } from "lucide-react";
 
 // hooks
-import { useModals } from "@/shared/hooks";
-import { useTagsForm } from "../model/hooks/useTagsForm";
-import { useCreateTag } from "../model/hooks/useCreateTag";
+import { useModals } from "@/shared/contexts/modal-context";
+import { useTagsForm } from "../../model/hooks/useTagsForm";
+import { useCreateTag } from "../../model/hooks/useCreateTag";
 
-interface Props {
-  text: string;
-}
-
-export const CreateTagModal: FC<BaseModalProps & Props> = ({
+export const CreateTagModal: FC<BaseModalProps & CreateTagModalProps> = ({
   isOpen,
   text,
 }) => {
@@ -56,7 +44,7 @@ export const CreateTagModal: FC<BaseModalProps & Props> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => open === true && closeModal}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) closeModal(); }}>
       <DialogContent
         showCloseButton={false}
         onCloseAutoFocus={(e) => e.preventDefault()}

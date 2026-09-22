@@ -1,8 +1,6 @@
 import type { APIError } from "@/shared/types";
-import { modalService } from "./ModalService";
+import { modalBridge } from "./modalBridge";
 import { ERROR_HANDLERS } from "../configs/errors-handler";
-
-import type { ModalType } from "@/shared/types";
 
 type ErrorListener = (error: APIError) => void;
 
@@ -26,30 +24,15 @@ class ErrorService {
     };
   }
 
-  private activeErrorTypes = new Set<ModalType>();
-
   showError(error: APIError): void {
     const statusCode = error.statusCode;
     const handler = ERROR_HANDLERS[statusCode];
 
-    if (handler) {
-      if (this.activeErrorTypes.has(handler.type)) return;
+    if (!handler) return;
+    if (modalBridge.isOpen(handler.type)) return;
 
-      const history = modalService.getHistory();
-      const isAlreadyOpen = history.some((m) => m.modalType === handler.type);
-
-      if (!isAlreadyOpen) {
-        this.activeErrorTypes.add(handler.type);
-        const props = handler.getProps ? handler.getProps(error) : {};
-
-        modalService.open(handler.type, {
-          ...props,
-          onClose: () => {
-            this.activeErrorTypes.delete(handler.type);
-          },
-        });
-      }
-    }
+    const props = handler.getProps ? handler.getProps(error) : undefined;
+    modalBridge.open(handler.type, props as never);
   }
 
   clearListeners() {
