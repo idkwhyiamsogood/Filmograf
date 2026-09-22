@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { CommonWrapper } from "@/shared/components";
+import { CommonWrapper, QueryErrorState } from "@/shared/components";
 import { useInfiniteMovies } from "@/entities/movie";
 import { MovieWrapper } from "@/entities/movie";
 import { MovieSkeletonWrapper } from "@/entities/movie/";
@@ -12,11 +12,19 @@ export const Route = createFileRoute("/top")({
 });
 
 function TopPage() {
-  const { movies, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteMovies({
-      pageSize: 21,
-      type: "top",
-    });
+  const {
+    movies,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useInfiniteMovies({
+    pageSize: 21,
+    type: "top",
+  });
 
   const { ref, inView } = useInView({
     threshold: 0,
@@ -31,6 +39,10 @@ function TopPage() {
 
   if (isLoading) {
     return <MovieSkeletonWrapper count={21} />;
+  }
+
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={() => refetch()} />;
   }
 
   return (

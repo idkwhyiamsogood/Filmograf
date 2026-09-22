@@ -3,7 +3,7 @@ import { Image } from "@/shared/ui/image";
 import { useParams, useRouter } from "@/shared/lib/router-compat";
 import { useState, useEffect, type FC } from "react";
 
-import { LoadingSplashScreen } from "@/shared/components";
+import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
 import { Button } from "@/shared/ui/button";
 import { ScrollArea, ScrollBar } from "@/shared/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
@@ -45,7 +45,7 @@ export const MovieClientPage = () => {
   const params = useParams();
   const router = useRouter();
 
-  const { data } = useMovie(params.id as string);
+  const { data, isError, error, refetch } = useMovie(params.id as string);
   const { data: genres } = useGenres();
   const { mutate: rateMovie } = useRateMovie();
 
@@ -69,6 +69,16 @@ export const MovieClientPage = () => {
       setUserRating(rates?.ByUser);
     }
   }, [movie]);
+
+  if (isError) {
+    return (
+      <QueryErrorState
+        error={error}
+        onRetry={() => refetch()}
+        notFoundMessage="Фильм не найден"
+      />
+    );
+  }
 
   if (!movie) {
     return <LoadingSplashScreen />;

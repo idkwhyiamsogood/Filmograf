@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@/entities/user";
 import { AuthProvider, ModalProvider } from "@/shared/context";
 import { ModalRenderer } from "@/shared/lib";
-import { NotFound } from "@/shared/components";
+import { NotFound, ServerError } from "@/shared/components";
 import { Navigation } from "@/widgets/Navigation/";
 import { FilterProvider } from "@/features/filter/common";
 import { TooltipProvider } from "@/shared/ui/tooltip";
@@ -52,4 +52,5 @@ const RootComponent = () => {
 export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: () => <NotFound />,
+  errorComponent: ({ reset }) => <ServerError onRetry={reset} />,
 });

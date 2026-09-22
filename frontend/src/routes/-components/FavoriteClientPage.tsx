@@ -7,7 +7,7 @@ import {
   CollectionActions,
 } from "@/widgets/collection/";
 import { CollectionSelector } from "@/widgets/collection";
-import { LoadingSplashScreen } from "@/shared/components";
+import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
 
 export const FavoriteClientPage: React.FC = () => {
   const [collectionsIds, setCollectionsIds] = useState<string[]>([]);
@@ -35,7 +35,13 @@ export const FavoriteClientPage: React.FC = () => {
     setSelected(collectionsIds[0]);
   }, [collectionsIds]);
 
-  const { data: collections, isLoading } = useCollections(collectionsIds);
+  const {
+    data: collections,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useCollections(collectionsIds);
 
   return (
     <div className={"flex flex-col gap-1.25"}>
@@ -52,6 +58,8 @@ export const FavoriteClientPage: React.FC = () => {
 
       {isLoading ? (
         <LoadingSplashScreen />
+      ) : isError ? (
+        <QueryErrorState error={error} onRetry={() => refetch()} />
       ) : (
         <CollectionSelector
           collections={collections || []}

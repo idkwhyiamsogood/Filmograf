@@ -9,7 +9,7 @@ import {
   useInfiniteCollections,
   type Collection 
 } from "@/entities/collection";
-import { LoadingSplashScreen } from "@/shared/components";
+import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
 import type { SearchTypeCollection } from "@/shared/types";
 
 import { useCatalog } from "../../model/hooks/useCatalog";
@@ -28,6 +28,9 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
     activeType,
     query,
     hasActiveFilters,
+    isError: isSearchError,
+    error: searchError,
+    handleSearch,
   } = useCatalog();
 
   const isSearchMode = query.trim() !== "" || hasActiveFilters;
@@ -41,9 +44,12 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
     collections: catalogCollections, 
     fetchNextPage: fetchCatalogNext, 
     hasNextPage: catalogHasNext, 
-    isFetchingNextPage: isCatalogFetchingNext, 
-    isLoading: isCatalogLoading 
-  } = useInfiniteCollections({ 
+    isFetchingNextPage: isCatalogFetchingNext,
+    isLoading: isCatalogLoading,
+    isError: isCatalogError,
+    error: catalogError,
+    refetch: refetchCatalog,
+  } = useInfiniteCollections({
     pageSize: 20, 
     type: type
   });
@@ -73,6 +79,19 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
 
   if (showInitialLoader) {
     return <LoadingSplashScreen />;
+  }
+
+  const isError = isSearchMode ? isSearchError : isCatalogError;
+
+  if (isError) {
+    return (
+      <TabsContent value="Collection">
+        <QueryErrorState
+          error={isSearchMode ? searchError : catalogError}
+          onRetry={isSearchMode ? handleSearch : () => refetchCatalog()}
+        />
+      </TabsContent>
+    );
   }
 
   if (isSearchMode && collectionsToDisplay.length === 0 && !isSearchLoading) {

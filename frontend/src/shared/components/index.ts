@@ -17,6 +17,8 @@ export { ConfirmationModal } from "./modals/ConfirmationModal";
 export { LoadingSplashScreen } from "./fallback/LoadingSplashScreen";
 export { LoadingSplashScreenModal } from "./fallback/LoadingSplashScreenModal";
 export { NotFound } from "./fallback/NotFound";
+export { ServerError } from "./fallback/ServerError";
+export { QueryErrorState } from "./fallback/QueryErrorState";
 
 // lexical
 export { Editor } from "./lexical/blocks/editor-00/editor";
