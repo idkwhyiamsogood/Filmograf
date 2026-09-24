@@ -64,10 +64,28 @@ backend/shared/env.docker.json
 /backend/CollectionsService/.idea
 /backend/CollectionsService/bin
 /backend/CollectionsService/obj
-/backend/ParsingService — копия
-/backend/ParsingService — копия — копия
-/backend/ParsingService — копия — копия — копия
-/backend/ParsingService — копия — копия — копия (2)
-/test-cap-auth-front/out
-/test-cap-auth-front/.next
-/test-cap-auth-front/android/.idea
+
+backend/AnalyticsService/AnalyticsService.sln.DotSettings.user
+backend/AnalyticsService/AnalyticsService.csproj.user
+
+backend/AuthService/AuthService.sln.DotSettings.user
+backend/AuthService/AuthService.csproj.user
+
+backend/CollectionsService/CollectionsService.sln.DotSettings.user
+backend/CollectionsService/CollectionsService.csproj.user
+
+backend/CommentsService/CommentsService.sln.DotSettings.user
+backend/CommentsService/CommentsService.user
+
+backend/SearchService/SearchService.sln.DotSettings.user
+backend/SearchService/SearchService.user
+
+backend/ParsingService/ParsingService.sln.DotSettings.user
+backend/ParsingService/ParsingService.csproj.user
+
+backend/MoviesService/MoviesService.sln.DotSettings.user
+backend/MoviesService/MoviesService.csproj.user
+/backend/SearchIndexerService/.idea
+/backend/SearchIndexerService/bin
+/backend/SearchIndexerService/obj
+.DS_Store

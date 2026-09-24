@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Filmograf.AnalyticsService.Caching;
-using Filmograf.AnalyticsService.DataAccess.Repositories;
-using Filmograf.AnalyticsService.Models.Repo;
 using Filmograf.AnalyticsService.Util;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.HttpExceptions;

@@ -24,6 +24,7 @@ public class SearchCaching
         _cachingSearchingGenresAtomic = new CachingProviderAtomic<SearchPartResponseDto>(redis, "searching:genres");
     }
 
+// --- COLLECTIONS ---
     private string MakeSearchingCollectionKey(string query, PaginationQueryDto pagination, CollectionSearchRequestDto? searchProps)
     {
         var queryHash = HashUtil.HashSHA256(query);
@@ -54,36 +55,45 @@ public class SearchCaching
         return await _cachingSearchingCollectionAtomic.RemoveAsync(key);
     }
     
-    private string MakeSearchingMoviesKey(string query, PaginationQueryDto pagination, MovieSearchRequestDto? searchProps)
+    
+// --- MOVIES ---
+    private string MakeSearchingMoviesKey(string query, PaginationQueryDto pagination, MovieSearchRequestDto? searchProps,
+        bool allowFuzziness)
     {
+        var searchPropsObject = new
+        { searchProps, allowFuzziness };
+        
         var queryHash = HashUtil.HashSHA256(query);
-        var searchPropsHash = searchProps == null ? "none" : HashUtil.HashObjectSHA256(searchProps);
+        var searchPropsHash = searchProps == null ? "none" : HashUtil.HashObjectSHA256(searchPropsObject);
         var paginationHash = pagination.ToString();
         
         return _cachingSearchingMoviesAtomic.MakeIdKey($"{queryHash}:{searchPropsHash}:{paginationHash}");
     }
     
-    public virtual async Task<SearchPartResponseDto> CachingSearchingMoviesAsync(string query, PaginationQueryDto pagination, 
-        MovieSearchRequestDto? searchProps, Func<Task<SearchPartResponseDto>> createItem)
+    public virtual async Task<SearchPartResponseDto> CachingSearchingMoviesAsync(string query, MovieSearchRequestDto? searchProps, 
+        bool allowFuzziness, PaginationQueryDto pagination, Func<Task<SearchPartResponseDto>> createItem)
     {
-        var key = MakeSearchingMoviesKey(query, pagination, searchProps);
+        var key = MakeSearchingMoviesKey(query, pagination, searchProps, allowFuzziness);
         return await _cachingSearchingMoviesAtomic.GetOrCreateAsync(key, createItem, DefaultExpirationTime);
     }
 
-    public async Task ResetCachingSearchingMoviesAsync(string query, PaginationQueryDto pagination, 
-        Func<Task<SearchPartResponseDto>> createItem, MovieSearchRequestDto? searchProps)
+    public async Task ResetCachingSearchingMoviesAsync(string query, MovieSearchRequestDto? searchProps, bool allowFuzziness, 
+        PaginationQueryDto pagination, Func<Task<SearchPartResponseDto>> createItem)
     {
-        var key = MakeSearchingMoviesKey(query, pagination, searchProps);
+        var key = MakeSearchingMoviesKey(query, pagination, searchProps, allowFuzziness);
         var payloadData = await createItem();
         await _cachingSearchingMoviesAtomic.CreateAsync(key, payloadData, DefaultExpirationTime);
     }
 
-    public async Task<bool> RemoveCachingSearchingMoviesAsync(string query, PaginationQueryDto pagination, MovieSearchRequestDto? searchProps)
+    public async Task<bool> RemoveCachingSearchingMoviesAsync(string query, MovieSearchRequestDto? searchProps, bool allowFuzziness, 
+        PaginationQueryDto pagination)
     {
-        var key = MakeSearchingMoviesKey(query, pagination, searchProps);
+        var key = MakeSearchingMoviesKey(query, pagination, searchProps, allowFuzziness);
         return await _cachingSearchingMoviesAtomic.RemoveAsync(key);
     }
     
+    
+// --- TAGS ---
     private string MakeSearchingTagsKey(string query, PaginationQueryDto pagination)
     {
         var queryHash = HashUtil.HashSHA256(query);
@@ -104,6 +114,7 @@ public class SearchCaching
         return await _cachingSearchingTagsAtomic.RemoveAsync(key);
     }
 
+    
 // --- GENRES ---
     private string MakeSearchingGenresKey(string query, PaginationQueryDto pagination)
     {

@@ -38,5 +38,6 @@ public class MovieSearchRequestDto
     public bool StrictMatch { get; set; }
     public string[]? FromYearTo { get; set; }  
     public float[]? FromGradeTo { get; set; }     
-    public int[]? AgeRating { get; set; }  
+    public int[]? AgeRating { get; set; }
+    public string[]? ExcludeCollections { get; set; }
 }

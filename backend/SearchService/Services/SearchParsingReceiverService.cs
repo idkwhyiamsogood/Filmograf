@@ -1,4 +1,3 @@
-using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Util;
 using Filmograf.SearchService.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -13,7 +12,6 @@ public class SearchParsingReceiverService
         _searchHubContext = searchHubContext;
     }
 
-    // todo
     // тут короче когда парсинг сервайс завершит поиск на сайте - отправиться запрос на SearchService и он перехватиться здесь
     public async Task HandleParsingResultAsync(string targetRoomId, string[] ids)
     {

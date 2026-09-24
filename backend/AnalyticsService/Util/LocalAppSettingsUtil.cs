@@ -33,4 +33,7 @@ public class LocalAppSettings
 {
     [DefaultValue(300)] // 300 sec
     public int UserMovieClickChickInterval { get; set; } = 300;
+    
+    [DefaultValue(60)]
+    public int HistoryReBuildingInterval { get; set; } = 300;
 }

@@ -6,8 +6,8 @@ namespace Filmograf.BaseLibrary.Caching;
 
 public class MissionPlannerCache
 {
-    protected static readonly TimeSpan LastParsingExpirationTime = new TimeSpan(2, 0, 0);
-    protected static readonly TimeSpan ParsingTaskExpirationTime = new TimeSpan(0, 10, 0);
+    protected static readonly TimeSpan LastExpirationTime = new TimeSpan(2, 0, 0);
+    protected static readonly TimeSpan TaskExpirationTime = new TimeSpan(0, 10, 0);
     protected readonly IConnectionMultiplexer _redis;
     protected readonly CachingProviderAtomic<MissionTaskCache> _cachingLastAtomic;
     protected readonly CachingProviderAtomic<MissionTaskCache> _cachingTaskAtomic;
@@ -28,7 +28,7 @@ public class MissionPlannerCache
     public virtual async Task SetLastAsync(string taskType, MissionTaskCache item)
     {
         var key = MakeLastIdKey(taskType);
-        await _cachingLastAtomic.CreateAsync(key, item, LastParsingExpirationTime);
+        await _cachingLastAtomic.CreateAsync(key, item, LastExpirationTime);
     }
     
     public virtual async Task<MissionTaskCache?> GetLastAsync(string taskType)
@@ -53,7 +53,7 @@ public class MissionPlannerCache
     public virtual async Task SetTaskAsync(string taskType, MissionTaskCache item)
     {
         var key = MakeTaskIdKey(taskType);
-        await _cachingTaskAtomic.CreateAsync(key, item, ParsingTaskExpirationTime);
+        await _cachingTaskAtomic.CreateAsync(key, item, TaskExpirationTime);
     }
     
     public virtual async Task<MissionTaskCache?> GetTaskAsync(string taskType)

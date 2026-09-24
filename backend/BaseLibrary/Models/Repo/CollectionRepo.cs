@@ -35,7 +35,10 @@ public class CollectionRepo : RepoBase
     [DefaultValue(false)]
     public bool IsDeleted { get; set; } = false;
     
+    // in-repository cache:
     [DefaultValue(0)] 
     public long ViewsCount { get; set; } = 0;
-    public DateTime LastViewsCheck { get; set; } = DateTime.UtcNow;
+    
+    [DefaultValue(-1.0f)]
+    public float Rate { get; set; } = -1.0f;
 }

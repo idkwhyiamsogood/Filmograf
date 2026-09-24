@@ -31,7 +31,6 @@ public class SearchGenreService
             .ToArray();
 
         if (!pagedIds.Any()) return new SearchPartResponseDto();
-
         return new SearchPartResponseDto { Type = SearchPartType.Genre, EntityIds = pagedIds };
     }
 

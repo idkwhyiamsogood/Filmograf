@@ -1,5 +1,4 @@
-﻿using Filmograf.AnalyticsService.DataAccess.Repositories;
-using Filmograf.AnalyticsService.Util;
+﻿using Filmograf.AnalyticsService.Util;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Services;
@@ -42,13 +41,13 @@ public class MoviesPersonalizedService
         var today = DateOnly.FromDateTime(now);
         var fromDate = today.AddDays(-HistoryDays);
 
-        // 1. Достаем историю пользователя
+        // достаем историю пользователя
         var history = await _activityRepository.GetUserHistoryAsync(userId, fromDate, today, ct);
         
-        // Извлекаем все клики плоским списком
+        // извлекаем все клики плоским списком
         var allClicks = history.SelectMany(h => h.Clicks).ToList();
 
-        // 2. Cold Start: Если истории нет или она слишком мала, просто отдаем глобальный топ
+        // cold Start: Если истории нет или она слишком мала, просто отдаем глобальный топ
         if (allClicks.Count < 3)
         {
             return globalTopChartIds
@@ -56,17 +55,17 @@ public class MoviesPersonalizedService
                 .ToList();
         }
 
-        // Собираем ID просмотренных фильмов, чтобы не рекомендовать их снова
+        // cобираем ID просмотренных фильмов, чтобы не рекомендовать их снова
         var watchedMovieIds = allClicks.Select(c => c.MovieId).ToHashSet();
 
-        // 3. Формируем профиль жанров (Time Decay)
+        // формируем профиль жанров (Time Decay)
         var genreWeights = new Dictionary<Guid, float>();
 
         foreach (var click in allClicks)
         {
             if (click.MovieCache?.Genres == null) continue;
 
-            // Считаем вес клика в зависимости от давности
+            // cчитаем вес клика в зависимости от давности
             int daysAgo = (now - click.Timestamp).Days;
             float weight = Math.Max(0.1f, 1.0f - (daysAgo * TimeDecayAlpha));
 
@@ -79,43 +78,41 @@ public class MoviesPersonalizedService
             }
         }
 
-        // Берем Топ-5 любимых жанров юзера
+        // берем Топ-10 любимых жанров юзера
         var topGenres = genreWeights
             .OrderByDescending(kvp => kvp.Value)
-            .Take(5)
+            .Take(10)
             .ToList();
 
         var topGenreIds = topGenres.Select(g => g.Key).ToList();
 
-        // 4. Candidate Generation (Отбор кандидатов)
-        // Ищем фильмы, у которых есть хотя бы один из топовых жанров
+        // Candidate Generation (Отбор кандидатов)
+        // ищем фильмы, у которых есть хотя бы один из топовых жанров
         var candidateMovies = await _movieRepository.GetByGenresAsync(topGenreIds, limit: 300, ct);
 
-        // 5. Ранжирование (Scoring)
+        // ранжирование (Scoring)
         var scoredCandidates = candidateMovies
-            .Where(m => !watchedMovieIds.Contains(m.Id)) // Исключаем просмотренное
+            .Where(m => !watchedMovieIds.Contains(m.Id)) // исключаем просмотренное
             .Select(m => 
             {
-                // Считаем совпадение по жанрам (Genre Match Score)
+                // считаем совпадение по жанрам (Genre Match Score)
                 float genreScore = 0;
                 if (m.GenreIds != null)
                 {
                     foreach (var gId in m.GenreIds)
                     {
-                        if (genreWeights.TryGetValue(gId, out float weight))
-                        {
-                            genreScore += weight;
-                        }
+                        if (!genreWeights.TryGetValue(gId, out float weight)) continue;
+                        genreScore += weight;
                     }
                 }
 
-                // Бонус за качество (от 0 до 1)
+                // бонус за качество (от 0 до 1)
                 float qualityBonus = m.RateIMDb / 10.0f;
                 
-                // Легкий бонус за популярность (нормализуем логарифмом, чтобы хиты не перевешивали жанр)
-                float popularityBonus = m.ViewsCount > 0 ? (float)Math.Log10(m.ViewsCount) * 0.1f : 0;
+                // легкий бонус за популярность (нормализуем логарифмом, чтобы хиты не перевешивали жанр)
+                float popularityBonus = m.ViewsCount > 0 ? (float) Math.Log10(m.ViewsCount) * 0.1f : 0;
 
-                // Итоговый скор (жанр - самое важное)
+                // итоговый скор (жанр - самое важное)
                 float finalScore = (genreScore * 2.0f) + qualityBonus + popularityBonus;
 
                 return new { MovieId = m.Id, Score = finalScore };
@@ -124,10 +121,10 @@ public class MoviesPersonalizedService
             .Select(x => x.MovieId)
             .ToList();
 
-        // 6. Микс с глобальным топом (Разбавление / Serendipity)
+        // микс с глобальным топом (Разбавление / Serendipity)
         var finalRecommendations = CollectionsPersonalizedUtils.MixWithGlobalChart(scoredCandidates, globalTopChartIds, watchedMovieIds, TargetRecommendationSize);
 
-        // 7. Сохраняем в БД
+        // возвращаем результат
         return finalRecommendations;
     }
 }

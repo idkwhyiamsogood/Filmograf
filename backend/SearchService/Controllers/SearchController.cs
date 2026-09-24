@@ -1,8 +1,9 @@
-﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+
 using Filmograf.BaseLibrary.Models.Dto;
+using Filmograf.SearchService.Attributes;
 using Filmograf.SearchService.Models.Dto;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Filmograf.SearchService.Services;
 
 namespace Filmograf.SearchService.Controllers;
 
@@ -10,12 +11,12 @@ namespace Filmograf.SearchService.Controllers;
 [Route("api/search")]
 public class SearchController : CustomControllerBase
 {
-    private readonly  Services.SearchMovieService _searchMovieService;
-    private readonly  Services.SearchCollectionService _searchCollectionService;
-    private readonly  Services.SearchTagService _searchTagService;
-    private readonly  Services.SearchGenreService _searchGenreService;
-    public SearchController(Services.SearchMovieService searchMovieService, Services.SearchCollectionService searchCollectionService, 
-        Services.SearchTagService searchTagService,Services.SearchGenreService searchGenreService)
+    private readonly SearchMovieService _searchMovieService;
+    private readonly SearchCollectionService _searchCollectionService;
+    private readonly SearchTagService _searchTagService;
+    private readonly SearchGenreService _searchGenreService;
+    public SearchController(SearchMovieService searchMovieService, SearchCollectionService searchCollectionService, 
+        SearchTagService searchTagService,SearchGenreService searchGenreService)
     {
         _searchMovieService = searchMovieService;
         _searchCollectionService = searchCollectionService;
@@ -24,7 +25,7 @@ public class SearchController : CustomControllerBase
     }
 
     [HttpPost("movies")]
-    [Authorize]
+    [UserTypePolicy]
     public async Task<ActionResult<SearchPartResponseDto>> SearchFilmAsync([FromQuery] string? query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId, [FromBody] MovieSearchRequestDto? data)
     {
@@ -33,7 +34,7 @@ public class SearchController : CustomControllerBase
     }
     
     [HttpPost("collections")]
-    [Authorize]
+    [UserTypePolicy]
     public async Task<ActionResult<SearchPartResponseDto>> SearchCollectionAsync([FromQuery] string? query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId, [FromBody] CollectionSearchRequestDto data)
     {
@@ -42,7 +43,7 @@ public class SearchController : CustomControllerBase
     }
     
     [HttpGet("tags")]
-    [Authorize]
+    [UserTypePolicy]
     public async Task<ActionResult<SearchPartResponseDto>> SearchTagsAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination,
         [FromQuery] string? roomId)
     {
@@ -51,11 +52,10 @@ public class SearchController : CustomControllerBase
     }
     
     [HttpGet("genres")]
-    [Authorize]
+    [UserTypePolicy]
     public async Task<ActionResult<SearchPartResponseDto>> SearchGenresAsync([FromQuery] string query, [FromQuery] PaginationQueryDto pagination)
     {
         var response = await _searchGenreService.SearchGenreAsync(query, pagination);
         return Ok(response);
     }
-    
 }

@@ -1,5 +1,5 @@
-﻿using Filmograf.AnalyticsService.DataAccess.Repositories;
-using Filmograf.AnalyticsService.Models.Repo;
+﻿using Filmograf.BaseLibrary.DataAccess.Repositories;
+using Filmograf.BaseLibrary.Models.Repo;
 using MongoDB.Driver;
 
 namespace Filmograf.AnalyticsService.Services;

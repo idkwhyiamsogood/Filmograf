@@ -46,6 +46,16 @@ public class MoviesController : CustomControllerBase
         return Ok(result);
     }
 
+    [HttpGet("history")]
+    [UserTypePolicy]
+    public async Task<ActionResult<MoviesListResponseDto>> GetViewsHistoryAsync([FromQuery] PaginationQueryDto pagination, 
+        [FromServices] AuthContext authContext)
+    {
+        var result = await _movieTopPicksService
+            .GetUserHistoryAsync(pagination, authContext.CurrentUser!.Id);
+        return Ok(result);
+    }
+
     [HttpGet("{id}")]
     [UserTypePolicy]
     public async Task<ActionResult<MovieResponseDto>> GetFilmAsync(string id, [FromServices] AuthContext authContext)

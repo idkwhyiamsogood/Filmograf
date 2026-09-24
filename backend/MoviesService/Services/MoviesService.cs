@@ -5,6 +5,7 @@ using Filmograf.BaseLibrary.Models.HttpExceptions;
 using Filmograf.BaseLibrary.Models.Repo;
 using Filmograf.MoviesService.Caching;
 using Filmograf.MoviesService.Models.Dto;
+using Filmograf.MoviesService.Services.Integrations.Shell;
 using Filmograf.MoviesService.Services.MovieRates;
 
 namespace Filmograf.MoviesService.Services;
@@ -16,15 +17,17 @@ public class MoviesService
     private readonly IMapper _mapper;
     private readonly MovieRateService _movieRateService;
     private readonly ClickEntityService _clickEntityService;
+    private readonly SearchReindexPickService _searchReindexPickService;
     
     public MoviesService(MovieRepository movieRepository, MoviesCaching moviesCaching, MovieRateService movieRateService, 
-        IMapper mapper, ClickEntityService clickEntityService)
+        IMapper mapper, ClickEntityService clickEntityService, SearchReindexPickService searchReindexPickService)
     {
         _movieRepository = movieRepository;
         _moviesCaching = moviesCaching;
         _movieRateService = movieRateService;
         _mapper = mapper;
         _clickEntityService = clickEntityService;
+        _searchReindexPickService = searchReindexPickService;
     }
 
     public async Task<MovieResponseDto> MapMovieAsync(MovieRepo movieRepo)
@@ -78,16 +81,21 @@ public class MoviesService
 
     public async Task<MovieResponseDto> GetByUserAsync(string movieId, User user)
     {
+        // integration requests:
         var sendClickRequestTask = _clickEntityService.CheckEntityClickAsync("Movie", movieId, user.Id);
+        var searchReindexPickTask = _searchReindexPickService.PickMovieReindexAsync(movieId);
+        
         var movieRateTask = _movieRateService.GetByUserAsync(user.Id, movieId);
         var movieResponseTask = GetMovieResponseAsync(movieId);
 
+        // ждем завершения тасок на получение оценки и респонса
         await Task.WhenAll(movieRateTask, movieResponseTask);
         var movieRate = movieRateTask.Result;
         var movieResponse = movieResponseTask.Result;
-
         movieResponse.Rates["ByUser"] = movieRate?.Rate ?? -1;
-        await sendClickRequestTask;
+        
+        // ждем завершения интеграционных запросов
+        await Task.WhenAll(sendClickRequestTask, searchReindexPickTask);
         return movieResponse;
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Filmograf.BaseLibrary.Models.Repo;
 
+[BsonIgnoreExtraElements]
 public class MovieRepo : RepoBase
 {
     [MaxLength(256)]
@@ -26,7 +28,10 @@ public class MovieRepo : RepoBase
     
     public Guid[]? GenreIds { get; set; }
 
+    // in-repository cache:
     [DefaultValue(0)] 
     public long ViewsCount { get; set; } = 0;
-    public DateTime LastViewsCheck { get; set; } = DateTime.UtcNow;
+    
+    [DefaultValue(-1.0f)]
+    public float RateFilmograf { get; set; } = -1.0f;
 }

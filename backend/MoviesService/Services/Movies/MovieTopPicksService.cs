@@ -2,6 +2,7 @@
 using Filmograf.BaseLibrary.Models.Dto;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.BaseLibrary.Services;
+using Filmograf.MoviesService.Services.Integrations.Shell;
 
 namespace Filmograf.MoviesService.Services.Movies;
 
@@ -50,6 +51,14 @@ public class MovieTopPicksService
         
         var hasMission = await _missionPlannerService.CheckLastMissionOrTaskAsync(userKey);
         if (hasMission) await _personalizedService.CompilePersonalizedAsync("Movie", userId);
+
+        return chart;
+    }
+
+    public async Task<EntitiesListResponseDto> GetUserHistoryAsync(PaginationQueryDto pagination, Guid userId)
+    {
+        var topPickKey = $"History:Movie:{userId}";
+        var chart = await _topPicksService.GetFromChartAsync(pagination, topPickKey);
 
         return chart;
     }

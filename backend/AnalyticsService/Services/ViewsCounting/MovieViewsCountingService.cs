@@ -1,4 +1,3 @@
-using Filmograf.AnalyticsService.DataAccess.Repositories;
 using Filmograf.BaseLibrary.DataAccess.Repositories;
 using Filmograf.BaseLibrary.Services;
 
@@ -24,12 +23,10 @@ public class MovieViewsCountingService
         var hasLastCounting = await _missionPlannerService.HasLastMissionAsync(missionName);
         if (hasLastCounting) return;
         
-        var movie = await _movieRepository.GetByIdAsync(movieId);
-        if (movie == null) return;
-        
-        var clicksCount = await _clicksAnalyticRepository.CountClicksByMovieAsync(movieId);
-        movie.ViewsCount = clicksCount;
-
-        await _movieRepository.UpdateAsync(movieId, movie);
+        await _movieRepository.UpdateManipulationAsync(movieId, (async (movie, ct) =>
+        {
+            var clicksCount = await _clicksAnalyticRepository.CountClicksByMovieAsync(movieId, ct);
+            movie.ViewsCount = clicksCount;
+        }));
     }
 }

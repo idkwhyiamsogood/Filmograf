@@ -54,7 +54,7 @@ public class MovieRateService
         var movieRates = await ListByMovieAsync(movieId);
         if (movieRates == null || !movieRates.Any()) return -1;
 
-        return (float)movieRates.Average(m => m.Rate);
+        return (float) movieRates.Average(m => m.Rate);
     }
 
 

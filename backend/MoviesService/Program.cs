@@ -16,6 +16,7 @@ using StackExchange.Redis;
 
 using Filmograf.MoviesService.Services;
 using Filmograf.MoviesService.Services.Integrations;
+using Filmograf.MoviesService.Services.Integrations.Shell;
 using Filmograf.MoviesService.Services.Middlewares;
 using Filmograf.MoviesService.Services.MovieRates;
 using Filmograf.MoviesService.Services.Movies;
@@ -198,6 +199,7 @@ public class Program
         builder.Services.AddScoped<MissionPlannerService>();
         builder.Services.AddScoped<PersonalizedService>();
         builder.Services.AddScoped<SearchParsingReceiverService>();
+        builder.Services.AddScoped<SearchReindexPickService>();
         
         // providers
         builder.Services.AddScoped<GenreProvider>();
