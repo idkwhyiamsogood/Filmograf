@@ -1,3 +1,5 @@
+name: 'filmograf'
+
 services:
   film-rabbitmq:
     image: rabbitmq:3-management
@@ -54,23 +56,188 @@ services:
       retries: 5
     command: mongod --config /etc/mongod.conf --auth
 
-  film-auth-service:
+  film-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: film-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=supersecret
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Ограничение памяти
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:supersecret http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+
+  film-kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: film-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://film-elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=supersecret
+    ports:
+      - "5601:5601"
+    depends_on:
+      - film-elasticsearch
+
+  # ---------- микросервисы ----------
+  # Общий конфиг: shared/env.docker.json -> /shared/env.json (сервис читает ../shared/env.json из /app)
+  # Локальный конфиг сервиса: <Service>/env.json -> /app/env.json
+
+  film-auth:
     build:
       context: .
       dockerfile: AuthService/Dockerfile
-    container_name: film-auth-service
+    container_name: film-auth
     restart: unless-stopped
     ports:
       - "5090:8080"
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       film-redis:
         condition: service_healthy
-      film-mongodb:
+      film-rabbitmq:
         condition: service_healthy
+
+  film-movies:
+    build:
+      context: .
+      dockerfile: MoviesService/Dockerfile
+    container_name: film-movies
+    restart: unless-stopped
+    ports:
+      - "5091:8080"
     volumes:
-      - ./shared/env.docker.json:/shared/env.json
-    user: root
+      - ./shared/env.docker.json:/shared/env.json:ro
+      - ./MoviesService/env.json:/app/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+
+  film-comments:
+    build:
+      context: .
+      dockerfile: CommentsService/Dockerfile
+    container_name: film-comments
+    restart: unless-stopped
+    ports:
+      - "5092:8080"
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+      - ./CommentsService/env.json:/app/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+
+  film-search:
+    build:
+      context: .
+      dockerfile: SearchService/Dockerfile
+    container_name: film-search
+    restart: unless-stopped
+    ports:
+      - "5093:8080"
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+      film-elasticsearch:
+        condition: service_healthy
+
+  film-collections:
+    build:
+      context: .
+      dockerfile: CollectionsService/Dockerfile
+    container_name: film-collections
+    restart: unless-stopped
+    ports:
+      - "5094:8080"
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+      - ./CollectionsService/env.json:/app/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+
+  film-analytics:
+    build:
+      context: .
+      dockerfile: AnalyticsService/Dockerfile
+    container_name: film-analytics
+    restart: unless-stopped
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+      - ./AnalyticsService/env.json:/app/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+
+  film-parsing:
+    build:
+      context: .
+      dockerfile: ParsingService/Dockerfile
+    container_name: film-parsing
+    restart: unless-stopped
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+
+  film-search-indexer:
+    build:
+      context: .
+      dockerfile: SearchIndexerService/Dockerfile
+    container_name: film-search-indexer
+    restart: unless-stopped
+    volumes:
+      - ./shared/env.docker.json:/shared/env.json:ro
+      - ./SearchIndexerService/env.json:/app/env.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      film-redis:
+        condition: service_healthy
+      film-rabbitmq:
+        condition: service_healthy
+      film-elasticsearch:
+        condition: service_healthy
 
 volumes:
   mongodb_data:
   mongodb_config:
+  es_data:

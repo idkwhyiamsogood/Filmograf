@@ -38,7 +38,6 @@ public class SearchTagService
             .ToArray();
 
         if (!pagedIds.Any()) return new SearchPartResponseDto();
-
         return new SearchPartResponseDto { Type = SearchPartType.Tag, EntityIds = pagedIds };
     }
 

@@ -4,6 +4,7 @@ using Filmograf.BaseLibrary.Integrations.Payload;
 using Filmograf.BaseLibrary.Models.IntegrationExceptions;
 using Filmograf.BaseLibrary.Models.Types;
 using Filmograf.MoviesService.Services;
+using Filmograf.MoviesService.Services.Integrations.Shell;
 using Filmograf.MoviesService.Services.Movies;
 using RabbitMQ.Client;
 

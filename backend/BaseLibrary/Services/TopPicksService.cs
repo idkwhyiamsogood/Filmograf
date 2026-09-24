@@ -54,16 +54,31 @@ public class TopPicksService
         return await _topPickCaching.CachingTopPickAsync(chartType, pagination, method);
     }
 
-    public async Task SetUserTopPickAsync(string chartType, Guid userId, Dictionary<int, string> chartDictionary)
+    public async Task SetUserTopPickAsync(string chartType, Guid userId, Dictionary<int, string> chartDictionary,
+        CancellationToken ct = default)
     {
         var chartKey = GetUserKey(chartType, userId);
-        await SetTopPickAsync(chartKey, chartDictionary);
+        await SetTopPickAsync(chartKey, chartDictionary, ct);
     }
 
-    public async Task SetTopPickAsync(string chartType, Dictionary<int, string> chartDictionary)
+    public async Task SetTopPickAsync(string chartType, List<string> chartList, CancellationToken ct = default)
+    {
+        var chartDictionary = new Dictionary<int, string>();
+        int currentNewIndex = 1; // новая нумерацию с 1
+
+        foreach (var movie in chartList)
+        {
+            chartDictionary.Add(currentNewIndex, movie);
+            currentNewIndex++;
+        }
+
+        await SetTopPickAsync(chartType, chartDictionary, ct);
+    }
+
+    public async Task SetTopPickAsync(string chartType, Dictionary<int, string> chartDictionary, CancellationToken ct = default)
     {
         // получаем существующий топик
-        var exitingTopPick = await _topPicksRepository.GetByChartTypeAsync(chartType);
+        var exitingTopPick = await _topPicksRepository.GetByChartTypeAsync(chartType, ct);
         
         // если нету
         if (exitingTopPick == null)
@@ -77,14 +92,14 @@ public class TopPicksService
             };
 
             // сохраняем
-            await _topPicksRepository.CreateAsync(newTopPick);
+            await _topPicksRepository.CreateAsync(newTopPick, ct);
             await _topPickCaching.RemoveCachingTopPickRootAsync(chartType);
             return;
         }
 
         // если уже есть запись для такого топика - обновляем данные
         exitingTopPick.Chart = chartDictionary;
-        await _topPicksRepository.UpdateAsync(exitingTopPick.Id, exitingTopPick);
+        await _topPicksRepository.UpdateAsync(exitingTopPick.Id, exitingTopPick, ct);
         
         // удяляем фулл кеш для топика
         await _topPickCaching.RemoveCachingTopPickRootAsync(chartType);

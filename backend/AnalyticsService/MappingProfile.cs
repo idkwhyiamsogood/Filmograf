@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Filmograf.AnalyticsService.Models.Repo;
 using Filmograf.BaseLibrary.Models.Repo;
 
 namespace Filmograf.AnalyticsService;

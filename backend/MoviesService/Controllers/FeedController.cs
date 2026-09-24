@@ -1,6 +1,7 @@
 ﻿using Filmograf.MoviesService.Attributes;
 using Filmograf.MoviesService.Models.Dto;
 using Filmograf.MoviesService.Services;
+using Filmograf.MoviesService.Services.Integrations.Shell;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmograf.MoviesService.Controllers;

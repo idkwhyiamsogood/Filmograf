@@ -26,7 +26,7 @@ public class Program
 {
     public async static Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = Host.CreateApplicationBuilder(args);
 
         AppSettingsUtil.LoadAppSettingsData();
         
@@ -44,25 +44,10 @@ public class Program
         
         var app = builder.Build();
         
-        // ловушка для ошибок
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-        // Configure the HTTP request pipeline.
-        if (AppSettingsUtil.AppSettings.DevMode)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseCors("AllowAll"); // todo: в проде поменять
-        app.UseAuthentication();
-        app.UseAuthorization();
-        
-        app.MapControllers();
-        app.Run();
+        await app.RunAsync();
     }
     
-    private static void SettingUpSwagger(WebApplicationBuilder builder)
+    private static void SettingUpSwagger(HostApplicationBuilder builder)
     {
         builder.Services.AddSwaggerGen(c =>
         {
@@ -115,7 +100,7 @@ public class Program
         });
     }
     
-    private static void SettingUpRedis(WebApplicationBuilder builder)
+    private static void SettingUpRedis(HostApplicationBuilder builder)
     {
         var redisSettings = AppSettingsUtil.AppSettings.RedisSettings;
         Console.WriteLine(redisSettings.Host);
@@ -124,7 +109,7 @@ public class Program
             ConnectionMultiplexer.Connect($"{redisSettings.Host}:6379,abortConnect=false"));
     }
     
-    private static void SettingRabbitMQ(WebApplicationBuilder builder)
+    private static void SettingRabbitMQ(HostApplicationBuilder builder)
     {
         // rabbitqm hosted service
         builder.Services.AddHostedService<RabbitMqHostedShell>();
@@ -140,7 +125,7 @@ public class Program
         builder.Services.AddScoped<ParseSearchingIntegrationContext>();
     }
 
-    private static void SettingComponents(WebApplicationBuilder builder)
+    private static void SettingComponents(HostApplicationBuilder builder)
     {
         // common utils
         builder.Services.AddTransient<FileExtensionContentTypeProvider>();

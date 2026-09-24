@@ -40,6 +40,7 @@ public class AppSettings
     public GoogleO2AuthSettings GoogleO2AuthSettings { get; set; }
     public OriginSettings OriginSettings { get; set; }
     public MongoDbSettings MongoDbSettings { get; set; }
+    public ElasticSettings ElasticSettings { get; set; }
 }
 
 public class SecretsSettings
@@ -88,4 +89,11 @@ public class MongoDbSettings
 {
     public string ConnectionString { get; set; }
     public string DatabaseName { get; set; }
+}
+
+public class ElasticSettings
+{
+    public string Uri { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
 }

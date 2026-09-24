@@ -28,6 +28,7 @@ public class ExceptionHandlingMiddleware
         }
     }
 
+
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         bool isDev = AppSettingsUtil.AppSettings.DevMode;

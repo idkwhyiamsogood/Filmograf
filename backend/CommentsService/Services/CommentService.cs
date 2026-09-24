@@ -61,6 +61,8 @@ public class CommentService
             .Where(i => i.Value == -1)
             .Select(i => i.UserId)
             .ToArray();
+        
+        commentDto.ChildsCount = await _commentRepository.CountChildrenAsync(comment.Id);
 
         return commentDto;
     }
@@ -72,7 +74,7 @@ public class CommentService
             "CommentNotFound", $"Comment with id={commentId} not found.");
 
         var response = await FillResponseCacheForCommentAsync(comment);
-        response.ChildsCount = await _commentRepository.CountChildrenAsync(commentId);
+        
         
         return response;
     }
