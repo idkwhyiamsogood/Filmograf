@@ -237,6 +237,43 @@ services:
       film-elasticsearch:
         condition: service_healthy
 
+  # ---------- консолидированный Swagger (только для локальной разработки) ----------
+  film-swagger-merger:
+    build:
+      context: ./shared/swagger-hub
+    container_name: film-swagger-merger
+    restart: unless-stopped
+    depends_on:
+      - film-auth
+      - film-movies
+      - film-comments
+      - film-search
+      - film-collections
+
+  film-swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: film-swagger-ui
+    restart: unless-stopped
+    environment:
+      - URL=/specs/merged.json
+
+  film-swagger-hub:
+    image: nginx:alpine
+    container_name: film-swagger-hub
+    restart: unless-stopped
+    ports:
+      - "5099:80"
+    volumes:
+      - ./shared/swagger-hub/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - film-swagger-ui
+      - film-swagger-merger
+      - film-auth
+      - film-movies
+      - film-comments
+      - film-search
+      - film-collections
+
 volumes:
   mongodb_data:
   mongodb_config:

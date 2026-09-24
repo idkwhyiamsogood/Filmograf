@@ -1,0 +1,3 @@
+# Локальные секреты — заполняются из *.example.json, не коммитятся
+shared/env.docker.json
+shared/env.json
