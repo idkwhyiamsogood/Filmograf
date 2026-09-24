@@ -1,5 +1,6 @@
 import type { FC } from "react";
-import { useModals, useSwipe } from "@/shared/hooks";
+import { useSwipe } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 
 import {
   Sheet,
@@ -13,7 +14,7 @@ import { SortingOptions } from "./ui/SortingOptions";
 import { SortingVariants } from "./ui/SortingVariants";
 import { WrapperSheetContent } from "@/shared/components";
 
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 
 export const SortingModal: FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();
@@ -24,7 +25,7 @@ export const SortingModal: FC<BaseModalProps> = ({ isOpen }) => {
   });
 
   return (
-    <Sheet open={isOpen} onOpenChange={closeModal}>
+    <Sheet open={isOpen} onOpenChange={() => closeModal()}>
       <SheetHeader>
         <SheetTitle hidden>Сортировка</SheetTitle>
         <SheetDescription hidden>

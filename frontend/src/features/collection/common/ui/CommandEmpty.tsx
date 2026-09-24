@@ -2,12 +2,12 @@
 import type { FC } from "react";
 
 // ui
-import { ModalType } from "@/shared/types";
+import type { useModals } from "@/shared/contexts/modal-context";
 import { Button } from "@/shared/ui/button";
 
 interface Props {
   text: string;
-  handleOpenModal: (modalType: ModalType, modalProps: any) => void;
+  handleOpenModal: ReturnType<typeof useModals>["openModal"];
 }
 
 export const CommandEmpty: FC<Props> = ({ text, handleOpenModal }) => {

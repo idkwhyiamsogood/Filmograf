@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 import { useInfinityTags } from "@/entities/collection-tags/model/hooks/useInfinityTags";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { useTagsFilter } from "../model/hooks/useTagsFilter";
 
 import {
@@ -18,7 +18,7 @@ import { FilterCommonBody } from "../../common/ui/FilterCommonBody";
 import { FilterCommonFooter } from "../../common/ui/FIlterCommonFooter";
 import { FilterCommonHeader } from "../../common/ui/FilterCommonHeader";
 
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 
 export const FilterTagsModal: React.FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();

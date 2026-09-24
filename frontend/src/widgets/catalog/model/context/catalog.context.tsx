@@ -16,6 +16,8 @@ interface CatalogContextType {
   isFetching: boolean;
   isFetchingNextPage: boolean;
   hasNextPage: boolean | undefined;
+  isError: boolean;
+  error: unknown;
   query: string;
   activeType: EntityType;
   hasActiveFilters: boolean;
@@ -71,6 +73,8 @@ export const CatalogProvider = ({ children }: { children: ReactNode }) => {
       isFetching: currentSearch.isFetching,
       isFetchingNextPage: currentSearch.isFetchingNextPage,
       hasNextPage: currentSearch.hasNextPage,
+      isError: currentSearch.isError,
+      error: currentSearch.error,
       query,
       activeType,
       hasActiveFilters: filtersActive,

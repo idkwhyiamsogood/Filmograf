@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { Button } from "@/shared/ui/button";
 import { Trash2 } from "lucide-react";
 
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 
 import { commentApi } from "@/entities/comment/model/api/comment.api";
 import { Comment } from "@/entities/comment";

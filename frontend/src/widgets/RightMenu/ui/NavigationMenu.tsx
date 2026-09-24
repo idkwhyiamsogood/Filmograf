@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
 import { fullNavigation } from "@/shared/configs";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { useRouter } from "@/shared/lib/router-compat";
 
 import { NavigationItem } from "./NavigationItem";

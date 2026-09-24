@@ -1,7 +1,7 @@
 import type { FC } from "react";
 
 import { CollectionWrapper } from "@/entities/collection";
-import { LoadingSplashScreen } from "@/shared/components";
+import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
 
 import { useCollections } from "@/entities/collection";
 
@@ -10,10 +10,23 @@ interface Props {
 }
 
 export const FavoritesClientPage: FC<Props> = ({ pinned }) => {
-  const { data: collections, isLoading: isCollectionLoading } =
-    useCollections(pinned);
+  const {
+    data: collections,
+    isLoading: isCollectionLoading,
+    isError,
+    error,
+    refetch,
+  } = useCollections(pinned);
 
-  if (!collections || isCollectionLoading) {
+  if (isCollectionLoading) {
+    return <LoadingSplashScreen />;
+  }
+
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={() => refetch()} />;
+  }
+
+  if (!collections) {
     return <LoadingSplashScreen />;
   }
 

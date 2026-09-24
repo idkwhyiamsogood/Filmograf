@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 import { MovieSkeletonWrapper, MovieWrapper, type IMovie } from "@/entities/movie";
 import { TabsContent } from "@/shared/ui/tabs";
 import { useInfiniteMovies } from "@/entities/movie";
-import { LoadingSplashScreen } from "@/shared/components";
+import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
 import type { SearchTypeMovie } from "@/shared/types";
 
 import { useCatalog } from "../../model/hooks/useCatalog";
@@ -24,6 +24,9 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     activeType,
     query,
     hasActiveFilters,
+    isError: isSearchError,
+    error: searchError,
+    handleSearch,
   } = useCatalog();
 
   const isSearchMode = query.trim() !== "" || hasActiveFilters;
@@ -39,6 +42,9 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     hasNextPage: catalogHasNext,
     isFetchingNextPage: isCatalogFetchingNext,
     isLoading: isCatalogLoading,
+    isError: isCatalogError,
+    error: catalogError,
+    refetch: refetchCatalog,
   } = useInfiniteMovies({
     pageSize: 21,
     type: type,
@@ -67,6 +73,19 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
 
   if (showInitialLoader) {
     return <LoadingSplashScreen />;
+  }
+
+  const isError = isSearchMode ? isSearchError : isCatalogError;
+
+  if (isError) {
+    return (
+      <TabsContent value="Movie">
+        <QueryErrorState
+          error={isSearchMode ? searchError : catalogError}
+          onRetry={isSearchMode ? handleSearch : () => refetchCatalog()}
+        />
+      </TabsContent>
+    );
   }
 
   if (isSearchMode && moviesToDisplay.length === 0 && !isSearchLoading) {

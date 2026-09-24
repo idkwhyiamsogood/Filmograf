@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from "react";
 
 import { useUser } from "@/entities/user";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import {
   Sheet,
   SheetContent,
@@ -17,7 +17,7 @@ import { NavigationMenu } from "./ui/NavigationMenu";
 import { WrapperContent } from "./ui/WrapperContent";
 import { ThemeToggleFull } from "@/features/change-theme";
 
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 
 export const RightMenu: React.FC<BaseModalProps> = memo(({ isOpen }) => {
   const { closeModal, openModal } = useModals();
@@ -27,9 +27,7 @@ export const RightMenu: React.FC<BaseModalProps> = memo(({ isOpen }) => {
 
   useEffect(() => {
     if (!user) {
-      openModal("authorization-menu", { 
-        function: () => openModal("right-menu") 
-      });
+      openModal("authorization-menu");
       setUserAvailable(false);
     }
   }, [user]);
@@ -38,7 +36,7 @@ export const RightMenu: React.FC<BaseModalProps> = memo(({ isOpen }) => {
 
   return (
     <div className="bg-background border-accent-foreground">
-      <Sheet open={isOpen} onOpenChange={closeModal}>
+      <Sheet open={isOpen} onOpenChange={() => closeModal()}>
         {/* ✅ Убрал дублирующийся SheetHeader */}
         <SheetHeader>
           <SheetTitle hidden>Боковая менюшка</SheetTitle>

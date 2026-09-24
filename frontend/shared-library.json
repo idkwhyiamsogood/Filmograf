@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/idkwhyiamsogood/registry-schemas/refs/heads/main/schemas/shared-library.schema.json",
+  "basePath": "./src",
+  "registries": {
+    "registry": {
+      "type": "git",
+      "url": "https://github.com/idkwhyiamsogood/registry",
+      "aliases": {
+        "modules": "@/modules",
+        "entities": "@/entities",
+        "services": "@/services",
+        "shared": "@/shared",
+        "api": "@/api"
+      },
+      "sourcePath": ""
+    }
+  },
+  "registry": "registry"
+}

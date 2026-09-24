@@ -3,7 +3,7 @@ import { useDebounce } from "react-use";
 import { useInfinityTags, useTagsSearch } from "@/entities/collection-tags";
 import { CommonSearchSelector, type SearchItem } from "@/shared/components";
 import { CommandEmpty } from "./CommandEmpty";
-import { useModals } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 import { useCollectionForm } from "@/entities/collection";
 
 interface Props {

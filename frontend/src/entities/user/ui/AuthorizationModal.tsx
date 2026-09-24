@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useUser } from "@/entities/user";
-import { useAuth, useModals } from "@/shared/hooks";
+import { useAuth } from "@/shared/hooks";
+import { useModals } from "@/shared/contexts/modal-context";
 
 import { Button } from "@/shared/ui/button";
 import {
@@ -19,7 +20,7 @@ import { Capacitor } from "@capacitor/core";
 
 import { authApi } from "@/shared/lib";
 
-import type { BaseModalProps } from "@/shared/types";
+import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 import { LoadingSplashScreen } from "@/shared/components";
 
 export const AuthorizationModal: React.FC<BaseModalProps> = ({ isOpen }) => {
