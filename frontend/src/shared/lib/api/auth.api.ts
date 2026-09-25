@@ -9,8 +9,8 @@ interface RouterLike {
 
 class AuthApi extends TokenApi {
   public googleLogin = (router: RouterLike): void => {
-    // this.get("/api/auth/google/");
-    router.push(`https://filmograf.online/api/auth/google`);
+    const baseUrl = import.meta.env.VITE_API_URL || "https://filmograf.online/";
+    router.push(`${baseUrl.replace(/\/$/, "")}/api/auth/google`);
   };
 
   public createTemporaryToken = async (): APIResponse<JWT> => {

@@ -30,5 +30,15 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: true,
+    proxy: {
+      "/api/auth": "http://localhost:5090",
+      "/api/users": "http://localhost:5090",
+      "/api/movies": "http://localhost:5091",
+      "/api/genres": "http://localhost:5091",
+      "/api/comments": "http://localhost:5092",
+      "/api/search": "http://localhost:5093",
+      "/api/collections": "http://localhost:5094",
+    },
   },
 });
