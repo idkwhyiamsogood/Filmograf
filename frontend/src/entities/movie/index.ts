@@ -22,3 +22,5 @@ export { useMyRates } from "./model/hooks/useMyRates";
 
 // api
 export { movieApi } from "./model/api/movie.api";
+export { movieFeedApi } from "./model/api/movieFeed.api";
+export type { FeedMovies, FeedSource } from "./model/api/movieFeed.api";

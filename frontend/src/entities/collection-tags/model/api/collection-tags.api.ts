@@ -23,7 +23,7 @@ class CollecionTagsApi extends BaseHttpClient {
 
   public updateTag = async (
     id: string,
-    data: { text: string },
+    data: { name: string },
   ): APIResponse<null> => {
     return this.patch(`api/collections/tags/${id}`, data);
   };
@@ -37,8 +37,13 @@ class CollecionTagsApi extends BaseHttpClient {
   };
 
   // search service
-  public searchTags = (query: string): APIResponse<SearchedIds> => {
-    return this.get(`api/search/tags?query=${query}`);
+  public searchTags = (
+    query: string,
+    params: QueryParams = { page: 0, count: 21 },
+  ): APIResponse<SearchedIds> => {
+    return this.get(
+      `api/search/tags?query=${encodeURIComponent(query)}&Page=${params.page}&Count=${params.count}`,
+    );
   };
 }
 

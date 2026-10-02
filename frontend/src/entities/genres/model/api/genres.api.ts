@@ -1,5 +1,5 @@
 import { BaseHttpClient } from "@/shared/lib/http/axios";
-import { APIResponse } from "@/shared/types/api";
+import type { APIResponse, QueryParams, SearchedIds } from "@/shared/types/api";
 
 import type { Genre } from "../types/types";
 
@@ -9,8 +9,13 @@ class GenreApi extends BaseHttpClient {
   };
 
   // search service
-  public searchGenres = (query: string): APIResponse<Genre[]> => {
-    return this.get(`api/search/genres?query=${query}`);
+  public searchGenres = (
+    query: string,
+    params: QueryParams = { page: 0, count: 21 },
+  ): APIResponse<SearchedIds> => {
+    return this.get(
+      `api/search/genres?query=${encodeURIComponent(query)}&Page=${params.page}&Count=${params.count}`,
+    );
   };
 }
 

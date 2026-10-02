@@ -8,6 +8,8 @@ export interface IUser extends BaseModel {
   googleId: string;
   name: string;
   avatarUrl: string;
+  isAdmin: boolean;
+  isBanned: boolean;
 }
 
 export interface UserLight {

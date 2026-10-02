@@ -13,6 +13,7 @@ export const USER_MOCK: IUser = {
   ...USER_MOCK_LIGHT,
   userType: "Member",
   googleId: "user-mock",
+  isBanned: false,
   createDate: new Date(),
   updateDate: new Date(),
 }

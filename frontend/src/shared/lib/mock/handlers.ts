@@ -94,6 +94,17 @@ const toCommentDto = (c: MockComment, withChilds = false): any => {
   };
 };
 
+const requireAdmin = (req: MockRequest) => {
+  const user = requireUser(req);
+  if (!user.isAdmin) throw new MockHttpError(403, "Доступно только администраторам", "FORBIDDEN");
+  return user;
+};
+
+const pushHistory = (userId: string, movieId: string) => {
+  const history = (db.history[userId] ?? []).filter((id) => id !== movieId);
+  db.history[userId] = [movieId, ...history].slice(0, 100);
+};
+
 const toUserLight = (u: MockUser) => ({
   id: u.id,
   email: u.email,
@@ -170,15 +181,20 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
   ["PATCH", "api/auth/refresh-token", (req) => ({ jwt: req.token ?? GUEST_TOKEN })],
   ["GET", "api/auth/status", (req) => !!currentUser(req)],
   ["GET", "api/auth/fetch", (req) => {
-    const { isAdmin: _a, isDeleted: _d, ...user } = requireUser(req);
+    const { isDeleted: _d, ...user } = requireUser(req);
     return user;
   }],
   ["GET", "api/users/:id", (req) => toUserLight(findOr404(db.users, req.params.id, "Пользователь"))],
 
   // genres
   ["GET", "api/genres", () => db.genres],
-  ["GET", "api/search/genres", (req) =>
-    db.genres.filter((g) => matchesQuery(g.name, req.query.get("query")))],
+  ["GET", "api/search/genres", (req) => ({
+    entityIds: paginate(
+      db.genres.filter((g) => matchesQuery(g.name, req.query.get("query"))),
+      req.query,
+    ).map((g) => g.id),
+    type: 3,
+  })],
 
   // movies
   ["GET", "api/movies/top", (req) => ({
@@ -199,6 +215,9 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
     const sorted = db.movies.filter((m) => !liked.includes(m.id)).sort((a, b) => score(b) - score(a));
     return { ids: paginate(sorted, req.query).map((m) => m.id) };
   }],
+  ["GET", "api/movies/history", (req) => ({
+    ids: paginate(db.history[requireUser(req).id] ?? [], req.query),
+  })],
   ["POST", "api/movies/batch-many", (req) =>
     byIds(db.movies, req.body?.ids).map((m) => toMovieDto(m, userIdFromToken(req.token)))],
   ["GET", "api/movies/rate/my", (req) => {
@@ -220,8 +239,42 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
     }
     return null;
   })],
-  ["GET", "api/movies/:id", (req) =>
-    toMovieDto(findOr404(db.movies, req.params.id, "Фильм"), userIdFromToken(req.token))],
+  ["GET", "api/movies/:id", (req) => {
+    const movie = findOr404(db.movies, req.params.id, "Фильм");
+    const user = currentUser(req);
+    // Как на бэке: просмотр карточки фильма попадает в историю.
+    if (user) mutate(() => pushHistory(user.id, movie.id));
+    return toMovieDto(movie, user?.id ?? null);
+  }],
+
+  // movies feed (админка парсинга) — в моках ничего не парсим, только проверяем права
+  ["POST", "api/movies/feed/parse-source-movie", (req) => {
+    requireAdmin(req);
+    if (!["IMDb", "Kinopoisk"].includes(req.body?.source) || !req.body?.url) {
+      throw new MockHttpError(400, "Укажите source (IMDb|Kinopoisk) и url", "VALIDATION_ERROR");
+    }
+    return null;
+  }],
+  ["POST", "api/movies/feed/parse-source-collection", (req) => {
+    requireAdmin(req);
+    if (!["IMDb", "Kinopoisk"].includes(req.body?.source) || !req.body?.url) {
+      throw new MockHttpError(400, "Укажите source (IMDb|Kinopoisk) и url", "VALIDATION_ERROR");
+    }
+    return null;
+  }],
+  ["POST", "api/movies/feed/compile-chart", (req) => {
+    requireAdmin(req);
+    return null;
+  }],
+  ["POST", "api/movies/feed/:id/re-parse-one-movie", (req) => {
+    requireAdmin(req);
+    findOr404(db.movies, req.params.id, "Фильм");
+    return null;
+  }],
+  ["POST", "api/movies/feed/nahyi-parsing-bugs", (req) => {
+    requireAdmin(req);
+    return 0;
+  }],
 
   // search
   ["POST", "api/search/movies", (req) => {
@@ -258,7 +311,10 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
     return { entityIds: paginate(found, req.query).map((c) => c.id), type: 1 };
   }],
   ["GET", "api/search/tags", (req) => ({
-    entityIds: db.tags.filter((t) => matchesQuery(t.name, req.query.get("query"))).map((t) => t.id),
+    entityIds: paginate(
+      db.tags.filter((t) => matchesQuery(t.name, req.query.get("query"))),
+      req.query,
+    ).map((t) => t.id),
     type: 2,
   })],
 
@@ -288,7 +344,7 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
   })],
   ["GET", "api/collections/tags/:id", (req) => findOr404(db.tags, req.params.id, "Тег")],
   ["PATCH", "api/collections/tags/:id", (req) => mutate(() => {
-    findOr404(db.tags, req.params.id, "Тег").name = String(req.body?.text ?? "");
+    findOr404(db.tags, req.params.id, "Тег").name = String(req.body?.name ?? "");
     return null;
   })],
   ["DELETE", "api/collections/tags/:id", (req) => mutate(() => {
@@ -418,6 +474,8 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
     db.comments.push(c);
     return toCommentDto(c);
   })],
+  ["GET", "api/comments/:id", (req) =>
+    toCommentDto(findOr404(db.comments, req.params.id, "Комментарий"))],
   ["GET", "api/comments/:id/full", (req) =>
     toCommentDto(findOr404(db.comments, req.params.id, "Комментарий"), true)],
   ["POST", "api/comments/:id/comment", (req) => mutate(() => {

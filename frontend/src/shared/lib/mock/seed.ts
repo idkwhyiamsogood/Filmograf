@@ -13,6 +13,7 @@ export interface MockUser {
   googleId: string;
   userType: "Guest" | "Member";
   isAdmin: boolean;
+  isBanned: boolean;
   isDeleted: boolean;
   createDate: string;
   updateDate: string;
@@ -98,6 +99,8 @@ export interface MockDb {
   comments: MockComment[];
   rates: MockRate[];
   pins: Record<string, string[]>;
+  /** userId → id фильмов, последние просмотренные первыми */
+  history: Record<string, string[]>;
   seq: number;
 }
 
@@ -123,7 +126,8 @@ const USERS: MockUser[] = [
   userType: userType as MockUser["userType"],
   avatarUrl: avatar(id),
   googleId: `google-${id}`,
-  isAdmin: id === "u-filmograf",
+  isAdmin: id === "u-filmograf" || id === MOCK_MEMBER_ID,
+  isBanned: false,
   isDeleted: false,
   createDate: SEED_DATE,
   updateDate: SEED_DATE,
@@ -309,7 +313,7 @@ const RATES: MockRate[] = [
 ];
 
 // Бампать при изменении сида — старые сохранённые в localStorage данные сбросятся.
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
 export const createSeed = (): MockDb =>
   structuredClone({
@@ -322,5 +326,6 @@ export const createSeed = (): MockDb =>
     comments: COMMENTS,
     rates: RATES,
     pins: { [MOCK_MEMBER_ID]: ["c3"] },
+    history: { [MOCK_MEMBER_ID]: ["m9", "m1", "m14"] },
     seq: 1000,
   });

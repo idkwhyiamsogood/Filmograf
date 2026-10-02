@@ -10,3 +10,7 @@ export { mockCommentsWithReplies } from "./model/mock/comments";
 // hooks
 export { useChildsComment } from "./model/hooks/useChildsComment";
 export { useParentComment } from "./model/hooks/useParentComments";
+export { useComment } from "./model/hooks/useComment";
+
+// api
+export { commentApi } from "./model/api/comment.api";

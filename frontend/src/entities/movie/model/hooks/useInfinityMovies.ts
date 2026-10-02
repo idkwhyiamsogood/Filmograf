@@ -1,11 +1,12 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { movieApi } from "../api/movie.api";
 import type { IMovie } from "../types/types";
+import type { SearchTypeMovie } from "@/shared/types";
 
 interface UseInfiniteMoviesParams {
   pageSize?: number;
   initialPage?: number;
-  type?: "top" | "recommended" | "popular";
+  type?: SearchTypeMovie;
 }
 
 export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
@@ -41,6 +42,12 @@ export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
           break;
         case "popular":
           idsResponse = await movieApi.getPopular({
+            page: pageParam,
+            count: pageSize,
+          });
+          break;
+        case "history":
+          idsResponse = await movieApi.getHistory({
             page: pageParam,
             count: pageSize,
           });

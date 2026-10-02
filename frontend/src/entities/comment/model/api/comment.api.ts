@@ -12,6 +12,10 @@ class CommentApi extends BaseHttpClient {
     return this.patch(`api/comments/${commentId}`, data);
   };
 
+  public getComment = async (id: string): APIResponse<Comment> => {
+    return this.get(`api/comments/${id}`);
+  };
+
   /**
    * @param {string} id - Идентификатор корневого комментария
    * @returns {APIResponse<Comment[]>} отец и дети
