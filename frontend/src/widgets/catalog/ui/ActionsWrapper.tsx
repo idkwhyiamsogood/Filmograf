@@ -1,25 +1,23 @@
-// types
 import { memo, type FC } from "react";
 
-// ui
 import { FilterButton } from "@/features/filter";
 import { Search } from "@/features/search";
-import { SortingButton } from "@/features/sort";
+import { useSearchParams } from "@/shared/lib/router-compat";
 
-// hooks
 import { useCatalog } from "../model/hooks/useCatalog";
 
 export const ActionsWrapper: FC = memo(() => {
-  const { setQuery } = useCatalog();
+  const { query, setQuery } = useCatalog();
+  const params = useSearchParams();
 
   return (
-    <div className="flex flex-col gap-2.5">
-      <div className="flex gap-2.5">
-        <FilterButton />
-        {/* <SortingButton /> */}
-      </div>
-
-      <Search onSearch={setQuery} />
+    <div className="flex items-center gap-2">
+      <Search
+        onSearch={setQuery}
+        defaultValue={query}
+        autoFocus={params.get("focus") === "1"}
+      />
+      <FilterButton />
     </div>
   );
 });

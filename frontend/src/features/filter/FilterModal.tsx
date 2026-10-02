@@ -58,16 +58,7 @@ export const FilterModal: FC<BaseModalProps> = ({ isOpen }) => {
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
           side="bottom"
-          className={`
-            h-full
-            w-full
-            bg-background 
-            data-[state=open]:animate-in 
-            data-[state=open]:slide-in-from-bottom 
-            data-[state=closed]:animate-out 
-            data-[state=closed]:slide-out-to-top
-            duration-100
-          `}
+          className="mx-auto flex h-[90dvh] w-full max-w-lg flex-col gap-0 overflow-hidden rounded-t-3xl border-t bg-popover pb-safe data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom duration-300"
           style={{
             transform: `translateY(${translateY}px)`,
             transition: isDragging ? "none" : "transform 0.3s ease-out",

@@ -64,9 +64,9 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
             className="space-y-4"
           >
             <DialogHeader className="text-left">
-              <DialogTitle>Создание новой закладки</DialogTitle>
+              <DialogTitle>Новая подборка</DialogTitle>
               <DialogDescription>
-                Введите название закладки, которую хотите создать
+                Название, видимость и теги — всё можно поменять позже
               </DialogDescription>
             </DialogHeader>
 
@@ -79,8 +79,8 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="Введите название закладки"
-                          className="w-full rounded-2xl"
+                          placeholder="Например, «На выходные»"
+                          className="h-12 w-full rounded-xl text-base"
                           {...field}
                         />
                       </FormControl>
@@ -93,7 +93,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                   control={collectionRedactForm.control}
                   name="isPublic"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-xl bg-muted/60 p-4">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
@@ -103,7 +103,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                       <div className="space-y-1 leading-none">
                         <FormLabel>Сделать публичной</FormLabel>
                         <p className="text-sm text-muted-foreground">
-                          Приватные закладки видны только вам
+                          Скрытые подборки видны только вам
                         </p>
                       </div>
                     </FormItem>
@@ -115,7 +115,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                     control={collectionRedactForm.control}
                     name="isCommentable"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-xl bg-muted/60 p-4">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
@@ -123,10 +123,9 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>Разрешить коментарии</FormLabel>
+                          <FormLabel>Разрешить комментарии</FormLabel>
                           <p className="text-sm text-muted-foreground">
-                            Разрешение даст возможность дргуим пользователям
-                            делиться впечатлениями о вашей колекции
+                            Другие смогут обсуждать вашу подборку
                           </p>
                         </div>
                       </FormItem>
@@ -139,7 +138,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                     control={collectionRedactForm.control}
                     name="isCopiable"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-xl bg-muted/60 p-4">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
@@ -149,8 +148,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                         <div className="space-y-1 leading-none">
                           <FormLabel>Разрешить копирование</FormLabel>
                           <p className="text-sm text-muted-foreground">
-                            Разрешение даст возможность дргуим пользователям
-                            копировать вашу подборку к себе в коллекцию
+                            Другие смогут сохранять копию подборки себе
                           </p>
                         </div>
                       </FormItem>
@@ -164,14 +162,15 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
               </div>
             )}
 
-            <DialogFooter className="flex flex-row justify-end">
+            <DialogFooter className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
               {step === 0 ? (
                 <>
                   <DialogClose asChild>
-                    <Button variant="outline">Отмена</Button>
+                    <Button variant="secondary" className="h-11 rounded-xl font-bold">Отмена</Button>
                   </DialogClose>
                   <Button
                     type="button"
+                    className="h-11 rounded-xl font-bold"
                     onClick={(e) => {
                       e.preventDefault();
                       handleNext();
@@ -183,7 +182,8 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
               ) : (
                 <>
                   <Button
-                    variant="outline"
+                    variant="secondary"
+                    className="h-11 rounded-xl font-bold"
                     onClick={(e) => {
                       e.preventDefault();
                       handlePrev();
@@ -191,7 +191,7 @@ export const CreateCollectionModal: React.FC<BaseModalProps> = ({ isOpen }) => {
                   >
                     Назад
                   </Button>
-                  <Button type="submit">Создать</Button>
+                  <Button type="submit" className="h-11 rounded-xl font-bold">Создать</Button>
                 </>
               )}
             </DialogFooter>

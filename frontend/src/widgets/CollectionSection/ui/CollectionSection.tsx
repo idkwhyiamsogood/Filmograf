@@ -1,77 +1,49 @@
-import React, { useCallback } from "react";
-import {
-  CollectionCarousel,
-  useInfiniteCollections,
-} from "@/entities/collection/";
-import { QueryErrorState } from "@/shared/components";
+import React from "react";
+
+import { CollectionCover, useInfiniteCollections } from "@/entities/collection/";
+import { QueryErrorState, Rail, SectionHeader } from "@/shared/components";
+import type { SearchTypeCollection } from "@/shared/types";
+import { Skeleton } from "@/shared/ui/skeleton";
 
 interface CollectionsSectionProps {
   title: string;
-  type: "popular" | "recommended" | "my";
-  pageSize?: number;
-  carouselType?: "full" | "partial";
-  orientation?: "horizontal" | "vertical";
-  hasFetch?: boolean;
+  subtitle?: string;
+  type: SearchTypeCollection;
+  limit?: number;
   viewAllHref?: string;
 }
 
 export const CollectionsSection: React.FC<CollectionsSectionProps> = ({
   title,
+  subtitle,
   type,
-  pageSize = 10,
-  carouselType = "partial",
-  orientation = "horizontal",
-  hasFetch = false,
+  limit = 10,
   viewAllHref,
 }) => {
-  const {
-    collections,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useInfiniteCollections({
-    pageSize,
-    type,
-  });
+  const { collections, isLoading, isError, error, refetch } =
+    useInfiniteCollections({ pageSize: limit, type });
 
-  const handleFetch = useCallback(() => {
-    if (hasFetch && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [hasFetch, hasNextPage, fetchNextPage]);
+  if (!isLoading && !isError && collections.length === 0) return null;
 
-  if (isError) {
-    return (
-      <div className="px-2">
-        <h2 className="text-xl font-semibold tracking-tight px-1 mb-2">
-          {title}
-        </h2>
+  return (
+    <section className="flex flex-col gap-3">
+      <SectionHeader title={title} subtitle={subtitle} href={viewAllHref} />
+      {isError ? (
         <QueryErrorState
           compact
           error={error}
           onRetry={() => refetch()}
           serverErrorMessage="Не удалось загрузить подборки"
         />
-      </div>
-    );
-  }
-
-  if (!isLoading && collections.length === 0) {
-    return null;
-  }
-
-  return (
-    <CollectionCarousel
-      title={title}
-      collections={collections}
-      isLoading={isLoading}
-      type={carouselType}
-      orientation={orientation}
-      onFetch={hasFetch ? handleFetch : undefined}
-      viewAllHref={viewAllHref}
-    />
+      ) : (
+        <Rail itemClassName="w-[46%] sm:w-[30%]">
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-[4/5] w-full rounded-2xl" />
+              ))
+            : collections.map((c) => <CollectionCover key={c.id} collection={c} />)}
+        </Rail>
+      )}
+    </section>
   );
 };

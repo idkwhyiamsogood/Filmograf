@@ -170,6 +170,47 @@ const ownCollection = (req: MockRequest, id: string) => {
   return col;
 };
 
+// --- права доступа (как UserTypePolicy на бэке) ------------------------------
+
+const PUBLIC_ROUTES = new Set([
+  "GET api/auth/temporary",
+  "POST api/auth/google-native",
+  "POST api/auth/verify-idempotence-code",
+  "PATCH api/auth/refresh-token",
+]);
+
+// [UserTypePolicy(Guest = false)]
+const MEMBER_ONLY_ROUTES = new Set([
+  "GET api/collections/pins/my",
+  "PUT api/collections/pins/:id",
+  "DELETE api/collections/pins/:id",
+  "GET api/collections/recommended",
+  "POST api/collections",
+  "PATCH api/collections/:id",
+  "DELETE api/collections/:id",
+  "POST api/collections/:id/copy",
+  "PUT api/collections/:id/movie/:movieId",
+  "DELETE api/collections/:id/movie/:movieId",
+  "POST api/collections/tags/batch-many",
+  "POST api/collections/tags",
+  "POST api/comments/:id/comment",
+  "PATCH api/comments/:id",
+  "DELETE api/comments/:id",
+  "PUT api/comments/:id/reaction",
+  "POST api/comments/entities/:entityId/comment",
+  "GET api/movies/rate/my",
+  "PUT api/movies/rate/:id",
+]);
+
+export const guardRoute = (method: string, pattern: string, req: MockRequest) => {
+  const key = `${method} ${pattern}`;
+  if (PUBLIC_ROUTES.has(key)) return;
+  const user = requireUser(req);
+  if (MEMBER_ONLY_ROUTES.has(key) && user.userType === "Guest") {
+    throw new MockHttpError(403, "Доступно только после входа", "FORBIDDEN");
+  }
+};
+
 // --- роуты ------------------------------------------------------------------
 // Порядок важен: более специфичные пути должны идти раньше `:id`.
 

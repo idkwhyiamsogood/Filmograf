@@ -6,8 +6,6 @@ export { CollectionCover } from "./ui/CollectionCover";
 export { CollectionSkeleton } from "./ui/CollectionSkeleton";
 export { CollectionWrapper } from "./ui/CollectionWrapper/CollectionWrapper";
 export { CollectionSkeletonWrapper } from "./ui/CollectionSkeletonWrapper";
-export { CollectionCarousel } from "./ui/CollectionCarousel";
-export { ColllectionFull } from "./ui/ColllectionFull";
 
 // schemas
 export {

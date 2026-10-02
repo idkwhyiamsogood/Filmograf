@@ -65,9 +65,6 @@ export const useGenresFilter = () => {
     [updateFilterOption],
   );
 
-  useEffect(() => {
-    console.log(filterState.filterOptions.genres);
-  }, [filterState.filterOptions.genres]);
 
   const handleGenresReset = useCallback(() => {
     updateFilterOption("genres", () => ({

@@ -3,23 +3,20 @@ import {
   useCallback,
   useEffect,
   useState,
-  type ReactNode
+  type ReactNode,
 } from "react";
 
-import { authApi } from "@/shared/lib";
 import { userApi } from "../api/user.api";
 import type { IUser } from "../types";
 
 import { useAuth } from "@/shared/hooks";
 
-import { toast } from "sonner";
-
 export interface UserContextType {
   user: IUser | undefined;
-
-  userError: () => void;
-  setCurrentUser: () => void;
-  logout: () => void;
+  isGuest: boolean;
+  isLoading: boolean;
+  setCurrentUser: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -28,43 +25,41 @@ export const UserContext = createContext<UserContextType | undefined>(
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { token } = useAuth();
-
-  const userError = () =>
-    toast.error("Произошла непредвиденная ошибка, попробуйте позже");
+  const { token, isGuest, syncUserType, logout: endSession } = useAuth();
 
   const setCurrentUser = useCallback(async () => {
+    if (!token.jwt) return;
     try {
-      if (token) await userApi.getMe().then((res) => setUser(res.data));
-      else return;
+      setIsLoading(true);
+      const { data } = await userApi.getMe();
+      setUser(data);
+      syncUserType(data.userType);
     } catch (e) {
-      console.log(e);
-      // userError();
+      console.error(e);
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  }, [token.jwt, syncUserType]);
 
   const logout = useCallback(async () => {
-    try {
-      if (user || authApi.getAccessToken() !== null) {
-        authApi.logout();
-        setUser(undefined);
-      }
-    } catch (e) {
-      console.log(e);
-      // userError();
-    }
-  }, []);
+    setUser(undefined);
+    await endSession();
+  }, [endSession]);
 
+  // Пользователь перезапрашивается при каждой смене токена (вход, выход,
+  // восстановление сессии).
   useEffect(() => {
     setCurrentUser();
-  }, [token]);
+  }, [setCurrentUser]);
 
   return (
     <UserContext.Provider
       value={{
         user,
-        userError,
+        isGuest: user ? user.userType === "Guest" : isGuest,
+        isLoading,
         setCurrentUser,
         logout,
       }}

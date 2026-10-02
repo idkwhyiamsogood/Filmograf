@@ -1,53 +1,65 @@
-// types
-import type { FC } from "react";
-import type { ChangeEvent } from "react";
-
-// ui
-import { Search as SearchIcon } from "lucide-react";
-import { Input } from "@/shared/ui/input";
-
-// hooks
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
+import { Search as SearchIcon, X } from "lucide-react";
 import { useDebounce } from "react-use";
+
+import { cn } from "@/shared/lib/utils";
 
 interface Props {
   onSearch: (value: string) => void;
+  /** Начальное значение — чтобы поиск переживал уход на карточку фильма и обратно */
+  defaultValue?: string;
+  autoFocus?: boolean;
+  placeholder?: string;
+  className?: string;
 }
 
-export const Search: FC<Props> = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+export const Search: FC<Props> = ({
+  onSearch,
+  defaultValue = "",
+  autoFocus,
+  placeholder = "Фильм или подборка",
+  className,
+}) => {
+  const [value, setValue] = useState(defaultValue);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  useDebounce(
-    () => {
-      setDebouncedSearchTerm(searchTerm);
-    },
-    500,
-    [searchTerm],
-  );
-
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+  useDebounce(() => onSearch(value), 400, [value]);
 
   useEffect(() => {
-    onSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
 
   return (
-    <div className="relative flex items-center">
-      <SearchIcon size={16} className="absolute left-2.5 text-[#8a8a8e]" />
-
-      <Input
-        value={searchTerm}
-        onChange={handleSearchChange}
-        placeholder="Поиск по названию"
-        className="
-            w-full h-7.5 pl-8 pr-2 py-[2px] 
-            text-[13px] leading-[20px] text-accent-foreground
-            bg-[#ffffff] border-1 rounded-[5px]
-            placeholder:text-[#8a8a8e]"
+    <label
+      className={cn(
+        "flex h-11 flex-1 items-center gap-2.5 rounded-xl bg-muted px-3.5 ring-primary/50 transition-shadow focus-within:ring-2",
+        className,
+      )}
+    >
+      <SearchIcon className="size-[18px] shrink-0 text-muted-foreground" />
+      <input
+        ref={inputRef}
+        type="search"
+        enterKeyHint="search"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={placeholder}
+        className="min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
       />
-    </div>
+      {value && (
+        <button
+          type="button"
+          aria-label="Очистить поиск"
+          onClick={() => {
+            setValue("");
+            onSearch("");
+            inputRef.current?.focus();
+          }}
+          className="flex size-6 items-center justify-center rounded-full bg-muted-foreground/20 text-muted-foreground"
+        >
+          <X className="size-3.5" />
+        </button>
+      )}
+    </label>
   );
 };

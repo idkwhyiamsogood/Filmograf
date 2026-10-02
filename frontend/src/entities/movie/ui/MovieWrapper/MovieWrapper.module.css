@@ -1,19 +1,25 @@
 .FilmWrapper {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 10px;
+  row-gap: 18px;
   align-items: start;
 }
 
 .cardContainer {
   width: 100%;
-  min-width: 0; 
+  min-width: 0;
 }
 
-/* Фиксируем минимальную и максимальную ширину карточек */
 @media (min-width: 640px) {
   .FilmWrapper {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    column-gap: 16px;
+  }
+}
+
+@media (min-width: 900px) {
+  .FilmWrapper {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }

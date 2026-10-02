@@ -4,7 +4,6 @@ export const ModalTypeEnum = {
   UPDATE_BOOKMARK: "update-bookmark",
   AUTHORIZATION_MENU: "authorization-menu",
   SHOW_LOADING: "show-loading",
-  RIGHT_MENU: "right-menu",
   SEARCH_FILTER: "search-filter",
   SEARCH_GENRES_FILTER: "search-genres-filter",
   SEARCH_TAGS_FILTER: "search-tags-filter",
@@ -14,7 +13,9 @@ export const ModalTypeEnum = {
 
 export type ModalType = (typeof ModalTypeEnum)[keyof typeof ModalTypeEnum];
 
-export interface ModalPropsMap {}
+export interface ModalPropsMap {
+  "authorization-menu": { reason?: string } | undefined;
+}
 
 export type ModalOptions = {
   [K in ModalType]: {
@@ -24,7 +25,9 @@ export type ModalOptions = {
 }[ModalType];
 
 export type OpenModalArgs<K extends ModalType> = K extends keyof ModalPropsMap
-  ? [modalType: K, modalProps: ModalPropsMap[K]]
+  ? undefined extends ModalPropsMap[K]
+    ? [modalType: K, modalProps?: ModalPropsMap[K]]
+    : [modalType: K, modalProps: ModalPropsMap[K]]
   : [modalType: K];
 
 export interface BaseModalProps {

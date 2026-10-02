@@ -1,11 +1,14 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { collecionTagsApi } from "../api/collection-tags.api";
 import type { Tag } from "../types";
+import { useAuth } from "@/shared/hooks";
 
 export const useTags = (ids: string[] | string) => {
   const queryClient = useQueryClient();
   const idArray = Array.isArray(ids) ? ids : [ids];
   const sortedIds = [...idArray].sort();
+  // batch-many закрыт для гостей на бэке.
+  const { isGuest } = useAuth();
 
   return useQuery({
     queryKey: ["tags", "batch", sortedIds],
@@ -33,5 +36,6 @@ export const useTags = (ids: string[] | string) => {
       return result;
     },
     staleTime: 10 * 60 * 1000,
+    enabled: !isGuest && idArray.length > 0,
   });
 };

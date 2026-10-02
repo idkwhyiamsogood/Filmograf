@@ -5,7 +5,8 @@ import { useInView } from "react-intersection-observer";
 import { MovieSkeletonWrapper, MovieWrapper, type IMovie } from "@/entities/movie";
 import { TabsContent } from "@/shared/ui/tabs";
 import { useInfiniteMovies } from "@/entities/movie";
-import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
+import { EmptyState, QueryErrorState } from "@/shared/components";
+import { SearchX } from "lucide-react";
 import type { SearchTypeMovie } from "@/shared/types";
 
 import { useCatalog } from "../../model/hooks/useCatalog";
@@ -72,7 +73,7 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
     : isCatalogLoading && !isCatalogFetchingNext && moviesToDisplay.length === 0;
 
   if (showInitialLoader) {
-    return <LoadingSplashScreen />;
+    return <MovieSkeletonWrapper count={12} />;
   }
 
   const isError = isSearchMode ? isSearchError : isCatalogError;
@@ -91,13 +92,15 @@ export const MovieContent: FC<Props> = memo(({ type }) => {
   if (isSearchMode && moviesToDisplay.length === 0 && !isSearchLoading) {
     return (
       <TabsContent value="Movie">
-        <div className="text-center py-10">
-          <p className="text-zinc-500">
-            {query.trim() !== ""
-              ? `Не найдено фильмов по запросу "${query}"`
-              : "По заданным фильтрам ничего не найдено"}
-          </p>
-        </div>
+        <EmptyState
+          icon={SearchX}
+          title="Ничего не нашлось"
+          description={
+            query.trim() !== ""
+              ? `Фильмов по запросу «${query}» нет. Проверьте написание или попробуйте другое название.`
+              : "Под эти фильтры фильмов нет — ослабьте условия."
+          }
+        />
       </TabsContent>
     );
   }

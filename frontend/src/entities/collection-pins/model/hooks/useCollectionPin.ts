@@ -16,14 +16,14 @@ export const usePinCollection = () => {
       return { previousPins };
     },
     onSuccess: (data, variables, context) => {
-      toast.success("Коллекция добавлена в избранное");
+      toast.success("Подборка закреплена в избранном");
     },
     onError: (error, variables, context) => {
       if (context?.previousPins) {
         queryClient.setQueryData(["pins"], context.previousPins);
       }
 
-      toast.error("При добавлении коллекции в избранное произошла ошибка");
+      toast.error("Не удалось закрепить подборку");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["pins"] });

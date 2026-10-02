@@ -1,55 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import { CommonWrapper, LoadingSplashScreen } from "@/shared/components";
+import { LoadingSplashScreen } from "@/shared/components";
 import { useAuth } from "@/shared/hooks";
-import { useUser } from "@/entities/user";
 import { useRouter, useSearchParams } from "@/shared/lib/router-compat";
 
 export const Route = createFileRoute("/auth-success")({
-  component: AuthSuccessRoute,
+  component: AuthSuccessPage,
 });
 
+// Сюда бэкенд возвращает после веб-OAuth с одноразовым кодом.
 function AuthSuccessPage() {
   const searchParams = useSearchParams();
-  const { callAuthError, verifyToken, token } = useAuth();
-  const { setCurrentUser } = useUser();
+  const { callAuthError, verifyToken } = useAuth();
   const router = useRouter();
 
-  const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
-    try {
-      const idempotence = searchParams.get("idempotence");
+    const idempotence = searchParams.get("idempotence");
 
-      if (!idempotence) {
+    (async () => {
+      try {
+        if (!idempotence) throw new Error("No idempotence code");
+        // Пользователь перезапросится сам — UserProvider следит за токеном.
+        await verifyToken(idempotence);
+      } catch {
         callAuthError();
-        return;
+      } finally {
+        router.replace("/");
       }
-
-      verifyToken(idempotence);
-    } catch (e) {
-      callAuthError();
-    } finally {
-      setLoading(false);
-    }
+    })();
   }, []);
 
-  useEffect(() => {
-    try {
-      setCurrentUser();
-    } finally {
-      router.push("/");
-    }
-  }, [loading]);
-
-  return <div>{loading && <LoadingSplashScreen />}</div>;
-}
-
-function AuthSuccessRoute() {
-  return (
-    <CommonWrapper>
-      <AuthSuccessPage />
-    </CommonWrapper>
-  );
+  return <LoadingSplashScreen showMessage />;
 }

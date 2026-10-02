@@ -1,10 +1,11 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 
 import { UserProvider } from "@/entities/user";
 import { AuthProvider } from "@/shared/context";
+import { useAuth } from "@/shared/hooks";
 import { ModalProvider, ModalRenderer, useModals } from "@/shared/contexts/modal-context";
 import { modalBridge } from "@/shared/services/modalBridge";
 import { NotFound, ServerError, LoadingSplashScreen } from "@/shared/components";
@@ -30,6 +31,43 @@ const ModalBridgeRegistrar = () => {
   return null;
 };
 
+// Пока нет токена (первый запуск, гостевой токен ещё не пришёл) — сплэш,
+// чтобы экраны не стреляли запросами без авторизации.
+const AppShell = () => {
+  const { isReady, token } = useAuth();
+  const queryClient = useQueryClient();
+  const prevTokenRef = useRef(token.jwt);
+
+  // Вход/выход: оценки, история, пины и «мои» подборки принадлежат прошлому
+  // пользователю — сбрасываем их в кэше, активные экраны перезапросятся.
+  useEffect(() => {
+    if (prevTokenRef.current && prevTokenRef.current !== token.jwt) {
+      queryClient.resetQueries({
+        predicate: ({ queryKey }) => {
+          const [key, sub] = queryKey as [string, string?];
+          return (
+            ["pins", "my-rates", "movie-details", "user-light"].includes(key) ||
+            (key === "infinite-movies" && (sub === "history" || sub === "recommended")) ||
+            (key === "infinite-collections" && sub !== "popular")
+          );
+        },
+      });
+    }
+    prevTokenRef.current = token.jwt;
+  }, [token.jwt, queryClient]);
+
+  return (
+    <>
+      {/* Прокручивается window: так роутер сам восстанавливает позицию
+          при «назад» (каталог → фильм → обратно к тому же месту). */}
+      <main className="min-h-dvh pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
+        {isReady ? <Outlet /> : <LoadingSplashScreen />}
+      </main>
+      <Navigation />
+    </>
+  );
+};
+
 const RootComponent = () => {
   const [queryClient] = useState(() => new QueryClient({}));
 
@@ -48,12 +86,7 @@ const RootComponent = () => {
               <FilterProvider>
                 <TooltipProvider>
                   <CatalogProvider>
-                    <div className="flex flex-col h-screen">
-                      <div className="flex-1 overflow-y-auto">
-                        <Outlet />
-                      </div>
-                      <Navigation />
-                    </div>
+                    <AppShell />
                     <Toaster position="top-center" />
                     <Suspense fallback={<LoadingSplashScreen />}>
                       <ModalRenderer />

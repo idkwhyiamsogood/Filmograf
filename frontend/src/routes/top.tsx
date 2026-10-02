@@ -2,13 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { CommonWrapper, QueryErrorState } from "@/shared/components";
-import { useInfiniteMovies } from "@/entities/movie";
-import { MovieWrapper } from "@/entities/movie";
-import { MovieSkeletonWrapper } from "@/entities/movie/";
+import { CommonWrapper, PageHeader, QueryErrorState } from "@/shared/components";
+import {
+  MovieFull,
+  MovieSkeletonWrapper,
+  RankedMovieCard,
+  useInfiniteMovies,
+} from "@/entities/movie";
 
 export const Route = createFileRoute("/top")({
-  component: TopRoute,
+  component: TopPage,
 });
 
 function TopPage() {
@@ -21,47 +24,52 @@ function TopPage() {
     isError,
     error,
     refetch,
-  } = useInfiniteMovies({
-    pageSize: 21,
-    type: "top",
-  });
+  } = useInfiniteMovies({ pageSize: 21, type: "top" });
 
-  const { ref, inView } = useInView({
-    threshold: 0,
-    rootMargin: "200px",
-  });
+  const { ref, inView } = useInView({ rootMargin: "300px" });
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    if (inView && hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) {
-    return <MovieSkeletonWrapper count={21} />;
-  }
-
-  if (isError) {
-    return <QueryErrorState error={error} onRetry={() => refetch()} />;
-  }
+  const podium = movies.slice(0, 3);
+  const rest = movies.slice(3);
 
   return (
-    <div>
-      <MovieWrapper movies={movies} />
+    <CommonWrapper className="gap-5">
+      <PageHeader back title="Топ фильмов" subtitle="Рейтинг по оценкам IMDb" />
 
-      <div ref={ref} className="py-8">
-        {isFetchingNextPage && <MovieSkeletonWrapper count={6} />}
-      </div>
+      {isLoading ? (
+        <MovieSkeletonWrapper count={9} />
+      ) : isError ? (
+        <QueryErrorState error={error} onRetry={() => refetch()} />
+      ) : (
+        <>
+          {/* Тройка лидеров крупно */}
+          <div className="grid grid-cols-3 gap-2">
+            {podium.map((movie, i) => (
+              <RankedMovieCard key={movie.id} movie={movie} rank={i + 1} compact />
+            ))}
+          </div>
 
-      {!hasNextPage && <div></div>}
-    </div>
-  );
-}
+          <ol className="-mx-2 flex flex-col">
+            {rest.map((movie, i) => (
+              <li key={movie.id} className="flex items-center gap-1">
+                <span className="w-8 shrink-0 text-center text-lg font-extrabold text-muted-foreground tabular-nums">
+                  {i + 4}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <MovieFull movie={movie} />
+                </div>
+              </li>
+            ))}
+          </ol>
 
-function TopRoute() {
-  return (
-    <CommonWrapper>
-      <TopPage />
+          <div ref={ref} className="py-4">
+            {isFetchingNextPage && <MovieSkeletonWrapper count={3} />}
+          </div>
+        </>
+      )}
     </CommonWrapper>
   );
 }

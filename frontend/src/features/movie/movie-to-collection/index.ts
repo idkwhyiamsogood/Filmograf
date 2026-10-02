@@ -1,1 +1,1 @@
-export { MovieToCollection } from "./ui/MovieToCollection";
+export { CollectionPickerSheet } from "./ui/CollectionPickerSheet";

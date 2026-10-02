@@ -27,11 +27,6 @@ export const MODALS: Record<ModalType, FC<any>> = {
       default: m.LoadingSplashScreenModal,
     })),
   ),
-  [ModalTypeEnum.RIGHT_MENU]: lazy(() =>
-    import("@/widgets/RightMenu").then((m) => ({
-      default: m.RightMenu,
-    })),
-  ),
   [ModalTypeEnum.SEARCH_FILTER]: lazy(() =>
     import("@/features/filter/").then((m) => ({
       default: m.FilterModal,

@@ -1,47 +1,58 @@
-import type { INavigationItem } from "@/shared/types";
 import type { FC } from "react";
 
-import { NavigationItem } from "./ui/NavigationItem";
+import Link from "@/shared/ui/link";
+import { cn } from "@/shared/lib/utils";
+import { usePathname } from "@/shared/lib/router-compat";
+import { tabBarItems, type TabBarItem } from "@/shared/configs";
 
-import { usePathname, useRouter } from "@/shared/lib/router-compat";
-import { useEffect, useState } from "react";
-
-import { navigationMenu } from "@/shared/configs";
-import { useModals } from "@/shared/contexts/modal-context";
+const isActive = (item: TabBarItem, pathname: string) => {
+  const prefixes = [item.url, ...(item.match ?? [])];
+  return prefixes.some((p) =>
+    p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(`${p}/`),
+  );
+};
 
 export const Navigation: FC = () => {
-  const [current, setCurrent] = useState<number | undefined>(undefined);
-
-  const router = useRouter();
   const pathname = usePathname();
-  const { openModal } = useModals();
-
-  useEffect(() => {
-    const current = navigationMenu.items.find((item) => item.url === pathname);
-    setCurrent(current ? current.id : 2);
-  }, [pathname]);
-
-  const handleClick = (index: number, url: string) => {
-    if (index === 4) {
-      openModal("right-menu");
-      return;
-    }
-
-    router.push(url);
-  };
 
   return (
-    <div className="flex-shrink-0 border-t bg-accent">
-      <div className="px-4 py-2 flex justify-around items-center">
-        {navigationMenu.items.map((item: INavigationItem) => (
-          <NavigationItem
-            item={item}
-            key={item.label}
-            isActive={current === item.id}
-            onClick={() => handleClick(item.id, item.url)}
-          />
-        ))}
-      </div>
-    </div>
+    <nav
+      aria-label="Основная навигация"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-surface-glass backdrop-blur-xl pb-safe"
+    >
+      <ul className="mx-auto flex max-w-lg items-stretch justify-around px-2">
+        {tabBarItems.map((item) => {
+          const active = isActive(item, pathname);
+          const Icon = item.icon;
+
+          return (
+            <li key={item.url} className="flex-1">
+              <Link
+                href={item.url}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "press relative flex flex-col items-center gap-1 pt-2.5 pb-2 text-[11px] font-semibold transition-colors",
+                  active ? "text-primary" : "text-muted-foreground",
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute top-0 h-0.5 w-8 rounded-full bg-primary transition-opacity",
+                    active ? "opacity-100" : "opacity-0",
+                  )}
+                />
+                <Icon
+                  className="size-[22px]"
+                  strokeWidth={active ? 2.4 : 1.8}
+                  fill={active && item.url !== "/catalog" ? "currentColor" : "none"}
+                  fillOpacity={0.15}
+                />
+                {item.label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 };

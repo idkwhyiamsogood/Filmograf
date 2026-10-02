@@ -82,8 +82,8 @@ export const useMovieToCollection = () => {
 
       return { previousCollection, previousCollectionsLists };
     },
-    onSuccess: () => {
-      toast.success("Фильм успешно добавлен в коллекцию");
+    onSuccess: (_data, { shouldAdd }) => {
+      toast.success(shouldAdd ? "Добавлено в подборку" : "Убрано из подборки");
     },
     onError: (_error, variables, context) => {
       if (!context) {
@@ -101,7 +101,7 @@ export const useMovieToCollection = () => {
         queryClient.setQueryData(queryKey, data);
       }
 
-      toast.error("При добавлении фильма в коллекцию произошла ошибка");
+      toast.error("Не удалось обновить подборку, попробуйте позже");
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({
@@ -111,6 +111,7 @@ export const useMovieToCollection = () => {
         queryKey: ["collections"],
         exact: false,
       });
+      queryClient.invalidateQueries({ queryKey: ["infinite-collections", "my"] });
     },
   });
 };

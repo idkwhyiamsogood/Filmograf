@@ -1,18 +1,27 @@
-import React from 'react';
+import React from "react";
 
-import { Avatar, AvatarImage, AvatarFallback } from '@/shared/ui/avatar';
-import { getValidURL } from '@/shared/lib';
+import { Avatar, AvatarImage, AvatarFallback } from "@/shared/ui/avatar";
+import { cn } from "@/shared/lib/utils";
 
 interface Props {
-  logo: string;
+  logo?: string;
+  name?: string;
+  className?: string;
 }
 
-export const UserLogo: React.FC<Props> = ({ logo }) => {
+const initials = (name?: string) =>
+  (name ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "?";
 
-  return (
-    <Avatar>
-      <AvatarImage src={logo} alt="user-log" />
-      <AvatarFallback>CN</AvatarFallback>
-    </Avatar>
-  );
-};
+export const UserLogo: React.FC<Props> = ({ logo, name, className }) => (
+  <Avatar className={className}>
+    {logo && <AvatarImage src={logo} alt={name ?? "Аватар"} className="object-cover" />}
+    <AvatarFallback className={cn("bg-brand-soft font-bold text-primary")}>
+      {initials(name)}
+    </AvatarFallback>
+  </Avatar>
+);

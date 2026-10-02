@@ -83,10 +83,10 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
             className="space-y-6"
           >
             <DialogHeader className="text-left">
-              <DialogTitle>Изменить закладку</DialogTitle>
+              <DialogTitle>Настройки подборки</DialogTitle>
               <DialogDescription>
                 {step === 0
-                  ? "Введите новое название закладки и настройте видимость"
+                  ? "Название и видимость подборки"
                   : "Настройте теги для вашей коллекции"}
               </DialogDescription>
             </DialogHeader>
@@ -100,8 +100,8 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="Введите новое название закладки"
-                          className="w-full rounded-2xl"
+                          placeholder="Название подборки"
+                          className="h-12 w-full rounded-xl text-base"
                           {...field}
                         />
                       </FormControl>
@@ -114,7 +114,7 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                   control={collectionRedactForm.control}
                   name="isPublic"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-xl bg-muted/60 p-4">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
@@ -124,7 +124,7 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                       <div className="space-y-1 leading-none">
                         <FormLabel>Сделать публичной</FormLabel>
                         <p className="text-sm text-muted-foreground">
-                          Приватные закладки видны только вам
+                          Скрытые подборки видны только вам
                         </p>
                       </div>
                     </FormItem>
@@ -137,7 +137,7 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                       control={collectionRedactForm.control}
                       name="isCommentable"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-xl bg-muted/60 p-4">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -145,10 +145,9 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>Разрешить коментарии</FormLabel>
+                            <FormLabel>Разрешить комментарии</FormLabel>
                             <p className="text-sm text-muted-foreground">
-                              Разрешение даст возможность дргуим пользователям
-                              делиться впечатлениями о вашей колекции
+                              Другие смогут обсуждать вашу подборку
                             </p>
                           </div>
                         </FormItem>
@@ -159,7 +158,7 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                       control={collectionRedactForm.control}
                       name="isCopiable"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-xl bg-muted/60 p-4">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -169,8 +168,7 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                           <div className="space-y-1 leading-none">
                             <FormLabel>Разрешить копирование</FormLabel>
                             <p className="text-sm text-muted-foreground">
-                              Разрешение даст возможность дргуим пользователям
-                              копировать вашу подборку к себе в коллекцию
+                              Другие смогут сохранять копию подборки себе
                             </p>
                           </div>
                         </FormItem>
@@ -189,10 +187,11 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
               {step === 0 ? (
                 <>
                   <DialogClose asChild>
-                    <Button variant="outline">Отмена</Button>
+                    <Button variant="secondary" className="h-11 rounded-xl font-bold">Отмена</Button>
                   </DialogClose>
                   <Button
                     type="button"
+                    className="h-11 rounded-xl font-bold"
                     onClick={(e) => {
                       e.preventDefault();
                       handleNext();
@@ -204,7 +203,8 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
               ) : (
                 <>
                   <Button
-                    variant="outline"
+                    variant="secondary"
+                    className="h-11 rounded-xl font-bold"
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -213,7 +213,7 @@ export const UpdateCollectionModal: React.FC<BaseModalProps & UpdateCollectionMo
                   >
                     Назад
                   </Button>
-                  <Button type="submit">Внести изменения</Button>
+                  <Button type="submit" className="h-11 rounded-xl font-bold">Сохранить</Button>
                 </>
               )}
             </DialogFooter>

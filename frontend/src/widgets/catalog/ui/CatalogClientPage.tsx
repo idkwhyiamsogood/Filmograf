@@ -1,23 +1,13 @@
-import React, { lazy, Suspense } from "react";
-import { LoadingSplashScreen } from "@/shared/components";
+import React from "react";
 
-interface Props {
-  className?: string;
-}
+import { ActionsWrapper } from "./ActionsWrapper";
+import { CatalogTabs } from "./CatalogTabs";
 
-const ActionsWrapper = lazy(() =>
-  import("@/widgets/catalog").then((mod) => ({ default: mod.ActionsWrapper })),
-);
-
-const CatalogTabs = lazy(() =>
-  import("@/widgets/catalog").then((mod) => ({ default: mod.CatalogTabs })),
-);
-
-export const CatalogClientPage: React.FC<Props> = ({ className }) => {
-  return (
-    <Suspense fallback={<LoadingSplashScreen />}>
+export const CatalogClientPage: React.FC = () => (
+  <>
+    <div className="sticky top-0 z-20 -mx-4 bg-background/90 px-4 pt-safe pb-1 backdrop-blur-xl">
       <ActionsWrapper />
-      <CatalogTabs />
-    </Suspense>
-  );
-};
+    </div>
+    <CatalogTabs />
+  </>
+);

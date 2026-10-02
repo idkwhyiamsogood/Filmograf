@@ -1,6 +1,6 @@
 import { AxiosError, AxiosHeaders } from "axios";
 import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { MockHttpError, routes, type MockRequest } from "./handlers";
+import { guardRoute, MockHttpError, routes, type MockRequest } from "./handlers";
 
 // Включено по умолчанию; выключается VITE_USE_MOCKS=false в .env.
 export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS !== "false";
@@ -70,6 +70,7 @@ export const mockAdapter: AxiosAdapter = async (config) => {
     };
 
     try {
+      guardRoute(method, pattern, req);
       const data = handler(req);
       if (import.meta.env.DEV) console.debug(`[mock] ${method} /${path}`, req.body ?? "", "→", data);
       return respond(200, data);

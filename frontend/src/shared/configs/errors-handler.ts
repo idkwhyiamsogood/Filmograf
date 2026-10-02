@@ -8,9 +8,8 @@ export const ERROR_HANDLERS: Record<
     getProps?: (error: APIError) => any;
   }
 > = {
-  401: {
-    type: "authorization-menu",
-  },
+  // 401 обрабатывает AuthProvider (тихое восстановление сессии),
+  // 403 — useRequireMember до запроса.
 
   // 500: {
   //   type: "confirmation-menu",

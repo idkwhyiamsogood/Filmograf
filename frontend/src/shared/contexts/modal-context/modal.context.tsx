@@ -23,13 +23,20 @@ export const ModalProvider: FC<PropsWithChildren> = ({ children }) => {
     <K extends ModalType>(...args: OpenModalArgs<K>) => {
       const [modalType, modalProps] = args;
       
-      setActiveModals((prev) => [
-        ...prev,
-        {
-          modalType,
-          modalProps: modalProps ?? undefined,
-        } as ModalOptions,
-      ]);
+      setActiveModals((prev) => {
+        // Несколько запросов с 401 подряд не должны открыть стопку одинаковых
+        // модалок: проверка по prev надёжнее, чем modalBridge.isOpen, который
+        // видит состояние только с прошлого рендера.
+        if (prev.some((item) => item.modalType === modalType)) return prev;
+
+        return [
+          ...prev,
+          {
+            modalType,
+            modalProps: modalProps ?? undefined,
+          } as ModalOptions,
+        ];
+      });
     },
     [],
   );

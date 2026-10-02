@@ -1,50 +1,53 @@
-import Link from "@/shared/ui/link";
 import React, { memo } from "react";
 
+import Link from "@/shared/ui/link";
+import { Poster } from "@/shared/ui/poster";
+import { RatingBadge } from "@/shared/ui/rating-badge";
+
 import type { IMovie } from "../model/types/types";
-
-import Image from "@/shared/ui/image";
-
-import { Badge } from "@/shared/ui/badge";
-
-// lib
-import { getValidURL } from "@/shared/lib";
+import { useGenreNames } from "../lib/useGenreNames";
 
 interface Props {
   movie: IMovie;
+  priority?: boolean;
+  /** Показать оценку пользователя вместо IMDb (экран «Мои оценки») */
+  userRate?: number;
 }
 
-export const MovieCover: React.FC<Props> = memo(({ movie }) => {
+export const MovieCover: React.FC<Props> = memo(({ movie, priority, userRate }) => {
+  const [genre] = useGenreNames(movie.genreIds, 1);
+  const meta = [movie.year, genre].filter(Boolean).join(" · ");
+
   return (
-    <Link href={`/movies/${movie.id}`} className="block h-full">
-      <article className="flex flex-col h-full w-full rounded-2xl overflow-hidden select-none gap-2">
-        <div
-          className="relative w-full flex-shrink-0"
-          style={{ aspectRatio: "2/3" }}
-        >
-          <Image
-            src={getValidURL(movie.imageUrl)}
+    <Link
+      href={`/movies/${movie.id}`}
+      className="press group block h-full select-none"
+      aria-label={movie.name}
+    >
+      <article className="flex h-full flex-col gap-2">
+        <div className="relative">
+          <Poster
+            src={movie.imageUrl}
             alt={movie.name}
-            className="rounded-2xl object-cover"
-            fill
-            sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
-            priority={true}
+            priority={priority}
+            className="shadow-sm ring-1 ring-black/5 transition-shadow group-hover:shadow-md"
           />
-          <Badge
-            variant={"secondary"}
-            className="absolute bottom-1.5 right-1.5 z-10"
-          >
-            {Object.values(movie.rates)[0]}
-          </Badge>
+          {userRate ? (
+            <span className="absolute top-1.5 left-1.5 inline-flex items-center gap-0.5 rounded-md bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground shadow-sm">
+              ★ {userRate}
+            </span>
+          ) : (
+            <RatingBadge value={movie.rates?.IMDb} className="absolute top-1.5 left-1.5" />
+          )}
         </div>
 
-        <div className="flex flex-col px-1 pb-1 gap-1 flex-1 min-h-0">
-          <span className="font-semibold text-[13px] line-clamp-1 break-words">
+        <div className="flex flex-col gap-0.5 px-0.5">
+          <h3 className="line-clamp-2 text-[13px] leading-tight font-bold">
             {movie.name}
-          </span>
-          <p className="text-[12px] text-gray-600 line-clamp-2 break-words">
-            {movie.description}
-          </p>
+          </h3>
+          {meta && (
+            <p className="truncate text-[11px] text-muted-foreground">{meta}</p>
+          )}
         </div>
       </article>
     </Link>

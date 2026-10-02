@@ -89,9 +89,6 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({
     [],
   );
 
-  useEffect(() => {
-    console.log(filterState);
-  }, [filterState]);
 
   return (
     <FilterContext.Provider

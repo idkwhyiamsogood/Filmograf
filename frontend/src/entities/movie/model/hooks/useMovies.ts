@@ -41,7 +41,6 @@ export const useMovie = (ids: string[] | string, options?: { enabled?: boolean }
         return [cachedMovie];
       }
 
-      console.log(ids);
       const { data: movie } = await movieApi.getMovie(ids);
 
       if (movie) {
@@ -54,7 +53,7 @@ export const useMovie = (ids: string[] | string, options?: { enabled?: boolean }
   };
 
   return useQuery({
-    queryKey: ["movies", Array.isArray(ids) ? ids.sort() : ids],
+    queryKey: ["movies", Array.isArray(ids) ? [...ids].sort() : ids],
     queryFn: () => getMovies(ids),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

@@ -2,6 +2,7 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { collectionApi } from "../api/collection.api";
 import type { Collection } from "../types";
 import { SearchTypeCollection } from "@/shared/types";
+import { useAuth } from "@/shared/hooks";
 
 interface UseInfiniteCollectionsParams {
   pageSize?: number;
@@ -14,6 +15,7 @@ export const useInfiniteCollections = (
 ) => {
   const { pageSize = 20, initialPage = 0, type = "my" } = params;
   const queryClient = useQueryClient();
+  const { isGuest, token } = useAuth();
 
   const {
     data,
@@ -25,7 +27,9 @@ export const useInfiniteCollections = (
     error,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["infinite-collections", type, pageSize],
+    // «Мои» зависят от пользователя, рекомендации гостю закрыты на бэке.
+    queryKey: ["infinite-collections", type, pageSize, type === "my" ? token.jwt : ""],
+    enabled: !(isGuest && type === "recommended"),
     queryFn: async ({ pageParam = initialPage }) => {
       let idsResponse;
 
@@ -57,7 +61,6 @@ export const useInfiniteCollections = (
       }
 
       const idsEntity = idsResponse.data;
-      console.log(idsEntity);
       const allIds = idsEntity.ids || [];
 
       const start = pageParam * pageSize;
@@ -100,7 +103,7 @@ export const useInfiniteCollections = (
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
+    isLoading: isLoading && !(isGuest && type === "recommended"),
     isError,
     error,
     refetch,

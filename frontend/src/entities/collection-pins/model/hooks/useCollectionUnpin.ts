@@ -11,10 +11,10 @@ export const useUnpinCollection = () => {
       await collecionPinsApi.unpinCollection(id),
     onSuccess: (data) => {
       queryClient.setQueryData(["pins"], () => data);
-      toast.success("Успешно удалено.");
+      toast.success("Подборка откреплена");
     },
     onError: () => {
-      toast.error("При удаления коллекции из избраного произошла ошибка");
+      toast.error("Не удалось открепить подборку");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["pins"] });

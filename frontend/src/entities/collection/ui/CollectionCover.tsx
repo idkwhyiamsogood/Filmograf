@@ -1,97 +1,80 @@
-import { Card, CardContent } from "@/shared/ui/card";
-import Image from "@/shared/ui/image";
+import React, { memo } from "react";
+import { BadgeCheck, Clapperboard, Lock } from "lucide-react";
+
 import Link from "@/shared/ui/link";
-import React from "react";
-import { Collection } from "../model/types";
+import { Poster } from "@/shared/ui/poster";
+import { pluralize } from "@/shared/lib";
+import { cn } from "@/shared/lib/utils";
+
+import type { Collection } from "../model/types";
 
 interface Props {
   collection: Collection;
+  className?: string;
 }
 
-export const CollectionCover: React.FC<Props> = ({ collection }) => {
-  const hasPosters = collection.moviePreviews.length === 3;
-  const posters = collection.moviePreviews
+// Позиции постеров веера — в процентах от карточки, поэтому ничего не
+// вылезает за края на любой ширине.
+const FAN = [
+  "left-[3%] top-[16%] w-[42%] -rotate-[7deg]",
+  "right-[3%] top-[16%] w-[42%] rotate-[7deg]",
+  "left-1/2 top-[6%] z-10 w-[48%] -translate-x-1/2 shadow-xl",
+];
+
+export const CollectionCover: React.FC<Props> = memo(({ collection, className }) => {
+  const posters = collection.moviePreviews.slice(0, 3);
+  const count = collection.movies.length;
 
   return (
     <Link
       href={`/collections/${collection.id}`}
-      className="block w-full border-1 px-1 overflow-hidden rounded-xl"
+      className={cn("press group block select-none", className)}
+      aria-label={collection.name}
     >
-      <Card
-        className={
-          "group relative w-full cursor-pointer overflow-visible border-none bg-transparent shadow-none transition-transform duration-300 hover:-translate-y-1"
-        }
-      >
-        <CardContent className="p-0">
-          <div className="relative mx-auto mb-3 h-40 sm:h-48">
-            {hasPosters ? (
-              <>
-                {/* Левая карточка */}
-                <div
-                  className="absolute bottom-2 left-1/2 h-32 w-22 -translate-x-[85%] -rotate-[10deg] transition-all duration-300 group-hover:-rotate-[12deg] group-hover:-translate-x-[90%]"
-                  style={{ zIndex: 1, transformOrigin: "bottom center" }}
-                >
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={posters[0]}
-                      alt="poster 3"
-                      fill
-                      className="rounded-lg object-cover shadow-md brightness-90"
-                      sizes="(max-width: 375px) 88px, 100px"
-                    />
-                  </div>
-                </div>
-
-                {/* Правая карточка */}
-                <div
-                  className="absolute bottom-2 left-1/2 h-32 w-22 -translate-x-[15%] rotate-[10deg] transition-all duration-300 group-hover:rotate-[12deg] group-hover:translate-x-[0%]"
-                  style={{ zIndex: 2, transformOrigin: "bottom center" }}
-                >
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={posters[1]}
-                      alt="poster 2"
-                      fill
-                      className="rounded-lg object-cover shadow-md brightness-95"
-                      sizes="(max-width: 375px) 88px, 100px"
-                    />
-                  </div>
-                </div>
-
-                {/* Центральная карточка */}
-                <div
-                  className="absolute bottom-4 left-1/2 h-32 w-22 -translate-x-1/2 transition-all duration-300 group-hover:bottom-6 group-hover:scale-105"
-                  style={{ zIndex: 3, transformOrigin: "bottom center" }}
-                >
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={posters[2]}
-                      alt="poster 1"
-                      fill
-                      className="rounded-lg object-cover shadow-2xl"
-                      sizes="(max-width: 375px) 88px, 100px"
-                      priority
-                    />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="absolute bottom-0 left-1/2 flex h-32 w-22 -translate-x-1/2 items-center justify-center rounded-lg bg-muted shadow-xl sm:h-36 sm:w-25">
-                <span className="text-3xl sm:text-4xl">🎬</span>
+      <article className="overflow-hidden rounded-2xl bg-card shadow-xs ring-1 ring-border transition-shadow group-hover:shadow-md">
+        <div className="relative aspect-[5/4] overflow-hidden bg-gradient-to-br from-brand-soft to-muted">
+          {posters.length === 0 ? (
+            <div className="absolute inset-0 flex items-center justify-center text-primary/70">
+              <Clapperboard className="size-10" />
+            </div>
+          ) : posters.length < 3 ? (
+            <div className="absolute top-[8%] left-1/2 w-[50%] -translate-x-1/2 shadow-xl">
+              <Poster src={posters[0]} alt={collection.name} rounded="rounded-lg" />
+            </div>
+          ) : (
+            posters.map((src, i) => (
+              <div
+                key={`${src}-${i}`}
+                className={cn(
+                  "absolute transition-transform duration-300",
+                  FAN[i],
+                  i < 2 && "brightness-90",
+                )}
+              >
+                <Poster src={src} alt="" rounded="rounded-lg" />
               </div>
-            )}
-          </div>
+            ))
+          )}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-card to-transparent" />
+        </div>
 
-          <div className="text-center">
-            <p className="line-clamp-2 text-xs font-semibold leading-tight text-foreground sm:text-sm">
-              {collection.name}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {collection.movies.length} фильмов
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="flex flex-col gap-0.5 px-3 pt-1 pb-3">
+          <h3 className="flex items-center gap-1 text-[13px] leading-tight font-bold">
+            <span className="line-clamp-1">{collection.name}</span>
+            {collection.isByFilmograf && (
+              <BadgeCheck className="size-3.5 shrink-0 text-primary" aria-label="От Filmograf" />
+            )}
+            {!collection.isPublic && (
+              <Lock className="size-3 shrink-0 text-muted-foreground" aria-label="Скрытая" />
+            )}
+          </h3>
+          <p className="text-[11px] text-muted-foreground">
+            {pluralize(count, ["фильм", "фильма", "фильмов"])}
+          </p>
+        </div>
+      </article>
     </Link>
   );
-};
+});
+
+CollectionCover.displayName = "CollectionCover";

@@ -19,6 +19,7 @@ export const ConfirmationModal: React.FC<BaseModalProps & ConfirmationModalProps
   description,
   confirmText,
   onConfirm,
+  destructive = true,
 }) => {
   const { closeModal } = useModals();
 
@@ -53,12 +54,22 @@ export const ConfirmationModal: React.FC<BaseModalProps & ConfirmationModalProps
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="flex flex-row justify-end gap-2">
-            {/* Используем closeModal напрямую для отмены */}
-            <Button type="button" variant="outline" onClick={() => closeModal()}>
+          <DialogFooter className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              className="h-11 rounded-xl font-bold"
+              onClick={() => closeModal()}
+            >
               Отмена
             </Button>
-            <Button type="submit">{confirmText ?? "Подтвердить"}</Button>
+            <Button
+              type="submit"
+              variant={destructive ? "destructive" : "default"}
+              className="h-11 rounded-xl font-bold"
+            >
+              {confirmText ?? "Подтвердить"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

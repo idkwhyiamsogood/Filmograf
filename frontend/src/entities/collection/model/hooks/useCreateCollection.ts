@@ -7,37 +7,18 @@ export const useCreateCollection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateCollection) =>
-      collectionApi.createCollection(data),
+    mutationFn: (data: CreateCollection) => collectionApi.createCollection(data),
     mutationKey: ["createCollection"],
-    onSuccess: (response) => {
-      try {
-        const collection = response.data;
-
-        queryClient.setQueryData(["collection", collection.id], collection);
-
-        queryClient.invalidateQueries({
-          queryKey: ["collections"],
-          exact: false,
-        });
-
-        toast.success("Коллекция успешно создана!");
-        
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-        
-      } catch (error) {
-        toast.error("Ошибка при создании коллекции");
-        console.error("Collection creation error:", error);
-      }
+    onSuccess: ({ data: collection }) => {
+      queryClient.setQueryData(["collection", collection.id], collection);
+      // Списки «Мои подборки» перезапросятся сами — без перезагрузки страницы.
+      queryClient.invalidateQueries({ queryKey: ["infinite-collections"] });
+      queryClient.invalidateQueries({ queryKey: ["collections"], exact: false });
+      toast.success(`Подборка «${collection.name}» создана`);
     },
     onError: (error) => {
-      toast.error("Не удалось создать коллекцию");
-      console.log("collection creation failed", error);
-    },
-    onSettled: () => {
-      console.log("collection creation settled");
+      console.error("collection creation failed", error);
+      toast.error("Не удалось создать подборку");
     },
   });
 };

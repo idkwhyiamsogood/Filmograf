@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { collectionApi } from "../api/collection.api";
-
 import { toast } from "sonner";
 
 export const useDeleteCollection = () => {
@@ -12,18 +11,13 @@ export const useDeleteCollection = () => {
     },
     mutationKey: ["deleteCollection"],
     onSuccess: (_, id) => {
-      queryClient.cancelQueries({ queryKey: ["collections", id] });
-      queryClient.removeQueries({ queryKey: ["collections", id] });
+      queryClient.removeQueries({ queryKey: ["collection", id] });
       queryClient.invalidateQueries({ queryKey: ["collections"] });
-
-      toast.success("Коллекция успешно удалена");
+      queryClient.invalidateQueries({ queryKey: ["infinite-collections"] });
+      toast.success("Подборка удалена");
     },
     onError: () => {
-      console.log("collection deletion failed");
-      toast.error("При удалении коллекции, произошла ошибка");
-    },
-    onSettled: () => {
-      console.log("collection deletion settled");
+      toast.error("Не удалось удалить подборку");
     },
   });
 };

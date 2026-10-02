@@ -1,3 +1,2 @@
-export { MODALS } from "./modals";
-export { navigationMenu, fullNavigation } from "./navigation";
+export { tabBarItems, type TabBarItem } from "./navigation";
 export { initialValue } from "./lexical-initial";

@@ -42,11 +42,8 @@ export const CommentEditor: React.FC<Props> = ({
   };
 
   const handleSend = () => {
-    console.log(editorState);
     const text = JSON.stringify(editorState);
     if (!text) return;
-
-    console.log(text);
 
     const onSuccess = () => {
       closeAndDeactivate();

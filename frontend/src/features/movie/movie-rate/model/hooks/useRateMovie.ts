@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { movieApi } from "@/entities/movie";
+import { movieApi, type IMovie } from "@/entities/movie";
 import { toast } from "sonner";
 
 interface Props {
@@ -12,17 +12,26 @@ export const useRateMovie = () => {
 
   return useMutation({
     mutationKey: ["rate-movie"],
-    mutationFn: async ({ rate, id }: Props) =>
-      await movieApi.rateMovie(rate, id),
-    onSuccess: () => {
-      toast.success("Оценка успешно поставлена");
+    mutationFn: async ({ rate, id }: Props) => await movieApi.rateMovie(rate, id),
+    // Оценка сразу видна на странице фильма, не дожидаясь ответа.
+    onMutate: ({ rate, id }) => {
+      const patch = (old?: IMovie) =>
+        old ? { ...old, rates: { ...old.rates, ByUser: rate } } : old;
+      queryClient.setQueryData<IMovie>(["movie", id], patch);
+      queryClient.setQueryData<IMovie>(["movie-details", id], patch);
+    },
+    onSuccess: (_, { rate }) => {
+      toast.success(`Оценка ${rate} сохранена`);
     },
     onError: (error: Error) => {
       console.error("Ошибка при выставлении рейтинга:", error);
-      toast.error("При выставлении оценки произошла ошибка, попробуйте позже");
+      toast.error("Не удалось сохранить оценку, попробуйте позже");
     },
-    onSettled: () => {
+    onSettled: (_, __, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["my-rates"] });
+      queryClient.invalidateQueries({ queryKey: ["movie-details", id] });
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+      queryClient.invalidateQueries({ queryKey: ["infinite-movies", "recommended"] });
     },
   });
 };

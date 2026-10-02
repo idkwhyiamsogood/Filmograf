@@ -9,7 +9,8 @@ import {
   useInfiniteCollections,
   type Collection 
 } from "@/entities/collection";
-import { LoadingSplashScreen, QueryErrorState } from "@/shared/components";
+import { EmptyState, QueryErrorState } from "@/shared/components";
+import { FolderOpen, SearchX } from "lucide-react";
 import type { SearchTypeCollection } from "@/shared/types";
 
 import { useCatalog } from "../../model/hooks/useCatalog";
@@ -78,7 +79,7 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
     : isCatalogLoading && !isCatalogFetchingNext && collectionsToDisplay.length === 0;
 
   if (showInitialLoader) {
-    return <LoadingSplashScreen />;
+    return <CollectionSkeletonWrapper count={6} />;
   }
 
   const isError = isSearchMode ? isSearchError : isCatalogError;
@@ -97,13 +98,31 @@ export const CollectionContent: FC<Props> = memo(({ type }) => {
   if (isSearchMode && collectionsToDisplay.length === 0 && !isSearchLoading) {
     return (
       <TabsContent value="Collection">
-        <div className="text-center py-10">
-          <p className="text-zinc-500">
-            {query.trim() !== ""
-              ? `Не найдено подборок по запросу "${query}"`
-              : "По заданным фильтрам подборок не найдено"}
-          </p>
-        </div>
+        <EmptyState
+          icon={SearchX}
+          title="Ничего не нашлось"
+          description={
+            query.trim() !== ""
+              ? `Подборок по запросу «${query}» нет. Попробуйте другое название.`
+              : "Под эти фильтры подборок нет — ослабьте условия."
+          }
+        />
+      </TabsContent>
+    );
+  }
+
+  if (!isSearchMode && collectionsToDisplay.length === 0) {
+    return (
+      <TabsContent value="Collection">
+        <EmptyState
+          icon={FolderOpen}
+          title={type === "my" ? "У вас пока нет подборок" : "Здесь пока пусто"}
+          description={
+            type === "my"
+              ? "Создайте первую в «Закладках» — и добавляйте туда фильмы."
+              : "Загляните чуть позже."
+          }
+        />
       </TabsContent>
     );
   }

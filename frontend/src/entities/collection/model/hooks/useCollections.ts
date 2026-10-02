@@ -53,7 +53,7 @@ export const useCollections = (ids: string[] | string, options?: { enabled?: boo
   };
 
   return useQuery({
-    queryKey: ["collections", Array.isArray(ids) ? ids.sort() : ids],
+    queryKey: ["collections", Array.isArray(ids) ? [...ids].sort() : ids],
     queryFn: () => getCollections(ids),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

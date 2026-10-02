@@ -10,7 +10,7 @@ export const CommonWrapper: React.FC<Props> = ({ children, className }) => {
   return (
     <div
       className={cn(
-        "max-w-[95%] mt-3 mb-20 mx-auto flex flex-col gap-5",
+        "mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 pt-safe mt-4 animate-fade-up",
         className,
       )}
     >

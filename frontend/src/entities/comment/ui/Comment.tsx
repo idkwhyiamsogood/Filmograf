@@ -1,6 +1,7 @@
 import { FC, ReactNode, useState, useEffect } from "react";
 import type { Comment as CommentType } from "../model/types";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import { UserLogo } from "@/entities/user";
+import { formatRelative } from "@/shared/lib";
 import { Button } from "@/shared/ui/button";
 import { ChevronDown, ChevronRight, ThumbsDown, ThumbsUp } from "lucide-react";
 import { CommentContent } from "./CommentContent";
@@ -84,12 +85,7 @@ export const Comment: FC<Props> = ({
         }}
       >
         <div className="flex flex-col gap-1 items-center">
-          <Avatar className="size-10 flex-shrink-0">
-            <AvatarImage src={user.avatarUrl} alt={user.name} />
-            <AvatarFallback>
-              {user.name.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          <UserLogo logo={user.avatarUrl} name={user.name} className="size-9 shrink-0" />
         </div>
 
         <div className="flex-1 min-w-0">
@@ -97,9 +93,13 @@ export const Comment: FC<Props> = ({
             <div className="flex items-center gap-2">
               <span className="font-semibold text-sm">{user.name}</span>
               <span className="text-xs text-muted-foreground">·</span>
-              <span className="text-xs text-muted-foreground">
-                {formattedDate.toLocaleDateString()}
-              </span>
+              <time
+                dateTime={formattedDate.toISOString()}
+                title={formattedDate.toLocaleString("ru-RU")}
+                className="text-xs text-muted-foreground"
+              >
+                {formatRelative(formattedDate)}
+              </time>
             </div>
 
             <div className="text-sm leading-relaxed text-wrap">
