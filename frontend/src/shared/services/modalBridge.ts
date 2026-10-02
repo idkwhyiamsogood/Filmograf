@@ -32,6 +32,9 @@ export const modalBridge = {
     closeModalRef?.(type);
   },
   isOpen(type: ModalType) {
-    return activeModalsRef.some((modal) => modal.modalType === type);
+    return activeModalsRef.some(
+      (modal) => modal.modalType === type && !(modal as { closing?: boolean }).closing,
+    );
+
   },
 };

@@ -30,6 +30,7 @@ export const MovieCover: React.FC<Props> = memo(({ movie, priority, userRate }) 
             src={movie.imageUrl}
             alt={movie.name}
             priority={priority}
+            width={140}
             className="shadow-sm ring-1 ring-black/5 transition-shadow group-hover:shadow-md"
           />
           {userRate ? (

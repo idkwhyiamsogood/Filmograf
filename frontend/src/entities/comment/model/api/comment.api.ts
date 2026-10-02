@@ -18,9 +18,9 @@ class CommentApi extends BaseHttpClient {
 
   /**
    * @param {string} id - Идентификатор корневого комментария
-   * @returns {APIResponse<Comment[]>} отец и дети
+   * @returns {APIResponse<Comment>} комментарий с заполненными childs
    */
-  public getCommentsWithChilds = async (id: string): APIResponse<Comment[]> => {
+  public getCommentsWithChilds = async (id: string): APIResponse<Comment> => {
     return this.get(`api/comments/${id}/full`);
   };
 

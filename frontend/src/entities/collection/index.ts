@@ -23,6 +23,15 @@ export { useUpdateCollection } from "./model/hooks/useUpdateCollection";
 export { useCopyCollection } from "./model/hooks/useCopyCollection";
 export { useInfiniteCollections } from "./model/hooks/useInfinityCollections";
 
+// cache
+export {
+  updateCollectionInCache,
+  removeCollectionFromCache,
+  prependToMyCollections,
+  replaceCollectionInCache,
+  COLLECTION_QUERY_PREFIXES,
+} from "./model/cache";
+
 // types
 export type { Collection, CreateCollection } from "./model/types";
 

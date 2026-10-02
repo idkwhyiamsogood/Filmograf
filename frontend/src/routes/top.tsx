@@ -48,7 +48,7 @@ function TopPage() {
           {/* Тройка лидеров крупно */}
           <div className="grid grid-cols-3 gap-2">
             {podium.map((movie, i) => (
-              <RankedMovieCard key={movie.id} movie={movie} rank={i + 1} compact />
+              <RankedMovieCard key={movie.id} movie={movie} rank={i + 1} />
             ))}
           </div>
 

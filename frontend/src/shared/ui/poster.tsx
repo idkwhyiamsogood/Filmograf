@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Clapperboard } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
+import { imageSrcSet, optimizeImage } from "@/shared/lib/utils/optimizeImage";
 
 interface Props {
   src?: string | null;
@@ -11,6 +12,8 @@ interface Props {
   ratio?: "poster" | "backdrop" | "square";
   priority?: boolean;
   rounded?: string;
+  /** Ширина картинки на экране в CSS-пикселях — под неё ресайзим на прокси */
+  width?: number;
 }
 
 const RATIO = {
@@ -20,8 +23,8 @@ const RATIO = {
 };
 
 /**
- * Изображение с плавным появлением и заглушкой: пока картинка грузится —
- * мерцающий фон, если не загрузилась — иконка вместо «битой» картинки.
+ * Изображение с ресайзом/WebP через прокси, плавным появлением и заглушкой.
+ * Если прокси недоступен — один раз пробуем оригинальный URL.
  */
 export const Poster: React.FC<Props> = ({
   src,
@@ -30,8 +33,10 @@ export const Poster: React.FC<Props> = ({
   ratio = "poster",
   priority,
   rounded = "rounded-xl",
+  width = 160,
 }) => {
   const [loaded, setLoaded] = useState(false);
+  const [useOriginal, setUseOriginal] = useState(false);
   const [failed, setFailed] = useState(!src);
 
   return (
@@ -46,13 +51,15 @@ export const Poster: React.FC<Props> = ({
     >
       {!failed && (
         <img
-          src={src ?? undefined}
+          src={useOriginal ? src ?? undefined : optimizeImage(src, width)}
+          srcSet={useOriginal ? undefined : imageSrcSet(src, width)}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           decoding="async"
           draggable={false}
           onLoad={() => setLoaded(true)}
-          onError={() => setFailed(true)}
+          onError={() => (useOriginal ? setFailed(true) : setUseOriginal(true))}
           className={cn(
             "absolute inset-0 h-full w-full object-cover transition-opacity duration-500",
             loaded ? "opacity-100" : "opacity-0",

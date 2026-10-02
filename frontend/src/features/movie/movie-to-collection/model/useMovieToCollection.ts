@@ -1,117 +1,58 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { collectionApi } from "@/entities/collection/";
-import type { Collection } from "@/entities/collection/";
-
-import type { MutationPayload, MutationContext } from "./types";
 import { toast } from "sonner";
+
+import {
+  collectionApi,
+  COLLECTION_QUERY_PREFIXES,
+  updateCollectionInCache,
+} from "@/entities/collection/";
+import type { IMovie } from "@/entities/movie";
+import { restoreSnapshot, snapshotQueries } from "@/shared/lib/query/entityCache";
+
+import type { MutationPayload } from "./types";
 
 export const useMovieToCollection = () => {
   const queryClient = useQueryClient();
 
-  const patchCollectionMovies = (
-    collection: Collection,
-    movieId: string,
-    shouldAdd: boolean,
-  ): Collection => {
-    const movies = collection.movies || [];
-    const hasMovie = movies.includes(movieId);
-
-    if (shouldAdd && !hasMovie) {
-      return { ...collection, movies: [...movies, movieId] };
-    }
-
-    if (!shouldAdd && hasMovie) {
-      return {
-        ...collection,
-        movies: movies.filter((id) => id !== movieId),
-      };
-    }
-
-    return collection;
-  };
-
   return useMutation({
     mutationKey: ["movieToCollection"],
-    mutationFn: ({ movieId, collectionId, shouldAdd }: MutationPayload) => {
-      if (shouldAdd) {
-        return collectionApi.addMovieToCollection(movieId, collectionId);
-      }
+    mutationFn: ({ movieId, collectionId, shouldAdd }: MutationPayload) =>
+      shouldAdd
+        ? collectionApi.addMovieToCollection(movieId, collectionId)
+        : collectionApi.deleteMovieFromCollection(movieId, collectionId),
 
-      return collectionApi.deleteMovieFromCollection(movieId, collectionId);
-    },
-    onMutate: async ({
-      movieId,
-      collectionId,
-      shouldAdd,
-    }: MutationPayload): Promise<MutationContext> => {
-      await Promise.all([
-        queryClient.cancelQueries({ queryKey: ["collection", collectionId] }),
-        queryClient.cancelQueries({ queryKey: ["collections"], exact: false }),
-      ]);
+    // Галочка и счётчик фильмов меняются сразу во всех списках подборок,
+    // обложка (первые 3 постера) — тоже.
+    onMutate: async ({ movieId, collectionId, shouldAdd }) => {
+      const snapshot = await snapshotQueries(queryClient, COLLECTION_QUERY_PREFIXES);
+      const poster =
+        queryClient.getQueryData<IMovie>(["movie", movieId])?.imageUrl ??
+        queryClient.getQueryData<IMovie>(["movie-details", movieId])?.imageUrl;
 
-      const previousCollection = queryClient.getQueryData<Collection>([
-        "collection",
-        collectionId,
-      ]);
-      const previousCollectionsLists = queryClient.getQueriesData<
-        Collection[] | null
-      >({
-        queryKey: ["collections"],
+      updateCollectionInCache(queryClient, collectionId, (c) => {
+        const has = c.movies.includes(movieId);
+        if (shouldAdd === has) return c;
+        const movies = shouldAdd ? [...c.movies, movieId] : c.movies.filter((m) => m !== movieId);
+        const moviePreviews =
+          shouldAdd && poster && c.moviePreviews.length < 3
+            ? [...c.moviePreviews, poster]
+            : !shouldAdd && poster
+              ? c.moviePreviews.filter((p) => p !== poster)
+              : c.moviePreviews;
+        return { ...c, movies, moviePreviews };
       });
 
-      if (previousCollection) {
-        queryClient.setQueryData<Collection>(["collection", collectionId], () =>
-          patchCollectionMovies(previousCollection, movieId, shouldAdd),
-        );
-      }
-
-      queryClient.setQueriesData<Collection[] | null>(
-        { queryKey: ["collections"] },
-        (oldData) => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          return oldData.map((collection) =>
-            collection.id === collectionId
-              ? patchCollectionMovies(collection, movieId, shouldAdd)
-              : collection,
-          );
-        },
-      );
-
-      return { previousCollection, previousCollectionsLists };
+      return { snapshot };
     },
-    onSuccess: (_data, { shouldAdd }) => {
+    onSuccess: (_d, { shouldAdd }) => {
       toast.success(shouldAdd ? "Добавлено в подборку" : "Убрано из подборки");
     },
-    onError: (_error, variables, context) => {
-      if (!context) {
-        return;
-      }
-
-      if (context.previousCollection) {
-        queryClient.setQueryData(
-          ["collection", variables.collectionId],
-          context.previousCollection,
-        );
-      }
-
-      for (const [queryKey, data] of context.previousCollectionsLists) {
-        queryClient.setQueryData(queryKey, data);
-      }
-
+    onError: (_e, _v, ctx) => {
+      restoreSnapshot(queryClient, ctx?.snapshot);
       toast.error("Не удалось обновить подборку, попробуйте позже");
     },
-    onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["collection", variables.collectionId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["collections"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({ queryKey: ["infinite-collections", "my"] });
+    onSettled: (_d, _e, { collectionId }) => {
+      queryClient.invalidateQueries({ queryKey: ["collection", collectionId] });
     },
   });
 };

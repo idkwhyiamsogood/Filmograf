@@ -1,4 +1,3 @@
 // hooks
-export { useCollectionPins } from "./model/hooks/useCollectionPins";
-export { usePinCollection } from "./model/hooks/useCollectionPin";
-export { useUnpinCollection } from "./model/hooks/useCollectionUnpin";
+export { useCollectionPins, PINS_KEY } from "./model/hooks/useCollectionPins";
+export { usePinCollection, useUnpinCollection } from "./model/hooks/usePinToggle";

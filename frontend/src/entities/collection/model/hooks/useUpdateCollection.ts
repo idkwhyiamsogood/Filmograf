@@ -1,32 +1,37 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { collectionApi } from "../api/collection.api";
-import { UpdateCollection } from "../types";
 import { toast } from "sonner";
-import type { Collection } from "../types";
+
+import { restoreSnapshot, snapshotQueries } from "@/shared/lib/query/entityCache";
+import { collectionApi } from "../api/collection.api";
+import { COLLECTION_QUERY_PREFIXES, updateCollectionInCache } from "../cache";
+import type { UpdateCollection } from "../types";
 
 export const useUpdateCollection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: UpdateCollection) =>
-      collectionApi.updateCollection(data),
     mutationKey: ["updateCollection"],
-    onSuccess: (_response, { id, data }) => {
-      // PATCH отвечает без тела — накладываем изменения на кэш сами.
-      queryClient.setQueryData<Collection>(["collection", id], (old) =>
-        old ? { ...old, ...data } : old,
-      );
-      queryClient.invalidateQueries({ queryKey: ["collections"] });
-      queryClient.invalidateQueries({ queryKey: ["infinite-collections"] });
-
-      toast.success("Подборка обновлена");
+    mutationFn: (data: UpdateCollection) => collectionApi.updateCollection(data),
+    // PATCH отвечает без тела — изменения накладываем на кэш сами, сразу.
+    onMutate: async ({ id, data }) => {
+      const snapshot = await snapshotQueries(queryClient, COLLECTION_QUERY_PREFIXES);
+      updateCollectionInCache(queryClient, id, (c) => ({
+        ...c,
+        ...data,
+        updateDate: new Date().toISOString(),
+      }));
+      return { snapshot };
     },
-    onError: (error) => {
+    onSuccess: () => toast.success("Подборка обновлена"),
+    onError: (error, _vars, ctx) => {
+      restoreSnapshot(queryClient, ctx?.snapshot);
       console.error("Collection update failed:", error);
       toast.error("Не удалось сохранить изменения");
     },
-    onSettled: () => {
-      console.log("Collection update settled");
+    onSettled: (_d, _e, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["collection", id] });
+      // Сменилась видимость/теги — могли поменяться публичные выдачи.
+      queryClient.invalidateQueries({ queryKey: ["infinite-collections"] });
     },
   });
 };

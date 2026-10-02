@@ -71,7 +71,7 @@ export const MoviesSection: React.FC<MoviesSectionProps> = ({
     }
 
     const itemClassName =
-      variant === "ranked" ? "w-[42%] sm:w-[26%]" : "w-[30%] sm:w-[20%]";
+      variant === "ranked" ? "w-[34%] sm:w-[22%]" : "w-[30%] sm:w-[20%]";
 
     return (
       <Rail itemClassName={itemClassName}>

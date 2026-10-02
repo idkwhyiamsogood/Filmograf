@@ -3,10 +3,9 @@ export const ModalTypeEnum = {
   CONFIRMATION_MENU: "confirmation-menu",
   UPDATE_BOOKMARK: "update-bookmark",
   AUTHORIZATION_MENU: "authorization-menu",
-  SHOW_LOADING: "show-loading",
+
   SEARCH_FILTER: "search-filter",
-  SEARCH_GENRES_FILTER: "search-genres-filter",
-  SEARCH_TAGS_FILTER: "search-tags-filter",
+
   SELECT_SORTING: "select-sorting",
   CREATE_TAG: "create-tag",
 } as const;

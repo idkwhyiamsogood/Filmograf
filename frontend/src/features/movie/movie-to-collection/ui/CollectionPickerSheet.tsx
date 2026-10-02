@@ -73,6 +73,7 @@ export const CollectionPickerSheet: React.FC<Props> = ({ open, onOpenChange, mov
                   alt={collection.name}
                   ratio="square"
                   rounded="rounded-lg"
+                  width={48}
                 />
               </div>
               <div className="min-w-0 flex-1">

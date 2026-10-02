@@ -60,32 +60,18 @@ export const useInfiniteCollections = (
         throw new Error("Не удалось получить ID коллекций");
       }
 
-      const idsEntity = idsResponse.data;
-      const allIds = idsEntity.ids || [];
+      // Бэк пагинирует сам (Page/Count → skip/limit), в ответе — уже нужная
+      // страница. Раньше фронт ещё раз резал её локально, и со второй
+      // страницы список оказывался пустым.
+      const ids = idsResponse.data.ids ?? [];
+      if (ids.length === 0) return { collections: [], nextPage: null, ids: [] };
 
-      const start = pageParam * pageSize;
-      const end = start + pageSize;
-      const movieIdsPage = allIds.slice(start, end);
-
-      if (movieIdsPage.length === 0) {
-        return {
-          collections: [],
-          nextPage: null,
-          ids: [],
-        };
-      }
-
-      const collections = await getCollectionsWithCache(
-        movieIdsPage,
-        queryClient,
-      );
-
-      const hasMore = end < allIds.length;
+      const collections = await getCollectionsWithCache(ids, queryClient);
 
       return {
         collections,
-        nextPage: hasMore ? pageParam + 1 : null,
-        ids: movieIdsPage,
+        nextPage: ids.length === pageSize ? pageParam + 1 : null,
+        ids,
       };
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -116,33 +102,23 @@ async function getCollectionsWithCache(
   ids: string[],
   queryClient: ReturnType<typeof useQueryClient>,
 ): Promise<Collection[]> {
+  const byId = new Map<string, Collection>();
   const missing: string[] = [];
-  const cachedData: Collection[] = [];
 
   for (const id of ids) {
     const cached = queryClient.getQueryData<Collection>(["collection", id]);
-    if (cached) {
-      cachedData.push(cached);
-    } else {
-      missing.push(id);
-    }
+    if (cached) byId.set(id, cached);
+    else missing.push(id);
   }
 
-  if (missing.length === 0) {
-    return cachedData;
-  }
-
-  const { data: missingCollections } = await collectionApi.batchMany({
-    ids: missing,
-  });
-
-  if (missingCollections) {
-    missingCollections.forEach((col) => {
+  if (missing.length > 0) {
+    const { data } = await collectionApi.batchMany({ ids: missing });
+    data?.forEach((col) => {
       queryClient.setQueryData(["collection", col.id], col);
+      byId.set(col.id, col);
     });
-
-    return [...cachedData, ...missingCollections];
   }
 
-  return cachedData;
+  // Порядок — как в ответе сервера, а не «сначала закэшированные».
+  return ids.map((id) => byId.get(id)).filter((c): c is Collection => Boolean(c));
 }

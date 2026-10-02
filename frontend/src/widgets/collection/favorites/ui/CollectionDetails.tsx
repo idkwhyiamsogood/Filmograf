@@ -24,7 +24,7 @@ import { CommentWrapper } from "@/widgets/comments/CommentWrapper";
 
 import { EmptyState } from "@/shared/components";
 import { useModals } from "@/shared/contexts/modal-context";
-import { pluralize } from "@/shared/lib";
+import { optimizeImage, pluralize } from "@/shared/lib";
 import { useRouter } from "@/shared/lib/router-compat";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
@@ -100,8 +100,8 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
 
   const { data: tags } = useTags(collection.tags);
   const { data: pins } = useCollectionPins();
-  const { mutate: pin, isPending: isPinning } = usePinCollection();
-  const { mutate: unpin, isPending: isUnpinning } = useUnpinCollection();
+  const { mutate: pin } = usePinCollection();
+  const { mutate: unpin } = useUnpinCollection();
   const { mutate: copy } = useCopyCollection();
   const { mutate: remove } = useDeleteCollection();
 
@@ -118,6 +118,7 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
     requireMember("копировать подборки", () =>
       copy({
         id: collection.id,
+        source: collection,
         data: {
           name: `${collection.name} (копия)`.slice(0, 20),
           tags: collection.tags,
@@ -156,7 +157,7 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
       <div className="relative overflow-hidden">
         {posters[0] && (
           <img
-            src={posters[0]}
+            src={optimizeImage(posters[0], 120, 50)}
             alt=""
             className="absolute inset-0 h-full w-full scale-125 object-cover opacity-40 blur-2xl"
           />
@@ -212,12 +213,12 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
           {posters.length === 3 ? (
             posters.map((src, i) => (
               <div key={`${src}-${i}`} className={cn("absolute", FAN[i])}>
-                <Poster src={src} alt="" rounded="rounded-xl" />
+                <Poster src={src} alt="" rounded="rounded-xl" width={170} />
               </div>
             ))
           ) : (
             <div className="absolute top-[4%] left-1/2 w-[40%] -translate-x-1/2 shadow-2xl">
-              <Poster src={posters[0]} alt={collection.name} rounded="rounded-xl" />
+              <Poster src={posters[0]} alt={collection.name} rounded="rounded-xl" width={180} />
             </div>
           )}
         </div>
@@ -267,8 +268,8 @@ export const CollectionDetails: FC<Props> = ({ collection }) => {
           ) : (
             <Button
               className={cn("h-11 rounded-xl font-bold", isPinned && "bg-secondary text-secondary-foreground ring-1 ring-border hover:bg-secondary/80")}
-              disabled={isPinning || isUnpinning}
               onClick={togglePin}
+
             >
               {isPinned ? <PinOff className="size-4" /> : <Pin className="size-4" />}
               {isPinned ? "Открепить" : "Закрепить в избранном"}

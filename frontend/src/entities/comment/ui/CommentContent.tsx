@@ -4,7 +4,7 @@ import { EditorState } from "lexical";
 import type { InitialConfigType } from "@lexical/react/LexicalComposer";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@/shared/components/lexical/editor/editor-ui/content-editable";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { editorTheme, nodes } from "@/shared/components/";
 
@@ -66,10 +66,7 @@ export const CommentContent: React.FC<Props> = ({ commentId, content }) => {
       <RichTextPlugin
         contentEditable={
           <div className="lexical-render-wrapper">
-            <ContentEditable
-              placeholder={""}
-              className="text-sm leading-relaxed"
-            />
+            <ContentEditable className="text-[15px] leading-relaxed outline-none" />
           </div>
         }
         ErrorBoundary={LexicalErrorBoundary}

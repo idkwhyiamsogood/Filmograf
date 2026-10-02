@@ -22,26 +22,13 @@ export const MODALS: Record<ModalType, FC<any>> = {
       default: m.AuthorizationModal,
     })),
   ),
-  [ModalTypeEnum.SHOW_LOADING]: lazy(() =>
-    import("@/shared/components/").then((m) => ({
-      default: m.LoadingSplashScreenModal,
-    })),
-  ),
+
   [ModalTypeEnum.SEARCH_FILTER]: lazy(() =>
     import("@/features/filter/").then((m) => ({
       default: m.FilterModal,
     })),
   ),
-  [ModalTypeEnum.SEARCH_GENRES_FILTER]: lazy(() =>
-    import("@/features/filter/").then((m) => ({
-      default: m.FilterGenresModal,
-    })),
-  ),
-  [ModalTypeEnum.SEARCH_TAGS_FILTER]: lazy(() =>
-    import("@/features/filter/").then((m) => ({
-      default: m.FilterTagsModal,
-    })),
-  ),
+
   [ModalTypeEnum.SELECT_SORTING]: lazy(() =>
     import("@/features/sort/").then((m) => ({
       default: m.SortingModal,

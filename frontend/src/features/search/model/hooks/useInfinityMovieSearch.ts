@@ -24,11 +24,22 @@ export const useInfiniteMovieSearch = ({
     enabled: Boolean(trimmed) || filtersActive,
     initialPageParam: 0,
     queryFn: async ({ pageParam = 0 }) => {
-      const { tags, targetType, ...rest } = filterOptions.filterOptions;
+      const { genres, fromYearTo, fromGradeTo, ageRating } = filterOptions.filterOptions;
+
+      // Бэк ждёт оценки числами, а неполный диапазон лучше не слать вовсе.
+      const years = fromYearTo?.filter((y) => String(y).trim() !== "");
+      const grades = fromGradeTo?.map(Number).filter((g) => Number.isFinite(g));
 
       const response = await searchApi.searchMovies(
         trimmed,
-        { ...rest, strictMatch: filterOptions.strictMatch },
+        {
+          genres,
+          fromYearTo: years?.length === 2 ? years : undefined,
+          fromGradeTo: grades?.length === 2 ? grades : undefined,
+          ageRating: ageRating?.length ? ageRating : undefined,
+          strictMatch: filterOptions.strictMatch,
+        },
+
         { page: pageParam, count: pageSize },
       );
 

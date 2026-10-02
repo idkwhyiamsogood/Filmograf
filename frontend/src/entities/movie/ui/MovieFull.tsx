@@ -22,7 +22,7 @@ export const MovieFull: React.FC<Props> = memo(({ movie }) => {
     <Link href={`/movies/${movie.id}`} className="press group block w-full">
       <article className="flex gap-3.5 rounded-2xl p-2 transition-colors hover:bg-accent/60">
         <div className="w-[92px] shrink-0">
-          <Poster src={movie.imageUrl} alt={movie.name} rounded="rounded-lg" />
+          <Poster src={movie.imageUrl} alt={movie.name} rounded="rounded-lg" width={92} />
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-1 py-0.5">

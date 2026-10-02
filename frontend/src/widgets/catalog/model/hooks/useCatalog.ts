@@ -10,4 +10,4 @@ export const useCatalog = () => {
     throw new Error("useCatalog must be used within a CatalogProvider");
   }
   return context;
-};
+}

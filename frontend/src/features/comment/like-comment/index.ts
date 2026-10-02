@@ -1,1 +1,0 @@
-export { useLikeComment } from "./model/hooks/useLikeComment";

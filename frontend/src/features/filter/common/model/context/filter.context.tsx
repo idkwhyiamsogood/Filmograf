@@ -13,6 +13,8 @@ interface FilterContextValue {
   toggleTarget: () => void;
   globalReset: () => void;
   toggleStrictMatch: () => void;
+  /** Применить черновик из шторки фильтров целиком */
+  setFilters: (next: FilterState) => void;
   updateFilterOption: <K extends keyof FilterState["filterOptions"]>(
     key: K,
     updater: (
@@ -90,10 +92,14 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({
   );
 
 
+  const setFilters = useCallback((next: FilterState) => setFilterState(next), []);
+
   return (
     <FilterContext.Provider
       value={{
         filterState,
+        setFilters,
+
         toggleTarget,
         globalReset,
         updateFilterOption,

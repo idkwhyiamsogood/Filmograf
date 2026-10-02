@@ -6,22 +6,22 @@ export const ModalRenderer: FC = () => {
   const { activeModals, closeModal } = useModals();
 
   return (
-    <div>
-      {activeModals.map((modal, index) => {
+    <>
+      {activeModals.map((modal) => {
         const ModalComponent = MODALS[modal.modalType];
-
         if (!ModalComponent) return null;
 
         return (
-          <ModalComponent
-            {...(modal.modalProps as any)}
-            key={modal.modalType}
-            isOpen={true}
-            closeModal={closeModal}
-            zIndex={1000 + index}
-          />
+          <Suspense key={modal.key} fallback={null}>
+            <ModalComponent
+              {...(modal.modalProps as object)}
+              // false — шторка уезжает вниз, потом провайдер её размонтирует
+              isOpen={!modal.closing}
+              closeModal={closeModal}
+            />
+          </Suspense>
         );
       })}
-    </div>
+    </>
   );
 };

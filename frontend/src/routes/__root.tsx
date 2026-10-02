@@ -1,7 +1,8 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
-import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { createQueryClient } from "@/shared/lib/query/queryClient";
 
 import { UserProvider } from "@/entities/user";
 import { AuthProvider } from "@/shared/context";
@@ -69,7 +70,8 @@ const AppShell = () => {
 };
 
 const RootComponent = () => {
-  const [queryClient] = useState(() => new QueryClient({}));
+  const [queryClient] = useState(createQueryClient);
+
 
   return (
     <ThemeProvider

@@ -1,1 +1,1 @@
-export { DeleteComment } from "./ui/DeleteComment";
+export { useDeleteComment } from "./model/useDeleteComment";

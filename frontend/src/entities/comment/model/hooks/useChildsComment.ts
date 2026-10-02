@@ -1,38 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { commentApi } from "../api/comment.api";
-import type { Comment } from "../types";
 import type { Entity } from "@/shared/types";
+import { commentApi } from "../api/comment.api";
+import { updateCommentInCache } from "../cache";
 
-export const useChildsComment = ({ entityId, type }: Entity) => {
+/** Подгрузить ветку ответов (GET /comments/{id}/full) и вписать её в дерево. */
+export const useChildsComment = (entity: Entity) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (commentId: string) => {
-      const response = await commentApi.getCommentsWithChilds(commentId);
-      return { commentId, updatedComment: response.data };
-    },
-    onSuccess: ({ commentId, updatedComment }) => {
-      const queryKey = ["parentComments", type, entityId];
-
-      queryClient.setQueryData(queryKey, (oldData: Comment[] | undefined) => {
-        if (!oldData) return [];
-
-        const updateRecursive = (comments: Comment[]): Comment[] => {
-          return comments.map((comment) => {
-            if (comment.id === commentId) {
-              return { ...comment, ...updatedComment };
-            }
-            if (comment.childs && comment.childs.length > 0) {
-              return { ...comment, childs: updateRecursive(comment.childs) };
-            }
-            return comment;
-          });
-        };
-
-        const newData = updateRecursive(oldData);
-        console.log("New Cache Data:", newData);
-        return newData;
-      });
+    mutationKey: ["load-replies"],
+    mutationFn: async (commentId: string) => (await commentApi.getCommentsWithChilds(commentId)).data,
+    onSuccess: (full, commentId) => {
+      const loaded = Array.isArray(full) ? full.find((c) => c.id === commentId) ?? full[0] : full;
+      if (!loaded) return;
+      updateCommentInCache(queryClient, entity, commentId, (c) => ({
+        ...c,
+        childs: loaded.childs ?? [],
+        childsCount: loaded.childsCount ?? c.childsCount,
+      }));
     },
   });
 };

@@ -394,24 +394,28 @@ export const routes: [method: string, pattern: string, handler: Handler][] = [
   })],
 
   // collections
-  // Фронт сам режет id на страницы (см. useInfiniteCollections), поэтому
-  // списки коллекций отдаются целиком.
+  // Как на бэке: Page/Count → skip/limit, «мои» — в порядке создания.
   ["GET", "api/collections/my", (req) => {
     const user = requireUser(req);
-    return { ids: db.collections.filter((c) => !c.isDeleted && c.userId === user.id).map((c) => c.id) };
+    return {
+      ids: paginate(db.collections.filter((c) => !c.isDeleted && c.userId === user.id), req.query).map((c) => c.id),
+    };
   }],
   ["GET", "api/collections/popular", (req) => ({
-    ids: visibleCollections(userIdFromToken(req.token))
-      .sort((a, b) => b.popularity - a.popularity)
-      .map((c) => c.id),
+    ids: paginate(
+      visibleCollections(userIdFromToken(req.token)).sort((a, b) => b.popularity - a.popularity),
+      req.query,
+    ).map((c) => c.id),
   })],
   ["GET", "api/collections/recommended", (req) => {
     const userId = userIdFromToken(req.token);
     return {
-      ids: visibleCollections(userId)
-        .filter((c) => c.userId !== userId)
-        .sort((a, b) => Number(b.isByFilmograf) - Number(a.isByFilmograf) || b.popularity - a.popularity)
-        .map((c) => c.id),
+      ids: paginate(
+        visibleCollections(userId)
+          .filter((c) => c.userId !== userId)
+          .sort((a, b) => Number(b.isByFilmograf) - Number(a.isByFilmograf) || b.popularity - a.popularity),
+        req.query,
+      ).map((c) => c.id),
     };
   }],
   ["POST", "api/collections/batch-many", (req) =>

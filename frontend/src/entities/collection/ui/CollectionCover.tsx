@@ -39,7 +39,7 @@ export const CollectionCover: React.FC<Props> = memo(({ collection, className })
             </div>
           ) : posters.length < 3 ? (
             <div className="absolute top-[8%] left-1/2 w-[50%] -translate-x-1/2 shadow-xl">
-              <Poster src={posters[0]} alt={collection.name} rounded="rounded-lg" />
+              <Poster src={posters[0]} alt={collection.name} rounded="rounded-lg" width={90} />
             </div>
           ) : (
             posters.map((src, i) => (
@@ -51,7 +51,7 @@ export const CollectionCover: React.FC<Props> = memo(({ collection, className })
                   i < 2 && "brightness-90",
                 )}
               >
-                <Poster src={src} alt="" rounded="rounded-lg" />
+                <Poster src={src} alt="" rounded="rounded-lg" width={80} />
               </div>
             ))
           )}

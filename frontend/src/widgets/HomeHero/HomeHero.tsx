@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Play } from "lucide-react";
 
 import { useGenreNames, useInfiniteMovies, type IMovie } from "@/entities/movie";
-import { formatDuration } from "@/shared/lib";
+import { formatDuration, imageSrcSet, optimizeImage } from "@/shared/lib";
 import { cn } from "@/shared/lib/utils";
 import Link from "@/shared/ui/link";
 import { RatingBadge } from "@/shared/ui/rating-badge";
@@ -20,7 +20,9 @@ const Slide: React.FC<{ movie: IMovie; index: number }> = ({ movie, index }) => 
       className="relative block aspect-[4/5] w-full overflow-hidden rounded-3xl bg-muted sm:aspect-[16/9]"
     >
       <img
-        src={movie.previewImageLink || movie.imageUrl}
+        src={optimizeImage(movie.previewImageLink || movie.imageUrl, 900, 68)}
+        srcSet={imageSrcSet(movie.previewImageLink || movie.imageUrl, 400)}
+        decoding="async"
         alt=""
         draggable={false}
         loading={index === 0 ? "eager" : "lazy"}

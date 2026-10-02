@@ -1,15 +1,12 @@
-import React, { type FormEvent } from "react";
-import { useModals } from "@/shared/contexts/modal-context";
+import React, { useState } from "react";
+import { AlertTriangle, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
+
+import { useModals } from "@/shared/contexts/modal-context";
+import { cn } from "@/shared/lib/utils";
+import { BottomSheet } from "@/shared/ui/bottom-sheet";
 import { Button } from "@/shared/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/shared/ui/dialog";
+import { Spinner } from "@/shared/ui/spinner";
 import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 import type { ConfirmationModalProps } from "./props";
 
@@ -22,57 +19,57 @@ export const ConfirmationModal: React.FC<BaseModalProps & ConfirmationModalProps
   destructive = true,
 }) => {
   const { closeModal } = useModals();
+  const [pending, setPending] = useState(false);
+  const close = () => closeModal("confirmation-menu");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!onConfirm) {
-      toast.error("Не удалось выполнить действие");
-      closeModal();
-      return;
-    }
-
+  const confirm = async () => {
+    if (!onConfirm) return close();
     try {
+      setPending(true);
       await onConfirm();
-      closeModal();
-    } catch (error) {
-      toast.error("Произошла ошибка, пожалуйста повторите позже");
+      close();
+    } catch {
+      toast.error("Не получилось, попробуйте ещё раз");
+    } finally {
+      setPending(false);
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={() => closeModal()}>
-      <DialogContent
-        showCloseButton={false}
-        onCloseAutoFocus={(e) => e.preventDefault()}
-      >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <DialogHeader className="text-left">
-            <DialogTitle>{title ?? "Вы уверены?"}</DialogTitle>
-            <DialogDescription>
-              {description ?? "Данное действие является необратимым."}
-            </DialogDescription>
-          </DialogHeader>
+  const Icon = destructive ? AlertTriangle : HelpCircle;
 
-          <DialogFooter className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
-            <Button
-              type="button"
-              variant="secondary"
-              className="h-11 rounded-xl font-bold"
-              onClick={() => closeModal()}
-            >
-              Отмена
-            </Button>
-            <Button
-              type="submit"
-              variant={destructive ? "destructive" : "default"}
-              className="h-11 rounded-xl font-bold"
-            >
-              {confirmText ?? "Подтвердить"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+  return (
+    <BottomSheet
+      open={isOpen}
+      onOpenChange={(open) => !open && close()}
+      centered
+      title={title ?? "Вы уверены?"}
+      description={description ?? "Это действие нельзя отменить."}
+      footer={
+        <div className="grid grid-cols-2 gap-2 pb-1">
+          <Button variant="secondary" className="h-12 rounded-xl text-[15px] font-bold" onClick={close}>
+            Отмена
+          </Button>
+          <Button
+            variant={destructive ? "destructive" : "default"}
+            className="h-12 rounded-xl text-[15px] font-bold"
+            disabled={pending}
+            onClick={confirm}
+          >
+            {pending ? <Spinner /> : confirmText ?? "Подтвердить"}
+          </Button>
+        </div>
+      }
+    >
+      <div className="flex justify-center pb-2">
+        <span
+          className={cn(
+            "flex size-14 items-center justify-center rounded-2xl",
+            destructive ? "bg-destructive/12 text-destructive" : "bg-brand-soft text-primary",
+          )}
+        >
+          <Icon className="size-7" />
+        </span>
+      </div>
+    </BottomSheet>
   );
 };

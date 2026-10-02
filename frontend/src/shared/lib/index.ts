@@ -11,5 +11,6 @@ export { pluralize, pluralWord } from "./utils/pluralize";
 export { formatRating } from "./utils/formatRating";
 export { formatDuration } from "./utils/formatDuration";
 export { formatRelative } from "./utils/formatRelative";
+export { optimizeImage, imageSrcSet } from "./utils/optimizeImage";
 export { getAverageGrade } from "./utils/getAvgGrade";
 export { getApiErrorStatus } from "./utils/getApiErrorStatus";

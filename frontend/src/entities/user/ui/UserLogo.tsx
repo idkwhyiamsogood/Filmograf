@@ -2,6 +2,7 @@ import React from "react";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/shared/ui/avatar";
 import { cn } from "@/shared/lib/utils";
+import { optimizeImage } from "@/shared/lib/utils/optimizeImage";
 
 interface Props {
   logo?: string;
@@ -19,7 +20,9 @@ const initials = (name?: string) =>
 
 export const UserLogo: React.FC<Props> = ({ logo, name, className }) => (
   <Avatar className={className}>
-    {logo && <AvatarImage src={logo} alt={name ?? "Аватар"} className="object-cover" />}
+    {logo && (
+      <AvatarImage src={optimizeImage(logo, 96)} alt={name ?? "Аватар"} className="object-cover" />
+    )}
     <AvatarFallback className={cn("bg-brand-soft font-bold text-primary")}>
       {initials(name)}
     </AvatarFallback>

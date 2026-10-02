@@ -1,7 +1,5 @@
 // hooks
-export { useCreateChildComment } from "./model/hooks/useCreateChildComment";
-export { useCreateParentComment } from "./model/hooks/useCreateParentComment";
-
+export { useCreateComment } from "./model/hooks/useCreateComment";
 
 // ui
-export { CommentEditor } from "./ui/CommentEditor/CommentEditor"
+export { CommentComposer, COMMENT_MAX } from "./ui/CommentComposer";

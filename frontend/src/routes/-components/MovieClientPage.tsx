@@ -10,7 +10,7 @@ import { CommentWrapper } from "@/widgets/comments/CommentWrapper";
 import { SimilarMovies } from "@/widgets/SimilarMovies";
 
 import { QueryErrorState } from "@/shared/components";
-import { formatDuration, formatRating } from "@/shared/lib";
+import { formatDuration, formatRating, imageSrcSet, optimizeImage } from "@/shared/lib";
 import { useParams, useRouter } from "@/shared/lib/router-compat";
 import { cn } from "@/shared/lib/utils";
 import { Poster } from "@/shared/ui/poster";
@@ -131,7 +131,10 @@ export const MovieClientPage = () => {
       {/* Hero */}
       <div className="relative h-[52vh] max-h-[440px] min-h-[320px] w-full overflow-hidden">
         <img
-          src={movie.previewImageLink || movie.imageUrl}
+          src={optimizeImage(movie.previewImageLink || movie.imageUrl, 900, 65)}
+          srcSet={imageSrcSet(movie.previewImageLink || movie.imageUrl, 430)}
+          fetchPriority="high"
+          decoding="async"
           alt=""
           className="absolute inset-0 h-full w-full scale-105 object-cover"
         />
@@ -154,6 +157,7 @@ export const MovieClientPage = () => {
             src={movie.imageUrl}
             alt={movie.name}
             priority
+            width={144}
             className="shadow-2xl ring-1 ring-white/10"
           />
         </div>

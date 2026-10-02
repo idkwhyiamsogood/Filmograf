@@ -24,6 +24,9 @@ export { useMovie } from "./model/hooks/useMovies";
 export { useMovieDetails } from "./model/hooks/useMovieDetails";
 export { useMyRates } from "./model/hooks/useMyRates";
 
+// cache
+export { updateMovieInCache, MOVIE_QUERY_PREFIXES } from "./model/cache";
+
 // api
 export { movieApi } from "./model/api/movie.api";
 export { movieFeedApi } from "./model/api/movieFeed.api";
