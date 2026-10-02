@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
-import { authApi } from "../lib";
+import { authApi, USE_MOCKS } from "../lib";
 import type { JWT } from "../types";
 import { toast } from "sonner";
 
@@ -49,8 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithNativeGoogle = useCallback(async () => {
     try {
-      const googleUser = await GoogleAuth.signIn();
-      const idToken = googleUser?.authentication?.idToken;
+      // В мок-режиме Google не дёргаем: мок-бэкенд примет любой idToken.
+      const idToken = USE_MOCKS
+        ? "mock-google-id-token"
+        : (await GoogleAuth.signIn())?.authentication?.idToken;
 
       console.log(idToken);
 
@@ -60,6 +62,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const response = await authApi.googleNative(idToken);
       const jwt = response.data.jwt;
+
+      console.log(jwt);
 
       authApi.setAccessToken(jwt);
       setToken({ jwt });

@@ -3,6 +3,7 @@ import type { AxiosRequestConfig } from "axios";
 import type { APIResponse } from "@/shared/types";
 import { REQUEST_INTERCEPTORS } from "./interceptors/request/index";
 import { RESPONSE_INTERCEPTORS } from "./interceptors/response/index";
+import { mockAdapter, USE_MOCKS } from "../mock/adapter";
  
 export class BaseHttpClient {
   http
@@ -15,6 +16,7 @@ export class BaseHttpClient {
       timeout: 10000,
       baseURL: import.meta.env.VITE_API_URL || "https://filmograf.online/",
       withCredentials: true,
+      ...(USE_MOCKS && { adapter: mockAdapter }),
       ...this.config
     })
 

@@ -18,7 +18,7 @@ import { useRouter } from "@/shared/lib/router-compat";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { Capacitor } from "@capacitor/core";
 
-import { authApi } from "@/shared/lib";
+import { authApi, USE_MOCKS } from "@/shared/lib";
 
 import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
 import { LoadingSplashScreen } from "@/shared/components";
@@ -47,7 +47,7 @@ export const AuthorizationModal: React.FC<BaseModalProps> = ({ isOpen }) => {
     try {
       e.preventDefault();
 
-      if (Capacitor.isNativePlatform()) {
+      if (USE_MOCKS || Capacitor.isNativePlatform()) {
         nativeGoogle();
       } else {
         webGoogle();

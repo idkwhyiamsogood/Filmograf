@@ -2,6 +2,7 @@ import { JWT } from "@/shared/types";
 import { APIResponse } from "@/shared/types/api";
 import { TokenApi } from "./token.api";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
+import { USE_MOCKS } from "../mock/adapter";
 
 interface RouterLike {
   push: (href: string) => void;
@@ -34,9 +35,12 @@ class AuthApi extends TokenApi {
   };
 
   public logout = async () => {
+    // Токен чистим в любом случае: signOut падает, если вход был не через
+    // Google-плагин (веб, моки).
+    this.clearAccessToken();
+    if (USE_MOCKS) return;
     try {
       await GoogleAuth.signOut();
-      this.clearAccessToken();
     } catch (e) {
       console.error(e);
     }
