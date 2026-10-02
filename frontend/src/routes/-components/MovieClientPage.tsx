@@ -32,41 +32,53 @@ const GlassButton: FC<{ label: string; onClick: () => void; children: ReactNode 
   </button>
 );
 
-const RatingCell: FC<{
-  label: string;
-  value?: number;
-  logo?: string;
-  onClick?: () => void;
-  emptyText?: string;
-  integer?: boolean;
-}> = ({ label, value, logo, onClick, emptyText = "—", integer }) => {
-  const hasValue = typeof value === "number" && value > 0;
-  const Comp = onClick ? "button" : "div";
-
+const ExternalRating: FC<{ label: string; value?: number; logo?: string }> = ({ label, value, logo }) => {
+  const has = typeof value === "number" && value > 0;
   return (
-    <Comp
-      type={onClick ? "button" : undefined}
-      onClick={onClick}
-      className={cn(
-        "flex flex-col items-center gap-1 rounded-2xl bg-card px-1 py-3 ring-1 ring-border",
-        onClick && "press",
-      )}
-    >
-      <span
-        className={cn(
-          "text-xl leading-none font-extrabold tabular-nums",
-          hasValue ? ratingTone(value) : "text-muted-foreground",
-        )}
-      >
-        {hasValue ? (integer ? value : formatRating(value)) : emptyText}
+    <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-3">
+      <span className={cn("text-[22px] leading-none font-extrabold tabular-nums", has ? ratingTone(value) : "text-muted-foreground")}>
+        {has ? formatRating(value) : "—"}
       </span>
       <span className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
         {logo && <img src={logo} alt="" className="h-3 w-auto rounded-[2px]" />}
         {label}
       </span>
-    </Comp>
+    </div>
   );
 };
+
+/** Все оценки в одной карточке: три внешних + своя (кликабельна). */
+const RatingsCard: FC<{
+  imdb?: number;
+  kinopoisk?: number;
+  film?: number;
+  userRate: number;
+  onRate: () => void;
+}> = ({ imdb, kinopoisk, film, userRate, onRate }) => (
+  <div className="flex items-stretch overflow-hidden rounded-2xl bg-card ring-1 ring-border">
+    <div className="flex flex-1 divide-x divide-border">
+      <ExternalRating label="IMDb" value={imdb} logo="/imdb.png" />
+      <ExternalRating label="Кинопоиск" value={kinopoisk} logo="/kp.png" />
+      <ExternalRating label="Filmograf" value={film} />
+    </div>
+    <button
+      type="button"
+      onClick={onRate}
+      aria-label={userRate ? `Ваша оценка ${userRate}, изменить` : "Поставить оценку"}
+      className="press flex w-[24%] shrink-0 flex-col items-center justify-center gap-1 bg-brand-soft text-primary"
+    >
+      {userRate ? (
+        <span className="flex items-center gap-0.5 text-[22px] leading-none font-extrabold tabular-nums">
+          <Star className="size-4 fill-current" />
+          {userRate}
+        </span>
+      ) : (
+        <Star className="size-[22px]" strokeWidth={2.2} />
+      )}
+      <span className="text-[11px] font-bold">{userRate ? "Ваша" : "Оценить"}</span>
+    </button>
+  </div>
+);
 
 const MovieSkeletonPage = () => (
   <div className="animate-pulse">
@@ -182,18 +194,13 @@ export const MovieClientPage = () => {
         )}
 
         {/* Рейтинги */}
-        <div className="grid grid-cols-4 gap-2">
-          <RatingCell label="IMDb" value={movie.rates?.IMDb} logo="/imdb.png" />
-          <RatingCell label="КП" value={movie.rates?.Kinopoisk} logo="/kp.png" />
-          <RatingCell label="Filmograf" value={movie.rates?.Film} />
-          <RatingCell
-            label="Ваша"
-            value={userRate}
-            integer
-            emptyText="+"
-            onClick={() => requireMember("оценивать фильмы", () => setRateOpen(true))}
-          />
-        </div>
+        <RatingsCard
+          imdb={movie.rates?.IMDb}
+          kinopoisk={movie.rates?.Kinopoisk}
+          film={movie.rates?.Film}
+          userRate={userRate}
+          onRate={() => requireMember("оценивать фильмы", () => setRateOpen(true))}
+        />
 
         {/* Действия */}
         <div className="grid grid-cols-2 gap-2.5">
@@ -293,6 +300,7 @@ export const MovieClientPage = () => {
         onOpenChange={setRateOpen}
         movieId={movie.id}
         movieName={movie.name}
+        poster={movie.imageUrl}
         current={userRate}
       />
       <CollectionPickerSheet open={pickerOpen} onOpenChange={setPickerOpen} movieId={movie.id} />

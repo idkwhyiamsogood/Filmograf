@@ -65,7 +65,8 @@ const TagPicker: FC<{ value: string[]; onToggle: (id: string) => void }> = ({ va
         />
       </label>
 
-      <div className="flex max-h-44 flex-wrap gap-1.5 overflow-y-auto">
+      {/* Без своей прокрутки — скроллится только шторка */}
+      <div className="flex flex-wrap gap-1.5">
         {(isLoading || (debounced && isSearching)) &&
           Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-8 w-20 rounded-full" />)}
 
@@ -131,9 +132,12 @@ export const CollectionFormSheet: FC<Props> = ({ isOpen, mode, initial, onClose,
   const { collectionRedactForm: form, isPublic } = useCollectionForm();
   const name = form.watch("name") ?? "";
   const tags = form.watch("tags") ?? [];
+  // Два шага, как раньше: 1 — название и видимость, 2 — теги.
+  const [step, setStep] = useState<0 | 1>(0);
 
   useEffect(() => {
     if (isOpen) {
+      setStep(0);
       form.reset({
         name: initial?.name ?? "",
         isPublic: initial?.isPublic ?? true,
@@ -155,7 +159,12 @@ export const CollectionFormSheet: FC<Props> = ({ isOpen, mode, initial, onClose,
   });
 
   const error = form.formState.errors.name?.message;
-  const canSubmit = name.trim().length > 0 && (mode === "create" || form.formState.isDirty);
+  const hasName = name.trim().length > 0;
+  const canSubmit = hasName && (mode === "create" || form.formState.isDirty);
+
+  const next = async () => {
+    if (await form.trigger("name")) setStep(1);
+  };
 
   const counter = useMemo(() => `${name.length}/${NAME_MAX}`, [name]);
 
@@ -163,20 +172,48 @@ export const CollectionFormSheet: FC<Props> = ({ isOpen, mode, initial, onClose,
     <BottomSheet
       open={isOpen}
       onOpenChange={(open) => !open && onClose()}
-      size="tall"
-      title={mode === "create" ? "Новая подборка" : "Настройки подборки"}
-      description={mode === "create" ? "Название, видимость и теги можно поменять позже" : undefined}
+      size={step === 1 ? "tall" : "auto"}
+      title={step === 0 ? (mode === "create" ? "Новая подборка" : "Настройки подборки") : "Теги"}
+      description={
+        <span className="flex items-center gap-2">
+          <span className="flex gap-1">
+            {[0, 1].map((i) => (
+              <span
+                key={i}
+                className={cn("h-1.5 rounded-full transition-all", i === step ? "w-5 bg-primary" : "w-1.5 bg-muted-foreground/30")}
+              />
+            ))}
+          </span>
+          Шаг {step + 1} из 2 · {step === 0 ? "название и видимость" : "по ним подборку будет проще найти"}
+        </span>
+      }
+      onBack={step === 1 ? () => setStep(0) : undefined}
       footer={
-        <Button
-          className="mb-1 h-12 w-full rounded-xl text-[15px] font-bold"
-          disabled={!canSubmit}
-          onClick={submit}
-        >
-          {mode === "create" ? "Создать подборку" : "Сохранить"}
-        </Button>
+        step === 0 ? (
+          <Button className="mb-1 h-12 w-full rounded-xl text-[15px] font-bold" disabled={!hasName} onClick={next}>
+            Далее
+          </Button>
+        ) : (
+          <div className="mb-1 grid grid-cols-[auto_1fr] gap-2">
+            <Button variant="secondary" className="h-12 rounded-xl px-5 text-[15px] font-bold" onClick={() => setStep(0)}>
+              Назад
+            </Button>
+            <Button className="h-12 rounded-xl text-[15px] font-bold" disabled={!canSubmit} onClick={submit}>
+              {mode === "create" ? "Создать подборку" : "Сохранить"}
+            </Button>
+          </div>
+        )
       }
     >
-      <form onSubmit={submit} className="flex flex-col gap-6 pt-1">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          step === 0 ? next() : submit();
+        }}
+        className="flex flex-col gap-6 pt-1"
+      >
+        {step === 0 && (
+          <>
         <div className="space-y-1.5">
           <div
             className={cn(
@@ -241,13 +278,10 @@ export const CollectionFormSheet: FC<Props> = ({ isOpen, mode, initial, onClose,
             )}
           />
         </SheetGroup>
+          </>
+        )}
 
-        <section className="space-y-2">
-          <h3 className="px-1 text-xs font-bold tracking-wider text-muted-foreground uppercase">
-            Теги {tags.length > 0 && `· ${tags.length}`}
-          </h3>
-          <TagPicker value={tags} onToggle={toggleTag} />
-        </section>
+        {step === 1 && <TagPicker value={tags} onToggle={toggleTag} />}
       </form>
     </BottomSheet>
   );

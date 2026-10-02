@@ -59,17 +59,28 @@ export const Comment: FC<Props> = memo(({ comment, level = 0 }) => {
   return (
     <div className={cn("flex flex-col gap-3", isPending && "opacity-60")}>
       <div className="flex gap-3">
-        {isAuthorLoading ? (
-          <Skeleton className="size-9 shrink-0 rounded-full" />
-        ) : (
-          <UserLogo logo={author?.avatarUrl} name={author?.name} className="size-9 shrink-0" />
-        )}
+        <button
+          type="button"
+          aria-label={`Профиль: ${author?.name ?? "пользователь"}`}
+          onClick={() => thread.openAuthor(comment.userId)}
+          className="press h-fit shrink-0 rounded-full"
+        >
+          {isAuthorLoading ? (
+            <Skeleton className="size-9 rounded-full" />
+          ) : (
+            <UserLogo logo={author?.avatarUrl} name={author?.name} className="size-9" />
+          )}
+        </button>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="truncate text-sm font-bold">
+            <button
+              type="button"
+              onClick={() => thread.openAuthor(comment.userId)}
+              className="truncate text-sm font-bold hover:underline"
+            >
               {author?.name ?? (isAuthorLoading ? " " : "Пользователь")}
-            </span>
+            </button>
             {isOwn && (
               <span className="rounded-md bg-brand-soft px-1.5 py-px text-[10px] font-bold text-primary uppercase">
                 вы

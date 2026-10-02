@@ -5,7 +5,9 @@ import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { createQueryClient } from "@/shared/lib/query/queryClient";
 
 import { UserProvider } from "@/entities/user";
-import { AuthProvider } from "@/shared/context";
+import { AppearanceProvider, AuthProvider } from "@/shared/context";
+import { BootSplash } from "@/widgets/BootSplash";
+import { useClipboardLink } from "@/features/clipboard-link";
 import { useAuth } from "@/shared/hooks";
 import { ModalProvider, ModalRenderer, useModals } from "@/shared/contexts/modal-context";
 import { modalBridge } from "@/shared/services/modalBridge";
@@ -39,6 +41,9 @@ const AppShell = () => {
   const queryClient = useQueryClient();
   const prevTokenRef = useRef(token.jwt);
 
+  // Ссылка на фильм/подборку в буфере обмена — предложить перейти.
+  useClipboardLink(isReady);
+
   // Вход/выход: оценки, история, пины и «мои» подборки принадлежат прошлому
   // пользователю — сбрасываем их в кэше, активные экраны перезапросятся.
   useEffect(() => {
@@ -65,6 +70,7 @@ const AppShell = () => {
         {isReady ? <Outlet /> : <LoadingSplashScreen />}
       </main>
       <Navigation />
+      <BootSplash ready={isReady} />
     </>
   );
 };
@@ -80,6 +86,7 @@ const RootComponent = () => {
       enableSystem
       disableTransitionOnChange
     >
+      <AppearanceProvider>
       <AuthProvider>
         <ModalProvider>
           <ModalBridgeRegistrar />
@@ -100,6 +107,7 @@ const RootComponent = () => {
           </QueryClientProvider>
         </ModalProvider>
       </AuthProvider>
+      </AppearanceProvider>
     </ThemeProvider>
   );
 };

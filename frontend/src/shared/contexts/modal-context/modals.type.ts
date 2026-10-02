@@ -8,6 +8,9 @@ export const ModalTypeEnum = {
 
   SELECT_SORTING: "select-sorting",
   CREATE_TAG: "create-tag",
+  APPEARANCE: "appearance",
+  CLIPBOARD_LINK: "clipboard-link",
+  USER_PROFILE: "user-profile",
 } as const;
 
 export type ModalType = (typeof ModalTypeEnum)[keyof typeof ModalTypeEnum];

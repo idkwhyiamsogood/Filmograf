@@ -1,1 +1,1 @@
-export { ThemeSegmented } from "./ui/ThemeSegmented";
+export { AppearanceSheet } from "./ui/AppearanceSheet";

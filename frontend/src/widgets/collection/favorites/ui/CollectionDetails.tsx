@@ -50,6 +50,7 @@ const FAN = [
 
 const Author: FC<{ userId: string }> = ({ userId }) => {
   const { data: author, isLoading } = useUserLight(userId);
+  const { openModal } = useModals();
 
   if (isLoading) {
     return (
@@ -62,10 +63,14 @@ const Author: FC<{ userId: string }> = ({ userId }) => {
   if (!author) return null;
 
   return (
-    <div className="flex items-center gap-2">
+    <button
+      type="button"
+      onClick={() => openModal("user-profile", { userId })}
+      className="press flex items-center gap-2 rounded-full pr-2 hover:bg-accent/60"
+    >
       <UserLogo logo={author.avatarUrl} name={author.name} className="size-7" />
       <span className="text-sm font-semibold">{author.name}</span>
-    </div>
+    </button>
   );
 };
 

@@ -1,0 +1,1 @@
+export { BootSplash } from "./BootSplash";

@@ -70,6 +70,7 @@ export const CommentWrapper: FC = () => {
           onConfirm: () => removeComment(id),
         }),
       loadReplies: (id) => loadReplies(id),
+      openAuthor: (userId) => openModal("user-profile", { userId }),
       renderReplyComposer: (parent) => (
         <CommentComposer
           compact

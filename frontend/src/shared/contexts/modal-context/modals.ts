@@ -34,6 +34,15 @@ export const MODALS: Record<ModalType, FC<any>> = {
       default: m.SortingModal,
     })),
   ),
+  [ModalTypeEnum.APPEARANCE]: lazy(() =>
+    import("@/features/change-theme").then((m) => ({ default: m.AppearanceSheet })),
+  ),
+  [ModalTypeEnum.CLIPBOARD_LINK]: lazy(() =>
+    import("@/features/clipboard-link").then((m) => ({ default: m.ClipboardLinkSheet })),
+  ),
+  [ModalTypeEnum.USER_PROFILE]: lazy(() =>
+    import("@/features/user-profile").then((m) => ({ default: m.UserProfileSheet })),
+  ),
   [ModalTypeEnum.CREATE_TAG]: lazy(() =>
     import("@/features/tags/create-tag").then((m) => ({
       default: m.CreateTagModal,

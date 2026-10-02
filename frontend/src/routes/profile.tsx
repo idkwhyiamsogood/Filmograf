@@ -5,6 +5,7 @@ import {
   ChevronRight,
   History,
   Lock,
+  Palette,
   LogIn,
   LogOut,
   Pin,
@@ -25,7 +26,7 @@ import { UserLogo, useRequireMember, useUser } from "@/entities/user";
 import { useInfiniteMovies, useMyRates } from "@/entities/movie";
 import { useInfiniteCollections } from "@/entities/collection";
 import { useCollectionPins } from "@/entities/collection-pins";
-import { ThemeSegmented } from "@/features/change-theme";
+import { useAppearance } from "@/shared/context";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -95,6 +96,7 @@ function ProfilePage() {
   const { user, isGuest, isLoading, logout } = useUser();
   const { openModal } = useModals();
   const requireMember = useRequireMember();
+  const appearance = useAppearance();
 
   const { data: rates } = useMyRates();
   const { collections } = useInfiniteCollections({ type: "my", pageSize: 100 });
@@ -187,12 +189,22 @@ function ProfilePage() {
         <Row icon={Trophy} label="Топ фильмов" href="/top" />
       </Group>
 
-      <section className="space-y-2">
-        <h2 className="px-1 text-xs font-bold tracking-wider text-muted-foreground uppercase">
-          Оформление
-        </h2>
-        <ThemeSegmented />
-      </section>
+      <Group title="Оформление">
+        <button
+          type="button"
+          onClick={() => openModal("appearance")}
+          className="press flex w-full items-center gap-3 px-3.5 py-2.5 text-left"
+        >
+          <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Palette className="size-[18px]" />
+          </span>
+          <span className="flex-1 text-[15px] font-semibold">Тема и цвет</span>
+          <span className="text-sm text-muted-foreground">
+            {appearance.settings.accent === "daily" ? `Цвет дня · ${appearance.palette.name}` : appearance.palette.name}
+          </span>
+          <ChevronRight className="size-4 text-muted-foreground" />
+        </button>
+      </Group>
 
       {!isGuest && (
         <Button

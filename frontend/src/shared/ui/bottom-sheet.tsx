@@ -2,7 +2,7 @@ import React, { type ReactNode } from "react";
 import { ChevronLeft, X } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
-import { useSheetDrag } from "@/shared/hooks/useSheetDrag";
+import { useSheetMotion } from "@/shared/hooks/useSheetMotion";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/shared/ui/sheet";
 
 interface Props {
@@ -44,7 +44,7 @@ export const BottomSheet: React.FC<Props> = ({
   bodyClassName,
 }) => {
   const close = () => onOpenChange(false);
-  const { contentRef, dragHandleProps } = useSheetDrag(close);
+  const { contentRef, bodyRef, dragHandleProps } = useSheetMotion(close);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -56,7 +56,8 @@ export const BottomSheet: React.FC<Props> = ({
         onCloseAutoFocus={(e) => e.preventDefault()}
         className={cn(
           "mx-auto w-full max-w-lg gap-0 rounded-t-[28px] border-x-0 border-t bg-popover p-0 text-popover-foreground shadow-2xl sm:border-x",
-          "data-[state=open]:duration-300 data-[state=closed]:duration-200",
+          // Свои keyframes с iOS-кривой вместо стандартных slide-in/out.
+          "data-[state=open]:animate-[sheet-in_460ms_cubic-bezier(0.32,0.72,0,1)] data-[state=closed]:animate-[sheet-out_240ms_cubic-bezier(0.4,0,0.9,0.6)]",
           size === "tall" ? "h-[92dvh]" : "max-h-[88dvh]",
           className,
         )}
@@ -111,7 +112,10 @@ export const BottomSheet: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4", bodyClassName)}>
+        <div
+          ref={bodyRef}
+          className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4", bodyClassName)}
+        >
           {children}
         </div>
 

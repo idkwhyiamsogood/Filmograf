@@ -4,6 +4,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 
 import { routeTree } from "./routeTree.gen";
 import { LoadingSplashScreen } from "@/shared/components";
+import { bootstrapAppearance } from "@/shared/lib/appearance";
 import "./app/globals.css";
 
 const router = createRouter({
@@ -20,8 +21,11 @@ declare module "@tanstack/react-router" {
 
 const rootElement = document.getElementById("root")!;
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+// Цвет и режим темы — из Preferences до первого кадра, без вспышки.
+bootstrapAppearance().finally(() => {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>,
+  );
+});

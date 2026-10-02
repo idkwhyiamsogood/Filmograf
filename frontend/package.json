@@ -19,6 +19,7 @@
   "dependencies": {
     "@capacitor/android": "^7.4.3",
     "@capacitor/cli": "^7.4.3",
+    "@capacitor/clipboard": "^7",
     "@capacitor/core": "^7.4.3",
     "@capacitor/preferences": "^7.0.2",
     "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",

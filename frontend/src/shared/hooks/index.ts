@@ -1,2 +1,2 @@
 export { useAuth } from "./useAuth";
-export { useSheetDrag } from "./useSheetDrag";
+export { useSheetMotion, SHEET_EASE } from "./useSheetMotion";

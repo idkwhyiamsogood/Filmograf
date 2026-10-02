@@ -17,6 +17,7 @@ export interface CommentThreadValue {
   startEdit: (commentId: string) => void;
   remove: (commentId: string) => void;
   loadReplies: (commentId: string) => void;
+  openAuthor: (userId: string) => void;
   renderReplyComposer: (parent: Comment) => ReactNode;
   renderEditComposer: (comment: Comment) => ReactNode;
 }
