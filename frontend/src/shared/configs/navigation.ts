@@ -49,12 +49,12 @@ export const navigationMenu: INavigationMenu = {
 export const fullNavigation: INavigationMenu = {
   items: [
     ...navigationMenu.items,
-    // {
-    //   id: 5,
-    //   icon: History,
-    //   label: "История просмотра",
-    //   url: "/user/history",
-    // },
+    {
+      id: 5,
+      icon: History,
+      label: "История просмотра",
+      url: "/history",
+    },
     { id: 8, icon: Package, label: "Избранные подборки", url: "/favorites" },
     { id: 9, icon: Heart, label: "Мои оценки", url: "/rates" }
   ],

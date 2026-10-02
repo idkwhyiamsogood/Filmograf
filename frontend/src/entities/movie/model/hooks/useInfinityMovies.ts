@@ -7,10 +7,16 @@ interface UseInfiniteMoviesParams {
   pageSize?: number;
   initialPage?: number;
   type?: SearchTypeMovie;
+  staleTime?: number;
 }
 
 export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
-  const { pageSize = 21, initialPage = 0, type = "top" } = params;
+  const {
+    pageSize = 21,
+    initialPage = 0,
+    type = "top",
+    staleTime = 5 * 60 * 1000,
+  } = params;
   const queryClient = useQueryClient();
 
   const {
@@ -81,7 +87,7 @@ export const useInfiniteMovies = (params: UseInfiniteMoviesParams = {}) => {
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: initialPage,
-    staleTime: 5 * 60 * 1000,
+    staleTime,
     gcTime: 10 * 60 * 1000,
   });
 
@@ -108,31 +114,29 @@ async function getMoviesWithCache(
   ids: string[],
   queryClient: ReturnType<typeof useQueryClient>,
 ): Promise<IMovie[]> {
+  const moviesById = new Map<string, IMovie>();
   const missing: string[] = [];
-  const cachedMovies: IMovie[] = [];
 
   for (const id of ids) {
     const cached = queryClient.getQueryData<IMovie>(["movie", id]);
     if (cached) {
-      cachedMovies.push(cached);
+      moviesById.set(id, cached);
     } else {
       missing.push(id);
     }
   }
 
-  if (missing.length === 0) {
-    return cachedMovies;
-  }
+  if (missing.length > 0) {
+    const { data: missingMovies } = await movieApi.batchMany({ ids: missing });
 
-  const { data: missingMovies } = await movieApi.batchMany({ ids: missing });
-
-  if (missingMovies) {
-    missingMovies.forEach((movie) => {
+    missingMovies?.forEach((movie) => {
       queryClient.setQueryData(["movie", movie.id], movie);
+      moviesById.set(movie.id, movie);
     });
-
-    return [...cachedMovies, ...missingMovies];
   }
 
-  return cachedMovies;
+  // Сохраняем порядок ids из ответа: для топа и истории он важен.
+  return ids
+    .map((id) => moviesById.get(id))
+    .filter((movie): movie is IMovie => !!movie);
 }
