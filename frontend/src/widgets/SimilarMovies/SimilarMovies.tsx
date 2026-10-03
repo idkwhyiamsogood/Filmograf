@@ -22,7 +22,7 @@ export const SimilarMovies: React.FC<Props> = ({ movie }) => {
     staleTime: 10 * 60 * 1000,
     queryFn: async () => {
       const { data } = await searchApi.searchMovies(
-        "",
+      "",
         { genres: { include: movie.genreIds, exclude: [] }, strictMatch: false },
         { page: 0, count: 13 },
       );
