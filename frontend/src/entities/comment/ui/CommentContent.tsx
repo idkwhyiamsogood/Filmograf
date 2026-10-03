@@ -61,11 +61,20 @@ export const CommentContent: React.FC<Props> = ({ commentId, content }) => {
     };
   }, [commentId, content]);
 
+  // Спойлер раскрывается по нажатию. Редактор только для чтения — Lexical
+  // DOM не перерисует, так что класс можно повесить напрямую.
+  const revealSpoiler = (e: React.MouseEvent) => {
+    const spoiler = (e.target as HTMLElement).closest<HTMLElement>("[data-spoiler]");
+    if (!spoiler || spoiler.classList.contains("is-revealed")) return;
+    e.stopPropagation();
+    spoiler.classList.add("is-revealed");
+  };
+
   return (
     <LexicalComposer key={commentId} initialConfig={commentConfig}>
       <RichTextPlugin
         contentEditable={
-          <div className="lexical-render-wrapper">
+          <div className="lexical-render-wrapper" onClick={revealSpoiler}>
             <ContentEditable className="text-[15px] leading-relaxed outline-none" />
           </div>
         }

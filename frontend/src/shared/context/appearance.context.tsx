@@ -17,6 +17,8 @@ interface AppearanceContextValue {
   palette: Palette;
   setAccent: (accent: string) => void;
   setMode: (mode: ThemeMode) => void;
+  /** Применить и сохранить несколько настроек разом (шторка «Оформление»). */
+  setAppearance: (next: AppearanceSettings) => void;
 }
 
 const AppearanceContext = createContext<AppearanceContextValue | null>(null);
@@ -52,6 +54,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
 
   const update = useCallback((patch: Partial<AppearanceSettings>) => {
     const next = { ...settingsRef.current, ...patch };
+    settingsRef.current = next;
     const p = resolvePalette(next);
     applyAccent(p);
     saveAppearance(next);
@@ -67,9 +70,16 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
     },
     [setTheme, update],
   );
+  const setAppearance = useCallback(
+    (next: AppearanceSettings) => {
+      if (next.mode !== settingsRef.current.mode) setTheme(next.mode);
+      update(next);
+    },
+    [setTheme, update],
+  );
 
   return (
-    <AppearanceContext.Provider value={{ settings, palette, setAccent, setMode }}>
+    <AppearanceContext.Provider value={{ settings, palette, setAccent, setMode, setAppearance }}>
       {children}
     </AppearanceContext.Provider>
   );

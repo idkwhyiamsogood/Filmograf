@@ -1,11 +1,19 @@
-import type { FC } from "react";
+import { useState, type FC } from "react";
 import { Check, Monitor, Moon, Shuffle, Sun } from "lucide-react";
 
 import { useAppearance } from "@/shared/context";
 import { useModals } from "@/shared/contexts/modal-context";
 import type { BaseModalProps } from "@/shared/contexts/modal-context/modals.type";
-import { dailyPalette, PALETTES, type ThemeMode } from "@/shared/lib/appearance";
+import {
+  dailyPalette,
+  DEFAULT_APPEARANCE,
+  PALETTES,
+  resolvePalette,
+  type AppearanceSettings,
+  type ThemeMode,
+} from "@/shared/lib/appearance";
 import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 import { BottomSheet } from "@/shared/ui/bottom-sheet";
 import { Switch } from "@/shared/ui/switch";
 
@@ -20,9 +28,25 @@ const swatch = (hue: number, chroma: number, darkText: boolean) =>
 
 export const AppearanceSheet: FC<BaseModalProps> = ({ isOpen }) => {
   const { closeModal } = useModals();
-  const { settings, palette, setAccent, setMode } = useAppearance();
-  const isDaily = settings.accent === "daily";
+  const { settings, setAppearance } = useAppearance();
+  // Выбор копится в черновике и применяется только по «Сохранить»;
+  // закрыть шторку без сохранения — отменить изменения.
+  const [draft, setDraft] = useState<AppearanceSettings>(settings);
+  const palette = resolvePalette(draft);
+  const isDaily = draft.accent === "daily";
   const today = dailyPalette();
+
+  const same = (a: AppearanceSettings, b: AppearanceSettings) => a.accent === b.accent && a.mode === b.mode;
+  const isDirty = !same(draft, settings);
+  const isDefault = same(draft, DEFAULT_APPEARANCE);
+
+  const setMode = (mode: ThemeMode) => setDraft((d) => ({ ...d, mode }));
+  const setAccent = (accent: string) => setDraft((d) => ({ ...d, accent }));
+
+  const save = () => {
+    if (isDirty) setAppearance(draft);
+    closeModal("appearance");
+  };
 
   return (
     <BottomSheet
@@ -30,13 +54,28 @@ export const AppearanceSheet: FC<BaseModalProps> = ({ isOpen }) => {
       onOpenChange={(open) => !open && closeModal("appearance")}
       title="Оформление"
       description="Тема и акцентный цвет приложения"
+      footer={
+        <div className="flex gap-2 pb-1">
+          <Button
+            variant="secondary"
+            className="h-12 flex-1 rounded-xl text-[15px] font-bold"
+            disabled={isDefault}
+            onClick={() => setDraft(DEFAULT_APPEARANCE)}
+          >
+            Сбросить
+          </Button>
+          <Button className="h-12 flex-1 rounded-xl text-[15px] font-bold" disabled={!isDirty} onClick={save}>
+            Сохранить
+          </Button>
+        </div>
+      }
     >
       <div className="flex flex-col gap-6 pt-1 pb-2">
         <section className="space-y-2">
           <h3 className="px-1 text-xs font-bold tracking-wider text-muted-foreground uppercase">Тема</h3>
           <div role="radiogroup" className="grid grid-cols-3 gap-2">
             {MODES.map(({ value, label, icon: Icon }) => {
-              const active = settings.mode === value;
+              const active = draft.mode === value;
               return (
                 <button
                   key={value}
@@ -84,7 +123,7 @@ export const AppearanceSheet: FC<BaseModalProps> = ({ isOpen }) => {
 
           <div role="radiogroup" aria-label="Акцентный цвет" className="grid grid-cols-5 gap-x-2 gap-y-3 pt-1">
             {PALETTES.map((p) => {
-              const active = !isDaily && settings.accent === p.id;
+              const active = !isDaily && draft.accent === p.id;
               return (
                 <button
                   key={p.id}

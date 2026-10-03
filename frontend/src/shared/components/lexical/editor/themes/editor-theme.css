@@ -89,3 +89,57 @@
 .Collapsible__container[open] >.Collapsible__title {
   list-style-type: disclosure-open;
 }
+
+/* Спойлер (SpoilerNode). В редакторе текст виден, но помечен;
+   в режиме чтения скрыт «шумом», пока не нажмут. */
+.Spoiler {
+  border-radius: 0.3em;
+  padding: 0 0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+
+[contenteditable="true"] .Spoiler {
+  background-color: color-mix(in oklch, var(--muted-foreground) 18%, transparent);
+  outline: 1px dashed color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+  outline-offset: -1px;
+}
+
+[contenteditable="false"] .Spoiler:not(.is-revealed) {
+  cursor: pointer;
+  user-select: none;
+  color: transparent;
+  text-decoration-color: transparent;
+  background-color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  background-image: repeating-linear-gradient(
+    115deg,
+    transparent 0 6px,
+    color-mix(in oklch, var(--foreground) 12%, transparent) 6px 9px
+  );
+  background-size: 40px 100%;
+  animation: spoiler-noise 1.6s linear infinite;
+}
+
+[contenteditable="false"] .Spoiler:not(.is-revealed) * {
+  color: transparent;
+  text-decoration-color: transparent;
+}
+
+[contenteditable="false"] .Spoiler.is-revealed {
+  background-color: color-mix(in oklch, var(--muted-foreground) 14%, transparent);
+}
+
+@keyframes spoiler-noise {
+  to {
+    background-position: 40px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [contenteditable="false"] .Spoiler:not(.is-revealed) {
+    animation: none;
+  }
+}

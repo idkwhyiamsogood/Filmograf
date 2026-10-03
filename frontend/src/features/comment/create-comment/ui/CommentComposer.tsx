@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FC } from "react";
-import { ArrowUp, Bold, Italic, Strikethrough } from "lucide-react";
+import { ArrowUp, Bold, EyeOff, Italic, Strikethrough } from "lucide-react";
+import { toast } from "sonner";
 import {
   $getRoot,
   $getSelection,
@@ -21,7 +22,7 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 
-import { editorTheme, nodes } from "@/shared/components";
+import { $isSelectionInSpoiler, editorTheme, nodes, toggleSpoiler } from "@/shared/components";
 import { cn } from "@/shared/lib/utils";
 import { Spinner } from "@/shared/ui/spinner";
 
@@ -81,9 +82,16 @@ const FORMATS: { type: TextFormatType; icon: typeof Bold; label: string }[] = [
   { type: "strikethrough", icon: Strikethrough, label: "Зачёркнутый" },
 ];
 
+const toolButton = (active: boolean) =>
+  cn(
+    "flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors",
+    active ? "bg-brand-soft text-primary" : "hover:bg-accent",
+  );
+
 const FormatButtons: FC = () => {
   const [editor] = useLexicalComposerContext();
   const [active, setActive] = useState<Record<string, boolean>>({});
+  const [inSpoiler, setInSpoiler] = useState(false);
 
   useEffect(
     () =>
@@ -92,13 +100,20 @@ const FormatButtons: FC = () => {
           const sel = $getSelection();
           if (!$isRangeSelection(sel)) return;
           setActive(Object.fromEntries(FORMATS.map((f) => [f.type, sel.hasFormat(f.type)])));
+          setInSpoiler($isSelectionInSpoiler());
         }),
       ),
     [editor],
   );
 
+  const onSpoiler = () => {
+    if (!toggleSpoiler(editor)) toast("Выделите текст, который нужно скрыть под спойлер");
+  };
+
+  // Узкий экран / глубокая ветка — кнопки форматирования прокручиваются,
+  // а «Отправить» справа не уезжает за край.
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {FORMATS.map(({ type, icon: Icon, label }) => (
         <button
           key={type}
@@ -108,14 +123,22 @@ const FormatButtons: FC = () => {
           // не забираем фокус у редактора
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, type)}
-          className={cn(
-            "flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors",
-            active[type] ? "bg-brand-soft text-primary" : "hover:bg-accent",
-          )}
+          className={toolButton(!!active[type])}
         >
           <Icon className="size-4" />
         </button>
       ))}
+      <button
+        type="button"
+        aria-label="Спойлер"
+        title="Спойлер"
+        aria-pressed={inSpoiler}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={onSpoiler}
+        className={toolButton(inSpoiler)}
+      >
+        <EyeOff className="size-4" />
+      </button>
     </div>
   );
 };
@@ -148,6 +171,7 @@ export const CommentComposer: FC<Props> = ({
 
   const expanded = focused || length > 0 || Boolean(onCancel);
   const tooLong = length > COMMENT_MAX;
+  const showCounter = length >= COMMENT_MAX * 0.8;
   const canSend = length > 0 && !tooLong && !pending;
 
   useEffect(() => {
@@ -227,20 +251,23 @@ export const CommentComposer: FC<Props> = ({
         {expanded && (
           <div className="flex items-center gap-1 border-t px-2 py-1.5">
             <FormatButtons />
-            <span
-              className={cn(
-                "ml-auto pr-1 text-xs tabular-nums text-muted-foreground transition-opacity",
-                length < COMMENT_MAX * 0.8 && "opacity-0",
-                tooLong && "font-semibold text-destructive",
-              )}
-            >
-              {length}/{COMMENT_MAX}
-            </span>
+            {/* Счётчик не резервирует место, пока не нужен: раньше он сдвигал
+                кнопку отправки за край на узких экранах. */}
+            {showCounter && (
+              <span
+                className={cn(
+                  "shrink-0 pr-1 text-xs tabular-nums text-muted-foreground",
+                  tooLong && "font-semibold text-destructive",
+                )}
+              >
+                {length}/{COMMENT_MAX}
+              </span>
+            )}
             {onCancel && (
               <button
                 type="button"
                 onClick={onCancel}
-                className="rounded-lg px-3 py-1.5 text-sm font-semibold text-muted-foreground hover:bg-accent"
+                className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold text-muted-foreground hover:bg-accent"
               >
                 Отмена
               </button>
@@ -252,12 +279,12 @@ export const CommentComposer: FC<Props> = ({
               onMouseDown={(e) => e.preventDefault()}
               onClick={send}
               className={cn(
-                "press flex h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-bold transition-colors",
+                "press flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-sm font-bold transition-colors",
                 canSend ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
               )}
             >
               {pending ? <Spinner className="size-4" /> : <ArrowUp className="size-4" strokeWidth={2.5} />}
-              {!compact && submitLabel}
+              {!compact && !showCounter && submitLabel}
             </button>
           </div>
         )}

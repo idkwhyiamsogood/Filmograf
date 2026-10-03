@@ -19,3 +19,9 @@ export { QueryErrorState } from "./fallback/QueryErrorState";
 // lexical
 export { editorTheme } from "./lexical/editor/themes/editor-theme";
 export { nodes } from "./lexical/blocks/editor-00/nodes";
+export {
+  SpoilerNode,
+  $isSpoilerNode,
+  $isSelectionInSpoiler,
+  toggleSpoiler,
+} from "./lexical/nodes/SpoilerNode";

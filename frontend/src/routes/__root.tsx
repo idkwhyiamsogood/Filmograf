@@ -6,7 +6,7 @@ import { createQueryClient } from "@/shared/lib/query/queryClient";
 
 import { UserProvider } from "@/entities/user";
 import { AppearanceProvider, AuthProvider } from "@/shared/context";
-import { BootSplash } from "@/widgets/BootSplash";
+import { AppSplash } from "@/widgets/BootSplash";
 import { useClipboardLink } from "@/features/clipboard-link";
 import { useAuth } from "@/shared/hooks";
 import { ModalProvider, ModalRenderer, useModals } from "@/shared/contexts/modal-context";
@@ -70,7 +70,7 @@ const AppShell = () => {
         {isReady ? <Outlet /> : <LoadingSplashScreen />}
       </main>
       <Navigation />
-      <BootSplash ready={isReady} />
+      <AppSplash ready={isReady} />
     </>
   );
 };

@@ -5,5 +5,7 @@ import {
   TextNode
 } from "lexical";
 
+import { SpoilerNode } from "../../nodes/SpoilerNode";
+
 export const nodes: ReadonlyArray<Klass<LexicalNode> | LexicalNodeReplacement> =
-  [TextNode];
+  [TextNode, SpoilerNode];
