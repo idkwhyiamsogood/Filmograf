@@ -84,7 +84,7 @@ public abstract class NoAskIntegrationBase<ReqPayload, TContext> : IIntegrationH
 
     private async Task ProcessingError(IntegrationRequest request, object? errorPayload, string errorMessage)
     {
-        // todo блять сделай логи наконец заебал :/
+        // todo: логировать ошибку обработки интеграции
     }
 
     public virtual string GetActionName()

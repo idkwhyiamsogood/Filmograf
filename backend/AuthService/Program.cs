@@ -56,7 +56,7 @@ public class Program
         // ловушка для ошибок
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         
-        // наебалово для nginx
+        // за nginx: доверяем X-Forwarded-* заголовкам (схема/хост исходного запроса)
         if (AppSettingsUtil.AppSettings.HttpsForwardedHeaders)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions

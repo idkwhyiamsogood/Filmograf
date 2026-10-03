@@ -41,7 +41,18 @@ export const ConfirmationModal: React.FC<BaseModalProps & ConfirmationModalProps
     <BottomSheet
       open={isOpen}
       onOpenChange={(open) => !open && close()}
-      centered
+      hideClose
+      icon={
+        <span
+          className={cn(
+            "flex size-12 items-center justify-center rounded-2xl",
+            destructive ? "bg-destructive/12 text-destructive" : "bg-brand-soft text-primary",
+          )}
+        >
+          <Icon className="size-6" />
+        </span>
+      }
+      bodyClassName="hidden"
       title={title ?? "Вы уверены?"}
       description={description ?? "Это действие нельзя отменить."}
       footer={
@@ -60,16 +71,7 @@ export const ConfirmationModal: React.FC<BaseModalProps & ConfirmationModalProps
         </div>
       }
     >
-      <div className="flex justify-center pb-2">
-        <span
-          className={cn(
-            "flex size-14 items-center justify-center rounded-2xl",
-            destructive ? "bg-destructive/12 text-destructive" : "bg-brand-soft text-primary",
-          )}
-        >
-          <Icon className="size-7" />
-        </span>
-      </div>
+      {null}
     </BottomSheet>
   );
 };

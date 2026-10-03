@@ -11,9 +11,10 @@ const config: CapacitorConfig = {
   },
 
   plugins: {
-    // Сплэш показывает ОС при холодном старте; прячет приложение, когда
-    // готова сессия (widgets/BootSplash/AppSplash.tsx). При перезагрузке
-    // WebView он не появляется.
+    // Сплэш показывает ОС при холодном старте (фон — @color/splash_background,
+    // светлый/тёмный по системной теме). Приложение прячет его, когда
+    // отрисован постер BootSplash (widgets/BootSplash/AppSplash.tsx).
+    // При перезагрузке WebView он не появляется.
     SplashScreen: {
       launchAutoHide: false,
       launchFadeOutDuration: 300,

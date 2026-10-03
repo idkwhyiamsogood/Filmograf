@@ -35,7 +35,7 @@ public class MovieSearchIndexService
             // отправляем в Elastic
             var bulkResponse = await _movieSearchIndexProvider.IndexMoviesAsync(searchIndexes, ct);
 
-            // todo: логгирование настрой блять заебал уже
+            // todo: настроить логирование
             if (bulkResponse.IsSuccess())
                 Console.WriteLine($"Обработано {searchIndexes.Length} фильмов.");
             else
@@ -54,7 +54,7 @@ public class MovieSearchIndexService
         // отправляем в Elastic
         var bulkResponse = await _movieSearchIndexProvider.IndexMoviesAsync(searchIndexes, ct);
 
-        // todo: логгирование настрой блять заебал уже
+        // todo: настроить логирование
         if (bulkResponse.IsSuccess())
             Console.WriteLine($"Обработано {searchIndexes.Length} фильмов.");
         else
@@ -69,7 +69,7 @@ public class MovieSearchIndexService
         // отправляем в Elastic
         var bulkResponse = await _movieSearchIndexProvider.IndexMoviesAsync(searchIndexes, ct);
 
-        // todo: логгирование настрой блять заебал уже
+        // todo: настроить логирование
         if (bulkResponse.IsSuccess())
             Console.WriteLine($"Обработано {searchIndexes.Length} фильмов.");
         else

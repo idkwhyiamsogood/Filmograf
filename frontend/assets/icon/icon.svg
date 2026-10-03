@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Полная иконка (фон + F) — сгенерирована из icon-background.svg и icon-foreground.svg -->
+  <!-- Фон иконки: тёмный, пятна как на заставке (BootSplash) -->
+  <defs>
+    <linearGradient id="violet" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3FA9F0"/>
+      <stop offset="0.45" stop-color="#8E5CF3"/>
+      <stop offset="1" stop-color="#FF00FF"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#42A5F5"/>
+      <stop offset="1" stop-color="#00D6E0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="#16130F"/>
+  <path fill="url(#violet)" d="M-60 -80 C 330 -150 790 -40 820 290 C 850 600 640 820 360 830 C 130 838 -50 720 -90 480 C -120 300 -130 -60 -60 -80 Z"/>
+  <path fill="url(#cyan)" d="M1104 690 C 990 640 790 700 720 850 C 670 960 720 1104 800 1104 L 1104 1104 Z"/>
+
+  <!-- Буква F. Вписана в безопасную зону adaptive icon (круг ~61% по центру) -->
+  <g fill="#FAF8F5">
+    <rect x="356" y="262" width="128" height="500" rx="10"/>
+    <rect x="356" y="262" width="330" height="124" rx="10"/>
+    <rect x="356" y="462" width="270" height="112" rx="10"/>
+  </g>
+</svg>

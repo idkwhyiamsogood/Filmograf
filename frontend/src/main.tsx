@@ -28,4 +28,9 @@ bootstrapAppearance().finally(() => {
       <RouterProvider router={router} />
     </StrictMode>,
   );
+  // Фон-заглушка из index.html больше не нужен: тему ведёт приложение.
+  requestAnimationFrame(() => {
+    document.getElementById("boot-bg")?.remove();
+    delete document.documentElement.dataset.bootTheme;
+  });
 });

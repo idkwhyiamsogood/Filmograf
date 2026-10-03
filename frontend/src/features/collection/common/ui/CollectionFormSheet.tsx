@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FC } from "react";
 import { Controller } from "react-hook-form";
-import { Check, Plus, Search, X } from "lucide-react";
+import { Check, Plus, Search } from "lucide-react";
 import { useDebounce } from "react-use";
 
 import { useCollectionForm, type CollectionRedactSchema } from "@/entities/collection";
@@ -22,7 +22,7 @@ const BigSwitch: FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ c
   />
 );
 
-/** Выбор тегов: выбранные — сверху, поиск, создание нового прямо из поиска. */
+/** Выбор тегов: отмечаются прямо в общем списке, поиск, создание нового из поиска. */
 const TagPicker: FC<{ value: string[]; onToggle: (id: string) => void }> = ({ value, onToggle }) => {
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
@@ -33,27 +33,15 @@ const TagPicker: FC<{ value: string[]; onToggle: (id: string) => void }> = ({ va
   const { data: selected = [] } = useTags(value);
   const { mutate: createTag, isPending: isCreating } = useCreateTag();
 
-  const list = debounced ? found : all;
+  // Выбранные теги, которых нет на загруженных страницах, — в начало списка,
+  // чтобы их всегда можно было увидеть и снять.
+  const list = debounced
+    ? found
+    : [...selected.filter((t) => !all.some((a) => a.id === t.id)), ...all];
   const exact = list.some((t) => t.name.toLowerCase() === debounced.toLowerCase());
 
   return (
     <div className="space-y-3">
-      {selected.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {selected.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => onToggle(t.id)}
-              className="press flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground"
-            >
-              #{t.name}
-              <X className="size-3.5" />
-            </button>
-          ))}
-        </div>
-      )}
-
       <label className="flex h-11 items-center gap-2.5 rounded-xl bg-muted px-3.5 ring-primary/50 focus-within:ring-2">
         <Search className="size-4 text-muted-foreground" />
         <input

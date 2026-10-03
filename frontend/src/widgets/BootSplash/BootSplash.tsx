@@ -43,7 +43,7 @@ const Blobs: FC = () => (
   </svg>
 );
 
-const Line: FC<{ line: PosterLine; index: number }> = ({ line, index }) => {
+const Line: FC<{ line: PosterLine }> = ({ line }) => {
   const vertical = line.dir === "v";
   const style: CSSProperties = {
     left: u(line.x),
@@ -56,23 +56,19 @@ const Line: FC<{ line: PosterLine; index: number }> = ({ line, index }) => {
 
   return (
     <span className="absolute leading-none whitespace-nowrap" style={style}>
-      <span
-        className="block animate-[poster-line_620ms_cubic-bezier(0.32,0.72,0,1)_both]"
-        style={{ animationDelay: `${120 + index * 55}ms` }}
-      >
-        {line.text}
-      </span>
+      {line.text}
     </span>
   );
 };
 
 /**
  * Заставка при запуске — постер из макета Figma: буква F из фраз Montserrat
- * ExtraBold на цветных пятнах, тонкая диагональ. Пятна медленно дрейфуют и
- * переливаются (transform + hue-rotate на одном слое), строки появляются
- * по очереди. Три точки — индикатор загрузки.
+ * ExtraBold на цветных пятнах. Постер появляется целиком, одним кадром —
+ * когда подгрузился шрифт и посчитана раскладка; до этого только фон.
+ * Пятна медленно дрейфуют и переливаются (transform + hue-rotate на одном
+ * слое). Три точки — индикатор загрузки.
  */
-export const BootSplash: FC<{ ready: boolean }> = ({ ready }) => {
+export const BootSplash: FC<{ ready: boolean; onVisible?: () => void }> = ({ ready, onVisible }) => {
   const [lines, setLines] = useState<PosterLine[] | null>(null);
   const [minElapsed, setMinElapsed] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -81,7 +77,12 @@ export const BootSplash: FC<{ ready: boolean }> = ({ ready }) => {
   // Раскладку считаем, когда подгрузился Montserrat — иначе кегли поплывут.
   useEffect(() => {
     let alive = true;
-    loadPosterFont().then(() => alive && setLines(buildPoster()));
+    loadPosterFont().then(() => {
+      if (!alive) return;
+      setLines(buildPoster());
+      // После кадра с постером — можно убирать то, что было под ним (нативный сплэш).
+      requestAnimationFrame(() => requestAnimationFrame(() => alive && onVisible?.()));
+    });
     const t = window.setTimeout(() => setMinElapsed(true), MIN_VISIBLE_MS);
     return () => {
       alive = false;
@@ -114,29 +115,22 @@ export const BootSplash: FC<{ ready: boolean }> = ({ ready }) => {
         ["--pu" as string]: `min(100vw / ${PANEL.w}, 100dvh / ${PANEL.h})`,
       }}
     >
-      <div className="relative" style={{ width: u(PANEL.w), height: u(PANEL.h) }}>
+      <div
+        className={cn(
+          "relative transition-opacity duration-300 ease-out",
+          lines ? "opacity-100" : "opacity-0",
+        )}
+        style={{ width: u(PANEL.w), height: u(PANEL.h) }}
+      >
         <div className="absolute inset-0 animate-[blob-hue_7s_ease-in-out_infinite_alternate]" style={{ willChange: "filter" }}>
           <Blobs />
         </div>
-
-        {/* тонкая диагональ, как в макете */}
-        <svg viewBox={`0 0 ${PANEL.w} ${PANEL.h}`} className="absolute inset-0 h-full w-full" aria-hidden>
-          <line
-            x1="233"
-            y1="0"
-            x2="184"
-            y2={PANEL.h}
-            stroke="currentColor"
-            strokeWidth="0.8"
-            className="text-foreground [stroke-dasharray:600] animate-[poster-stroke_1s_cubic-bezier(0.32,0.72,0,1)_both]"
-          />
-        </svg>
 
         <div
           className="absolute inset-0 text-foreground"
           style={{ fontFamily: `${FONT}, Arial, sans-serif`, fontWeight: 800 }}
         >
-          {lines?.map((line, i) => <Line key={i} line={line} index={i} />)}
+          {lines?.map((line, i) => <Line key={i} line={line} />)}
         </div>
       </div>
 

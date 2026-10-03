@@ -128,17 +128,19 @@ export const RateSheet: React.FC<Props> = ({ open, onOpenChange, movieId, movieN
     <BottomSheet
       open={open}
       onOpenChange={onOpenChange}
-      title={isUpdate ? "Изменить оценку" : "Ваша оценка"}
-      description={
-        <span className="flex items-center gap-2">
-          {poster && (
-            <span className="w-6 shrink-0">
-              <Poster src={poster} alt="" width={24} rounded="rounded-[4px]" />
-            </span>
-          )}
-          <span className="truncate">{movieName}</span>
-        </span>
+      icon={
+        poster ? (
+          <span className="block w-11">
+            <Poster src={poster} alt="" width={44} rounded="rounded-lg" />
+          </span>
+        ) : (
+          <span className="flex size-11 items-center justify-center rounded-xl bg-brand-soft text-primary">
+            <Star className="size-5" />
+          </span>
+        )
       }
+      title={isUpdate ? "Изменить оценку" : "Ваша оценка"}
+      description={<span className="line-clamp-2">{movieName}</span>}
       footer={
         <Button
           size="lg"

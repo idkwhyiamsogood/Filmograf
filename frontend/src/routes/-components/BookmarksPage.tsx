@@ -60,13 +60,23 @@ const MyCollections: FC = () => {
       {collections.map((c) => (
         <CollectionCover key={c.id} collection={c} />
       ))}
+      {/* Повторяет раскладку CollectionCover (обложка 5:4 + две строки
+          подписи), поэтому всегда одной высоты с карточками. Пунктир —
+          outline, а не border, чтобы не добавлять к размеру. */}
       <button
         type="button"
         onClick={() => openModal("create-bookmark")}
-        className="press flex aspect-[4/5] flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border text-sm font-semibold text-muted-foreground hover:border-primary hover:text-primary"
+        className="press group block rounded-2xl text-left text-muted-foreground outline-2 -outline-offset-2 outline-border outline-dashed transition-colors select-none hover:text-primary hover:outline-primary"
       >
-        <Plus className="size-6" />
-        Новая подборка
+        <div className="flex aspect-[5/4] items-center justify-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-brand-soft">
+            <Plus className="size-6" />
+          </span>
+        </div>
+        <div className="flex flex-col gap-0.5 px-3 pt-1 pb-3">
+          <span className="line-clamp-1 text-[13px] leading-tight font-bold text-foreground">Новая подборка</span>
+          <span className="text-[11px]">Создать свою</span>
+        </div>
       </button>
     </Grid>
   );

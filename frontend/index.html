@@ -16,6 +16,25 @@
       rel="stylesheet"
     />
     <title>Filmograf</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Фон до загрузки бандла: без этого WebView/вкладка мелькает белым.
+         Тема — сохранённая next-themes ("theme" в localStorage) или системная.
+         Удаляется в main.tsx после первого рендера — дальше фон задаёт приложение. -->
+    <style id="boot-bg">
+      html { background: #faf8f5; color-scheme: light; }
+      @media (prefers-color-scheme: dark) { html { background: #16130f; color-scheme: dark; } }
+      html[data-boot-theme="light"] { background: #faf8f5; color-scheme: light; }
+      html[data-boot-theme="dark"] { background: #16130f; color-scheme: dark; }
+    </style>
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.bootTheme = t;
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

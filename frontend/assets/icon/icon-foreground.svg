@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Буква F. Вписана в безопасную зону adaptive icon (круг ~61% по центру) -->
+  <g fill="#FAF8F5">
+    <rect x="356" y="262" width="128" height="500" rx="10"/>
+    <rect x="356" y="262" width="330" height="124" rx="10"/>
+    <rect x="356" y="462" width="270" height="112" rx="10"/>
+  </g>
+</svg>

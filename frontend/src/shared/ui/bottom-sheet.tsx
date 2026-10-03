@@ -18,8 +18,12 @@ interface Props {
   onBack?: () => void;
   /** auto — по контенту (до 88% экрана), tall — почти на весь экран */
   size?: "auto" | "tall";
-  /** Центрированная шапка для «диалоговых» шторок (вход, подтверждение) */
+  /** Центрированная шапка для «диалоговых» шторок (вход) */
   centered?: boolean;
+  /** Иконка/обложка слева от заголовка и описания */
+  icon?: ReactNode;
+  /** Скрыть крестик (когда в футере уже есть «Отмена») */
+  hideClose?: boolean;
   className?: string;
   bodyClassName?: string;
 }
@@ -40,6 +44,8 @@ export const BottomSheet: React.FC<Props> = ({
   onBack,
   size = "auto",
   centered,
+  icon,
+  hideClose,
   className,
   bodyClassName,
 }) => {
@@ -71,9 +77,11 @@ export const BottomSheet: React.FC<Props> = ({
           <div
             className={cn(
               "flex items-start gap-2 px-5 pt-1 pb-3",
+              icon && !centered && "items-center gap-3.5",
               centered && "flex-col items-center text-center",
             )}
           >
+            {icon && <div className="shrink-0">{icon}</div>}
             {onBack && (
               <button
                 type="button"
@@ -97,7 +105,7 @@ export const BottomSheet: React.FC<Props> = ({
             {!centered && (
               <div className="flex shrink-0 items-center gap-1">
                 {headerAction}
-                {!onBack && (
+                {!onBack && !hideClose && (
                   <button
                     type="button"
                     aria-label="Закрыть"

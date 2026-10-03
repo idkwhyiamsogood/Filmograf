@@ -11,7 +11,11 @@ const SESSION_KEY = "boot-splash-shown";
 
 const hideNative = () => SplashScreen.hide({ fadeOutDuration: FADE_MS }).catch(() => undefined);
 
-/** Постер показываем один раз за сессию вкладки — F5 его не вызывает. */
+/**
+ * Постер показываем один раз за сессию: вкладки в браузере или процесса
+ * приложения (sessionStorage WebView живёт, пока жив процесс). F5 и live
+ * reload его не вызывают.
+ */
 const wasPosterShown = () => {
   try {
     return Boolean(sessionStorage.getItem(SESSION_KEY));
@@ -31,18 +35,19 @@ const markPosterShown = () => {
 /**
  * Экран загрузки приложения.
  *
- * Нативно — @capacitor/splash-screen: его показывает сама ОС при холодном
- * старте процесса (launchAutoHide: false в capacitor.config.ts), а мы прячем,
- * когда готова сессия. Перезагрузка WebView (F5, live reload) нативный сплэш
- * не показывает — hide() в этом случае ничего не делает.
+ * Нативно при холодном старте ОС сразу показывает @capacitor/splash-screen
+ * (фон в цвет приложения, launchAutoHide: false) — он закрывает белый WebView,
+ * пока грузится JS. Как только постер BootSplash отрисован, нативный сплэш
+ * плавно уходит и дальше до готовности сессии виден постер.
  *
- * В браузере нативного сплэша нет — там один раз за сессию вкладки
- * показываем анимированный постер BootSplash.
+ * При перезагрузке (F5, live reload) постер не показываем; нативный сплэш
+ * в этом случае не появляется, hide() ничего не делает.
  */
 export const AppSplash: FC<{ ready: boolean }> = ({ ready }) => {
   const isNative = Capacitor.isNativePlatform();
   // Чистый инициализатор (StrictMode вызывает его дважды), флаг — в эффекте.
-  const [showPoster] = useState(() => !isNative && !wasPosterShown());
+  const [showPoster] = useState(() => !wasPosterShown());
+  const [posterVisible, setPosterVisible] = useState(false);
 
   useEffect(() => {
     if (showPoster) markPosterShown();
@@ -54,9 +59,10 @@ export const AppSplash: FC<{ ready: boolean }> = ({ ready }) => {
     return () => window.clearTimeout(t);
   }, [isNative]);
 
+  // Эстафета: нативный сплэш держим, пока его есть чем сменить.
   useEffect(() => {
-    if (isNative && ready) hideNative();
-  }, [isNative, ready]);
+    if (isNative && (showPoster ? posterVisible : ready)) hideNative();
+  }, [isNative, showPoster, posterVisible, ready]);
 
-  return showPoster ? <BootSplash ready={ready} /> : null;
+  return showPoster ? <BootSplash ready={ready} onVisible={() => setPosterVisible(true)} /> : null;
 };

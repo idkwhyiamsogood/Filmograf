@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Фон нативного сплэша = фон приложения (светлая тема) -->
+    <color name="splash_background">#FAF8F5</color>
+</resources>

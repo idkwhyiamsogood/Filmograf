@@ -14,7 +14,8 @@
     "cap:ios": "cap add ios",
     "cap:open:android": "cap open android",
     "cap:open:ios": "cap open ios",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "icons": "./scripts/generate-icons.sh"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",

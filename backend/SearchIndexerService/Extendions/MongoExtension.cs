@@ -18,7 +18,7 @@ internal static class MongoExtension
         var guidSerializer = new MongoDB.Bson.Serialization.Serializers.GuidSerializer(GuidRepresentation.Standard);
         MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(guidSerializer);
         
-        // с date only этот еблан тоже не дружит
+        // DateOnly драйвер Mongo из коробки тоже не сериализует
         var dateOnlySerializer = new DateOnlySerializer();
         MongoDB.Bson.Serialization.BsonSerializer.RegisterSerializer(dateOnlySerializer);
 
